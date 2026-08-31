@@ -1,0 +1,7 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArchiveRail from '../../components/ArchiveRail.astro';
+const events=[['2026 / 08','多租户授权边界研究','API 安全'],['2026 / 07','WordPress 插件披露专项','漏洞研究'],['2026 / 06','自主安全智能体实验','AI 安全'],['2026 / 05','可复现的 JavaScript 审计流水线','代码审计'],['2026 / 03','Burp 扩展开发','工具开发'],['2025 / 12','移动应用安全现场研究','移动安全']];
+---
+<BaseLayout title="研究时间线 — AN7LN Security" description="按时间记录研究主题、漏洞披露与工具开发。"><div class="page-grid"><ArchiveRail index="TIME" label="日志"/><div class="page-main"><header class="page-hero"><span class="section-number">// 研究 Git 日志</span><h1 class="display display-lg">研究时间线</h1><p>按时间记录研究主题、漏洞披露与工具开发。</p></header><ol class="timeline">{events.map((event,i)=><li><b>{String(i+1).padStart(2,'0')}</b><time>{event[0]}</time><strong>{event[1]}</strong><span>{event[2]}</span></li>)}</ol></div></div></BaseLayout>
+<style>.timeline{margin:0;padding:0;list-style:none}.timeline li{display:grid;grid-template-columns:5rem 11rem 1fr 12rem;gap:1.5rem;align-items:center;padding:1.4rem var(--gutter);border-bottom:1px solid var(--rule)}.timeline b,.timeline time,.timeline span{font:.72rem/1.4 var(--mono)}.timeline b{color:var(--amber)}.timeline time,.timeline span{color:var(--steel-bright)}.timeline strong{font-size:1.05rem}@media(max-width:760px){.timeline li{grid-template-columns:3rem 1fr}.timeline time{grid-column:2;grid-row:1}.timeline strong{grid-column:2}.timeline span{grid-column:2}}</style>

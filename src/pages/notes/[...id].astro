@@ -1,0 +1,9 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArchiveRail from '../../components/ArchiveRail.astro';
+import Giscus from '../../components/Giscus.astro';
+export async function getStaticPaths(){const entries=await getCollection('notes',({data})=>!data.draft);return entries.map(entry=>({params:{id:entry.id},props:{entry}}));}
+const {entry}=Astro.props;const {Content}=await render(entry);
+---
+<BaseLayout title={`${entry.data.title} — AN7LN Security`} description={entry.data.description} type="article"><div class="page-grid"><ArchiveRail index="NOTE" label={entry.data.topic}/><article class="page-main" data-pagefind-body><header class="page-hero"><span class="section-number">// {entry.data.topic} · {entry.data.published.toISOString().slice(0,10)}</span><h1 class="display display-lg" data-pagefind-meta="title">{entry.data.title}</h1><p>{entry.data.description}</p><div class="tag-list">{entry.data.tags.map(tag=><span>{tag}</span>)}</div></header><div class="article-wrap"><div class="prose"><Content /></div><Giscus /></div></article></div></BaseLayout>

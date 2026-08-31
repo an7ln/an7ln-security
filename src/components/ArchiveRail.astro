@@ -1,0 +1,17 @@
+---
+interface Props {
+  index?: string;
+  label?: string;
+}
+const { index = '001', label = '公开' } = Astro.props;
+---
+<aside class="archive-rail" aria-label="档案信息">
+  <strong>AN7LN<br />公开档案</strong>
+  <dl>
+    <div><dt>编号</dt><dd>{index}</dd></div>
+    <div><dt>类型</dt><dd>{label}</dd></div>
+    <div><dt>范围</dt><dd>公开</dd></div>
+    <div><dt>更新</dt><dd>2026.08.31</dd></div>
+    <div><dt>披露</dt><dd>负责任<br />披露</dd></div>
+  </dl>
+</aside>

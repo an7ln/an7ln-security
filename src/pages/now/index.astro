@@ -1,0 +1,6 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArchiveRail from '../../components/ArchiveRail.astro';
+---
+<BaseLayout title="近况 — AN7LN Security" description="AN7LN 当前正在研究与构建的方向。"><div class="page-grid"><ArchiveRail index="NOW" label="近况"/><article class="page-main" data-pagefind-body><header class="page-hero"><span class="section-number">// 更新于 2026.08.31</span><h1 class="display display-lg" data-pagefind-meta="title">正在探索</h1><p>当前研究方向的简短快照。</p></header><div class="now-list"><section><b>01</b><div><h2>AI 辅助漏洞研究</h2><p>构建证据优先的工作流，用智能体加速侦察、代码导航与验证，同时严格区分自动生成的假设与已经确认的发现。</p></div></section><section><b>02</b><div><h2>自主渗透测试智能体</h2><p>研究权限边界、不可信目标内容、凭据范围、持久记忆与可审计的工具调用。</p></div></section><section><b>03</b><div><h2>从输入源到危险点的代码审计</h2><p>改进大型 JavaScript、Java、PHP 与混合应用栈中的可复现追踪方法。</p></div></section></div></article></div></BaseLayout>
+<style>.now-list section{display:grid;grid-template-columns:6rem 1fr;gap:2rem;padding:2.5rem var(--gutter);border-bottom:1px solid var(--rule)}.now-list b{color:var(--amber);font:900 3rem/1 var(--display)}.now-list h2{margin:0;font-family:var(--display);font-size:clamp(2rem,4vw,3.5rem);line-height:1;text-transform:uppercase}.now-list p{max-width:46rem;color:var(--steel-bright)}@media(max-width:600px){.now-list section{grid-template-columns:3rem 1fr}}</style>

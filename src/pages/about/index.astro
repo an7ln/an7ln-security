@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArchiveRail from '../../components/ArchiveRail.astro';
+import ArrowIcon from '../../components/ArrowIcon.astro';
+---
+<BaseLayout title="关于 — AN7LN Security" description="关于 AN7LN Security 及其漏洞研究方法。"><div class="page-grid"><ArchiveRail index="006" label="档案"/><article class="page-main" data-pagefind-body><header class="page-hero"><span class="section-number">// 研究者档案</span><h1 class="display display-lg" data-pagefind-meta="title">关于 AN7LN</h1><p>攻防安全、漏洞研究、代码审计与实用 AI 安全。</p></header><div class="about-grid"><div class="prose"><h2>研究工作</h2><p>AN7LN Security 是一份公开研究档案，记录在授权安全研究中形成的方法、技术观察、协调披露与实战工具。</p><p>当前重点包括 Web 与 API 授权、前端与源代码分析、移动应用安全、WordPress 生态研究，以及自主智能体的安全边界。</p><h2>披露原则</h2><p>只有在可以负责任分享时，研究才会公开。报告应当可复现、范围明确，并真正帮助修复问题。未修复漏洞、客户资料、凭据和敏感 PoC 细节始终保存在独立的私有研究仓库中。</p><h2 id="contact">联系</h2><p>如需协调漏洞披露或进行技术合作，请在对应 GitHub 仓库中创建私有安全公告，或使用 AN7LN GitHub 主页列出的联系方式。</p><a class="arrow-link" href="https://github.com/an7ln">打开 GitHub 主页 <ArrowIcon/></a></div><aside><span class="mono-label">研究方向</span><ul><li>Web 与 API 安全</li><li>代码审计</li><li>移动安全</li><li>WordPress 研究</li><li>AI 智能体安全</li></ul></aside></div></article></div></BaseLayout>
+<style>
+  .about-grid{display:grid;grid-template-columns:minmax(0,1fr) 17rem;gap:5rem;padding:4rem var(--gutter) 7rem}.about-grid aside{align-self:start;padding:1.5rem;border:1px solid var(--rule)}.about-grid aside ul{margin:1rem 0 0;padding:0;list-style:none}.about-grid aside li{padding:.65rem 0;border-top:1px solid var(--rule);color:var(--steel-bright);font:.75rem/1.4 var(--mono)}
+  @media(max-width:760px){.about-grid{grid-template-columns:1fr;gap:2rem}}
+</style>

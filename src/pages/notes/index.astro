@@ -1,0 +1,14 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArchiveRail from '../../components/ArchiveRail.astro';
+import ArrowIcon from '../../components/ArrowIcon.astro';
+const notes = (await getCollection('notes', ({ data }) => !data.draft)).sort((a,b) => b.data.published.valueOf() - a.data.published.valueOf());
+---
+<BaseLayout title="现场笔记 — AN7LN Security" description="来自进行中安全研究的工作记录。">
+  <div class="page-grid"><ArchiveRail index="003" label="笔记" /><div class="page-main"><header class="page-hero"><span class="section-number">// 工作笔记本</span><h1 class="display display-lg">现场笔记</h1><p>来自进行中安全研究的工作记录。</p></header><ol class="notes-list">{notes.map((note,i)=><li><a href={`/notes/${note.id}/`}><b>{String(i+1).padStart(2,'0')}</b><time>{note.data.published.toISOString().slice(0,10)}</time><div><span>{note.data.topic}</span><h2>{note.data.title}</h2><p>{note.data.description}</p></div><ArrowIcon /></a></li>)}</ol></div></div>
+</BaseLayout>
+<style>
+  .notes-list{margin:0;padding:0;list-style:none}.notes-list li{border-bottom:1px solid var(--rule)}.notes-list a{display:grid;grid-template-columns:5rem 8rem 1fr auto;gap:1.5rem;align-items:start;padding:1.8rem var(--gutter)}.notes-list a:hover{background:rgba(242,239,231,.05)}.notes-list b{font:900 2.3rem/1 var(--display)}.notes-list time,.notes-list span{color:var(--steel);font:.7rem/1 var(--mono);text-transform:uppercase}.notes-list h2{margin:.45rem 0 .25rem;font-size:1.2rem}.notes-list p{margin:0;color:var(--steel-bright);font-size:.85rem}.notes-list svg{margin-top:1rem;color:var(--amber)}
+  @media(max-width:760px){.notes-list a{grid-template-columns:3rem 1fr auto}.notes-list time{display:none}.notes-list div{grid-column:2;}.notes-list svg{grid-column:3;grid-row:1}}
+</style>

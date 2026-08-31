@@ -1,0 +1,32 @@
+---
+const repo = import.meta.env.PUBLIC_GISCUS_REPO;
+const repoId = import.meta.env.PUBLIC_GISCUS_REPO_ID;
+const category = import.meta.env.PUBLIC_GISCUS_CATEGORY ?? 'Announcements';
+const categoryId = import.meta.env.PUBLIC_GISCUS_CATEGORY_ID;
+const enabled = Boolean(repo && repoId && categoryId);
+---
+{enabled && (
+  <section class="discussion" aria-labelledby="discussion-title">
+    <div><span class="section-number">// 讨论</span><h2 id="discussion-title">继续分析与交流</h2></div>
+    <script is:inline
+      src="https://giscus.app/client.js"
+      data-repo={repo}
+      data-repo-id={repoId}
+      data-category={category}
+      data-category-id={categoryId}
+      data-mapping="pathname"
+      data-strict="1"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="dark_dimmed"
+      data-lang="zh-CN"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </section>
+)}
+<style>
+  .discussion { margin-top: 5rem; padding-top: 2rem; border-top: 1px solid var(--rule); }
+  .discussion h2 { margin: .6rem 0 2rem; font-family: var(--display); font-size: 2.5rem; line-height: 1; text-transform: uppercase; }
+</style>

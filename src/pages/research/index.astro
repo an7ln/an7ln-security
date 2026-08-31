@@ -1,0 +1,62 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArchiveRail from '../../components/ArchiveRail.astro';
+import ResearchRow from '../../components/ResearchRow.astro';
+
+const research = (await getCollection('research', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
+const filters = [
+  ['all', '全部'], ['web', 'Web 安全'], ['api', 'API 安全'], ['mobile', '移动安全'], ['code-audit', '代码审计'], ['ai-security', 'AI 安全'],
+];
+---
+<BaseLayout title="研究索引 — AN7LN Security" description="精选漏洞研究、技术复盘与公开披露记录。">
+  <div class="page-grid">
+    <ArchiveRail index="002" label="研究" />
+    <div class="page-main">
+      <header class="page-hero">
+        <span class="section-number">// 研究档案</span>
+        <h1 class="display display-lg">研究索引</h1>
+        <p>精选漏洞研究、技术复盘与公开披露记录。</p>
+      </header>
+      <div class="filters" role="group" aria-label="按研究方向筛选">
+        {filters.map(([value, label], i) => <button type="button" data-filter={value} aria-pressed={i === 0 ? 'true' : 'false'}>{label}</button>)}
+      </div>
+      <div class="table-head" aria-hidden="true"><span>日期</span><span>研究</span><span>方向</span><span>等级</span><i></i></div>
+      <div class="ruled-list" data-research-list>
+        {research.map((entry) => <div class="research-item" data-category={entry.data.category}><ResearchRow entry={entry} /></div>)}
+      </div>
+      <p class="empty" data-filter-empty hidden>这个方向暂无公开记录。</p>
+    </div>
+  </div>
+</BaseLayout>
+
+<script is:inline>
+  const filterButtons = document.querySelectorAll('[data-filter]');
+  const items = document.querySelectorAll('.research-item');
+  const empty = document.querySelector('[data-filter-empty]');
+  filterButtons.forEach((button) => button.addEventListener('click', () => {
+    const active = button.dataset.filter;
+    filterButtons.forEach((candidate) => candidate.setAttribute('aria-pressed', String(candidate === button)));
+    let visible = 0;
+    items.forEach((item) => {
+      const show = active === 'all' || item.dataset.category === active;
+      item.hidden = !show;
+      if (show) visible++;
+    });
+    empty.hidden = visible !== 0;
+  }));
+</script>
+
+<style>
+  .filters { display: flex; flex-wrap: wrap; gap: 2rem; padding: 1.4rem var(--gutter); border-bottom: 1px solid var(--rule); }
+  .filters button { position: relative; padding: .45rem 0; border: 0; background: transparent; color: var(--steel-bright); cursor: pointer; font: 700 .72rem/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+  .filters button::after { content: ''; position: absolute; right: 0; bottom: 0; left: 0; height: 2px; transform: scaleX(0); background: var(--amber); }
+  .filters button[aria-pressed='true'] { color: var(--amber); }
+  .filters button[aria-pressed='true']::after { transform: scaleX(1); }
+  .table-head { display: grid; grid-template-columns: 8.5rem minmax(18rem,1fr) 10rem 8rem 2rem; gap: 1.25rem; padding: .9rem var(--gutter); color: var(--steel); font: .66rem/1 var(--mono); letter-spacing: .07em; text-transform: uppercase; }
+  .research-item { display: contents; }
+  .empty { margin: 0; padding: 4rem var(--gutter); color: var(--steel); font-family: var(--mono); }
+  @media (max-width: 980px) { .table-head { grid-template-columns: 6.5rem minmax(0,1fr) 7rem 2rem; } .table-head span:nth-child(3) { display:none; } }
+  @media (max-width: 760px) { .filters { gap: 1rem 1.4rem; } .table-head { display: none; } }
+</style>

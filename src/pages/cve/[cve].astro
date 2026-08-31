@@ -1,0 +1,16 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArchiveRail from '../../components/ArchiveRail.astro';
+import Giscus from '../../components/Giscus.astro';
+
+export async function getStaticPaths() {
+  const records = await getCollection('research', ({ data }) => !data.draft && Boolean(data.cve));
+  return records.map((entry) => ({ params: { cve: entry.data.cve }, props: { entry } }));
+}
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+<BaseLayout title={`${entry.data.cve} — AN7LN Security`} description={entry.data.description} type="article">
+  <div class="page-grid"><ArchiveRail index="CVE" label={entry.data.severity} /><article class="page-main" data-pagefind-body><header class="page-hero"><span class="section-number">// 协调披露</span><h1 class="display display-lg">{entry.data.cve}</h1><p>{entry.data.title}</p></header><div class="article-wrap"><div class="prose"><Content /></div><Giscus /></div></article></div>
+</BaseLayout>

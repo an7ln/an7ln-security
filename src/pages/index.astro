@@ -1,0 +1,202 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArchiveRail from '../components/ArchiveRail.astro';
+import ResearchRow from '../components/ResearchRow.astro';
+import ArrowIcon from '../components/ArrowIcon.astro';
+
+const research = (await getCollection('research', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
+const notes = (await getCollection('notes', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
+const latest = research.slice(0, 2);
+const index = research.slice(0, 5);
+const arsenal = {
+  侦察: ['subfinder', 'httpx', 'Nuclei'],
+  Web: ['Burp Suite', 'Caido'],
+  移动端: ['Frida', 'JADX'],
+  逆向: ['x64dbg', 'Ghidra'],
+  AI: ['Codex', 'PentAGI'],
+};
+---
+
+<BaseLayout>
+  <div class="page-grid">
+    <ArchiveRail />
+    <div class="page-main">
+      <section class="hero">
+        <div class="hero-copy">
+          <h1 class="display display-xl">漏洞研究，<br />公开<br />记录。</h1>
+          <p>专注 Web、API、移动端与 AI 安全研究。公开记录技术笔记、负责任披露与实战工具。</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="/research/">浏览研究 <ArrowIcon /></a>
+            <a class="button" href="/cve/">查看 CVE 索引 <ArrowIcon /></a>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="漏洞链路示意图">
+          <div class="field-note"><span>现场笔记 — 2026-08-31</span><p>最有价值的漏洞，往往出现在信任、上下文与错误假设的交界处。</p></div>
+          <svg viewBox="0 0 650 380" role="img" aria-labelledby="chain-title chain-desc">
+            <title id="chain-title">漏洞链路</title>
+            <desc id="chain-desc">不可信输入经过入口、校验缺口和逻辑缺陷，最终形成安全影响。</desc>
+            <g class="chain-lines" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M70 190H560" />
+              <path d="M200 190V90h150v100" stroke-dasharray="6 6" />
+              <path d="M250 190v100h210V190" stroke-dasharray="6 6" />
+            </g>
+            <g class="chain-nodes" fill="#091018" stroke="currentColor" stroke-width="2">
+              <rect x="112" y="170" width="40" height="40" />
+              <rect x="245" y="170" width="40" height="40" />
+              <rect class="accent" x="378" y="170" width="40" height="40" />
+              <circle class="impact" cx="555" cy="190" r="22" />
+              <circle cx="350" cy="90" r="18" />
+              <circle cx="250" cy="290" r="18" />
+            </g>
+            <g class="chain-copy">
+              <text x="30" y="190">不可信输入</text>
+              <text x="107" y="235">入口</text>
+              <text x="232" y="235">校验缺口</text>
+              <text x="379" y="235">逻辑缺陷</text>
+              <text x="515" y="235">影响</text>
+              <text x="390" y="82">错误假设</text>
+              <text x="190" y="325">上下文混淆</text>
+            </g>
+          </svg>
+        </div>
+      </section>
+
+      <section aria-labelledby="latest-heading">
+        <div class="latest-heading content-pad">
+          <h2 id="latest-heading">最新研究</h2>
+          <a class="arrow-link" href="/research/">查看全部研究 <ArrowIcon /></a>
+        </div>
+        <div class="ruled-list">{latest.map((entry) => <ResearchRow entry={entry} />)}</div>
+      </section>
+    </div>
+  </div>
+
+  <section class="index-section" aria-labelledby="index-heading">
+    <div class="section-heading-row">
+      <div><span class="section-number">// 02</span><h2 id="index-heading" class="display display-lg">研究索引</h2><p class="section-intro">精选漏洞研究、技术复盘与公开披露记录。</p></div>
+      <a class="arrow-link" href="/research/">浏览研究档案 <ArrowIcon /></a>
+    </div>
+    <div class="ruled-list">{index.map((entry) => <ResearchRow entry={entry} />)}</div>
+  </section>
+
+  <section class="notes-section" aria-labelledby="notes-heading">
+    <div class="notes-intro">
+      <span class="section-number">// 03</span>
+      <h2 id="notes-heading" class="display display-md">现场笔记</h2>
+      <p class="section-intro">来自进行中研究的工作记录。</p>
+      <a class="arrow-link" href="/notes/">阅读全部笔记 <ArrowIcon /></a>
+    </div>
+    <ol class="note-list">
+      {notes.slice(0, 4).map((note, i) => (
+        <li><a href={`/notes/${note.id}/`}><b>{String(i + 1).padStart(2, '0')}</b><time>{note.data.published.toISOString().slice(0, 10)}</time><strong>{note.data.title}</strong><ArrowIcon /></a></li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="arsenal-section" aria-labelledby="arsenal-heading">
+    <div class="arsenal-intro">
+      <span class="section-number">// 04</span>
+      <h2 id="arsenal-heading" class="display display-md">武器库</h2>
+      <p>在真实评估中沉淀的工具、方法与小型实用程序。</p>
+      <a class="arrow-link" href="/arsenal/">打开武器库 <ArrowIcon /></a>
+    </div>
+    <div class="tool-index">
+      {Object.entries(arsenal).map(([category, tools]) => <div><h3>{category}</h3><ul>{tools.map((tool) => <li>{tool}</li>)}</ul></div>)}
+    </div>
+  </section>
+
+  <section class="timeline-section" aria-labelledby="timeline-heading">
+    <div class="timeline-title"><span class="section-number">// 05</span><h2 id="timeline-heading" class="display display-md">研究时间线</h2></div>
+    <ol>
+      <li><b>01</b><time>2026 / 08</time><span>多租户授权边界研究</span></li>
+      <li><b>02</b><time>2026 / 07</time><span>WordPress 插件披露专项</span></li>
+      <li><b>03</b><time>2026 / 06</time><span>自主安全智能体实验</span></li>
+      <li><b>04</b><time>2025 / 12</time><span>移动应用安全现场研究</span></li>
+    </ol>
+    <a class="arrow-link" href="/timeline/">查看完整时间线 <ArrowIcon /></a>
+  </section>
+
+  <section class="now-section" aria-labelledby="now-heading">
+    <span class="section-number">// 06</span>
+    <h2 id="now-heading" class="display display-lg">正在探索<span aria-hidden="true"></span></h2>
+    <ul><li>AI 辅助漏洞研究</li><li>自主渗透测试智能体</li><li>从输入源到危险点的代码审计</li></ul>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero { display: grid; grid-template-columns: minmax(24rem, 1fr) minmax(25rem, 1fr); gap: 2rem; min-height: 39rem; padding: 3rem var(--gutter) 2.3rem; }
+  .hero .display-xl { font-size: clamp(4rem, 7.3vw, 7.3rem); }
+  .hero-copy { align-self: end; }
+  .hero-copy p { max-width: 40rem; margin: 1.7rem 0 0; color: var(--paper-dim); font-size: clamp(1rem, 1.4vw, 1.18rem); line-height: 1.55; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.8rem; }
+  .hero-visual { align-self: center; color: var(--steel); }
+  .field-note { max-width: 26rem; margin: 0 0 1.5rem auto; padding-left: 1.1rem; border-left: 2px solid var(--amber); }
+  .field-note span { color: var(--amber); font: .7rem/1 var(--mono); text-transform: uppercase; }
+  .field-note p { color: var(--steel-bright); font: .76rem/1.65 var(--mono); }
+  .hero-visual svg { width: 100%; height: auto; overflow: visible; }
+  .chain-nodes .accent { stroke: var(--amber); }
+  .chain-nodes .impact { stroke: var(--critical); }
+  .chain-copy { fill: var(--steel-bright); font: 12px var(--mono); }
+  .latest-heading { display: flex; align-items: center; justify-content: space-between; min-height: 4.5rem; border-top: 1px solid var(--rule); }
+  .latest-heading h2 { margin: 0; font: 400 1.1rem/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+
+  .index-section { border-top: 1px solid var(--rule); }
+  .notes-section { display: grid; grid-template-columns: minmax(18rem, .7fr) 1.3fr; border-top: 1px solid var(--rule); }
+  .notes-intro { padding: 5rem var(--gutter); }
+  .notes-intro .arrow-link { margin-top: 2.2rem; }
+  .note-list { margin: 0; padding: 3.5rem var(--gutter); border-left: 1px solid var(--rule); list-style: none; }
+  .note-list li { border-top: 1px solid var(--rule); }
+  .note-list li:last-child { border-bottom: 1px solid var(--rule); }
+  .note-list a { display: grid; grid-template-columns: 4rem 7rem 1fr auto; align-items: center; gap: 1rem; min-height: 5.6rem; }
+  .note-list b { color: var(--paper); font: 900 2.2rem/1 var(--display); }
+  .note-list time { color: var(--steel); font: .72rem/1 var(--mono); }
+  .note-list strong { font-size: 1rem; }
+  .note-list svg { color: var(--amber); transition: transform 180ms ease; }
+  .note-list a:hover svg { transform: translateX(.35rem); }
+
+  .arsenal-section { display: grid; grid-template-columns: minmax(18rem, .7fr) 1.3fr; background: var(--paper); color: var(--ink); }
+  .arsenal-intro { padding: 4.5rem var(--gutter); border-right: 1px solid rgba(9,16,24,.3); }
+  .arsenal-intro p { max-width: 25rem; color: #4d5760; font: .9rem/1.7 var(--mono); }
+  .arsenal-intro .arrow-link { margin-top: 1.5rem; }
+  .tool-index { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2rem; padding: 5rem var(--gutter); }
+  .tool-index h3 { margin: 0 0 1.5rem; padding-bottom: .8rem; border-bottom: 2px solid var(--amber); font-family: var(--display); font-size: 1.45rem; text-transform: uppercase; }
+  .tool-index ul { margin: 0; padding: 0; list-style: none; }
+  .tool-index li { margin: .65rem 0; font: .86rem/1.4 var(--mono); }
+
+  .timeline-section { padding: 5rem var(--gutter); border-top: 1px solid var(--rule); }
+  .timeline-title { display: flex; align-items: flex-start; gap: 1rem; }
+  .timeline-section ol { margin: 2.5rem 0 1.8rem; padding: 0; border-top: 1px solid var(--rule); list-style: none; }
+  .timeline-section li { display: grid; grid-template-columns: 5rem 13rem 1fr; gap: 1.5rem; padding: 1rem 0; border-bottom: 1px solid var(--rule); font-family: var(--mono); }
+  .timeline-section b, .timeline-section time { color: var(--steel-bright); font-weight: 400; }
+
+  .now-section { padding: 4rem var(--gutter) 5rem; border-top: 1px solid var(--rule); }
+  .now-section h2 { display: inline-flex; align-items: center; gap: .5rem; margin-top: 1rem; }
+  .now-section h2 span { width: .35rem; height: .86em; background: var(--amber); animation: cursor 1.1s steps(1) infinite; }
+  .now-section ul { margin: 2rem 0 0; padding: 0; list-style: none; }
+  .now-section li { padding: .85rem 0 .85rem 3.8rem; border-bottom: 1px solid var(--rule); font-family: var(--display); font-size: clamp(1.45rem, 2.5vw, 2.4rem); font-weight: 800; letter-spacing: .01em; text-transform: uppercase; }
+  .now-section li::before { content: '→'; float: left; margin-left: -3.8rem; color: var(--amber); font-family: var(--sans); font-weight: 300; }
+  @keyframes cursor { 50% { opacity: 0; } }
+
+  @media (max-width: 980px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-visual { display: grid; grid-template-columns: .7fr 1.3fr; align-items: center; gap: 1rem; }
+    .field-note { margin: 0; }
+    .tool-index { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 760px) {
+    .hero { min-height: auto; padding-block: 4rem 2.5rem; }
+    .hero-visual { display: block; margin-top: 2rem; }
+    .field-note { max-width: none; }
+    .hero-actions .button { width: 100%; }
+    .notes-section, .arsenal-section { grid-template-columns: 1fr; }
+    .note-list, .arsenal-intro { border-left: 0; border-right: 0; border-top: 1px solid var(--rule); }
+    .note-list { padding-top: 1rem; }
+    .note-list a { grid-template-columns: 3rem 1fr auto; }
+    .note-list time { display: none; }
+    .tool-index { grid-template-columns: repeat(2, 1fr); padding-top: 3rem; }
+    .timeline-section li { grid-template-columns: 2.5rem 7.8rem 1fr; gap: .5rem; font-size: .78rem; }
+  }
+</style>

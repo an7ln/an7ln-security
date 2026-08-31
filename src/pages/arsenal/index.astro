@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArchiveRail from '../../components/ArchiveRail.astro';
+const groups=[
+  {name:'侦察',purpose:'资产发现与攻击面验证',tools:[['subfinder','被动子域名发现'],['httpx','HTTP 服务验证'],['Nuclei','可复现的模板化检查']]},
+  {name:'Web',purpose:'请求分析与应用安全测试',tools:[['Burp Suite','主要的拦截与分析工作台'],['Caido','快速协作式 HTTP 分析'],['Browser DevTools','运行时与前端调查']]},
+  {name:'移动端',purpose:'应用静态与运行时分析',tools:[['JADX','Android 反编译与代码导航'],['Frida','聚焦的运行时插桩'],['adb','设备控制与证据采集']]},
+  {name:'逆向',purpose:'原生代码与 Windows 程序分析',tools:[['x64dbg','Windows 程序调试'],['Ghidra','跨平台静态分析'],['IDA','交互式反汇编']]},
+  {name:'AI',purpose:'在明确控制下加速安全研究',tools:[['Codex','代码与证据分析'],['PentAGI','自主渗透研究'],['自定义智能体','限定范围的工作流自动化']]},
+];
+---
+<BaseLayout title="武器库 — AN7LN Security" description="在真实评估中沉淀的工具、方法与实用程序。"><div class="page-grid"><ArchiveRail index="004" label="工具"/><div class="page-main"><header class="page-hero arsenal-hero"><span class="section-number">// 实战工具索引</span><h1 class="display display-lg">武器库</h1><p>在真实评估中沉淀的工具、方法与实用程序。这里记录每件工具如何进入工作流，而不是堆一份通用清单。</p></header><div class="groups">{groups.map((group,i)=><section><header><b>{String(i+1).padStart(2,'0')}</b><div><h2>{group.name}</h2><p>{group.purpose}</p></div></header><ul>{group.tools.map(([name,description])=><li><strong>{name}</strong><span>{description}</span></li>)}</ul></section>)}</div></div></div></BaseLayout>
+<style>
+  .groups section{display:grid;grid-template-columns:minmax(15rem,.55fr) 1fr;border-bottom:1px solid var(--rule)}.groups header{display:flex;gap:1.5rem;padding:2.5rem var(--gutter);border-right:1px solid var(--rule)}.groups header>b{color:var(--amber);font:900 2.4rem/1 var(--display)}.groups h2{margin:0;font-family:var(--display);font-size:3rem;line-height:1;text-transform:uppercase}.groups header p{margin:.6rem 0 0;color:var(--steel);font:.72rem/1.5 var(--mono)}.groups ul{margin:0;padding:1.4rem var(--gutter);list-style:none}.groups li{display:grid;grid-template-columns:10rem 1fr;gap:1rem;padding:1rem 0;border-bottom:1px solid var(--rule)}.groups li:last-child{border-bottom:0}.groups li strong{font-family:var(--mono)}.groups li span{color:var(--steel-bright);font-size:.85rem}
+  @media(max-width:760px){.groups section{grid-template-columns:1fr}.groups header{border-right:0;border-bottom:1px solid var(--rule)}}
+</style>

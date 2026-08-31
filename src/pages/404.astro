@@ -1,0 +1,6 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArrowIcon from '../components/ArrowIcon.astro';
+---
+<BaseLayout title="404 — 未找到记录"><section class="not-found"><span class="section-number">// 错误 404</span><h1 class="display display-xl">未找到<br/>这条记录。</h1><p>请求的档案记录不存在，或尚未公开发布。</p><a class="button button-primary" href="/">返回首页 <ArrowIcon/></a></section></BaseLayout>
+<style>.not-found{min-height:70vh;padding:6rem var(--gutter)}.not-found p{max-width:35rem;margin:1.5rem 0 2rem;color:var(--steel-bright);font-family:var(--mono)}</style>

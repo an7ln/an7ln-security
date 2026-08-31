@@ -1,0 +1,32 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArchiveRail from '../../components/ArchiveRail.astro';
+import ArrowIcon from '../../components/ArrowIcon.astro';
+
+const records = (await getCollection('research', ({ data }) => !data.draft && Boolean(data.cve)))
+  .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
+---
+<BaseLayout title="CVE 索引 — AN7LN Security" description="公开 CVE 记录、厂商协调状态与漏洞披露时间线。">
+  <div class="page-grid">
+    <ArchiveRail index="CVE" label="公告" />
+    <div class="page-main">
+      <header class="page-hero"><span class="section-number">// 公开安全公告</span><h1 class="display display-lg">CVE 索引</h1><p>公开 CVE 记录、厂商协调状态与漏洞披露时间线。</p></header>
+      {records.length ? (
+        <div class="cve-list">{records.map((entry) => <a href={`/cve/${entry.data.cve}/`}><strong>{entry.data.cve}</strong><span>{entry.data.title}</span><b class:list={['severity', `severity-${entry.data.severity}`]}>{entry.data.severity}</b><ArrowIcon /></a>)}</div>
+      ) : (
+        <div class="empty-state"><span class="mono-label">登记状态 / 000</span><h2>暂无公开 CVE 记录。</h2><p>这里只收录完成协调披露后的公开记录。草稿、未修复漏洞与敏感 PoC 不会进入公开仓库。</p><a class="arrow-link" href="/research/">浏览公开研究 <ArrowIcon /></a></div>
+      )}
+    </div>
+  </div>
+</BaseLayout>
+<style>
+  .cve-list a { display:grid; grid-template-columns: 12rem 1fr 7rem auto; align-items:center; gap:1rem; min-height:5.5rem; padding:1rem var(--gutter); border-bottom:1px solid var(--rule); }
+  .cve-list a:hover { background:rgba(242,239,231,.05); }
+  .cve-list strong { color:var(--amber); font-family:var(--mono); }
+  .empty-state { max-width: 48rem; padding: 6rem var(--gutter) 9rem; }
+  .empty-state h2 { margin:1rem 0; font-family:var(--display); font-size:clamp(2.5rem,5vw,4.5rem); line-height:1; text-transform:uppercase; }
+  .empty-state p { color:var(--steel-bright); }
+  .empty-state .arrow-link { margin-top:1.5rem; }
+  @media(max-width:760px){.cve-list a{grid-template-columns:1fr auto}.cve-list span{grid-column:1/-1;grid-row:2}.cve-list svg{grid-column:2;grid-row:2}}
+</style>

@@ -1,0 +1,125 @@
+---
+const nav = [
+  ['研究', '/research/'],
+  ['CVE', '/cve/'],
+  ['笔记', '/notes/'],
+  ['武器库', '/arsenal/'],
+  ['项目', '/projects/'],
+  ['关于', '/about/'],
+];
+const pathname = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <a class="brand" href="/" aria-label="AN7LN Security 首页">
+    <img src="/an7ln-wordmark.png" alt="AN7LN" width="120" height="40" />
+    <span>/ 安全研究</span>
+  </a>
+
+  <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav">
+    <span>菜单</span>
+    <i aria-hidden="true"></i>
+  </button>
+
+  <nav id="site-nav" aria-label="主导航">
+    {nav.map(([label, href]) => (
+      <a href={href} aria-current={pathname.startsWith(href) ? 'page' : undefined}>{label}</a>
+    ))}
+  </nav>
+
+  <button class="search-trigger" type="button" data-open-search aria-label="打开站内搜索">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.5" />
+      <path d="m16 16 4 4" stroke="currentColor" stroke-width="1.5" />
+    </svg>
+    <span>搜索</span>
+    <kbd>Ctrl K</kbd>
+  </button>
+</header>
+
+<script is:inline>
+  const menuButton = document.querySelector('.menu-button');
+  const siteNav = document.querySelector('#site-nav');
+  menuButton?.addEventListener('click', () => {
+    const open = menuButton.getAttribute('aria-expanded') === 'true';
+    menuButton.setAttribute('aria-expanded', String(!open));
+    siteNav?.toggleAttribute('data-open', !open);
+  });
+</script>
+
+<style>
+  .site-header {
+    position: relative;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: minmax(17rem, 1fr) auto minmax(10rem, .45fr);
+    align-items: center;
+    min-height: 6rem;
+    padding: 0 var(--gutter);
+    border-bottom: 1px solid var(--rule);
+    background: rgba(9, 16, 24, .96);
+  }
+  .brand { display: inline-flex; align-items: center; gap: 1.3rem; width: fit-content; }
+  .brand img { width: 8rem; height: auto; object-fit: contain; }
+  .brand span { padding-left: 1.3rem; border-left: 1px solid var(--rule-strong); font: .72rem/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+  nav { display: flex; align-items: center; gap: clamp(1.2rem, 2.6vw, 2.8rem); }
+  nav a { position: relative; padding: 2.35rem 0; color: var(--paper-dim); font-size: .84rem; font-weight: 650; }
+  nav a::after { content: ''; position: absolute; right: 0; bottom: 1.75rem; left: 0; height: 2px; transform: scaleX(0); background: var(--amber); transition: transform 180ms ease; }
+  nav a:hover::after, nav a[aria-current='page']::after { transform: scaleX(1); }
+  nav a[aria-current='page'] { color: var(--paper); }
+  .search-trigger {
+    justify-self: end;
+    display: inline-flex;
+    align-items: center;
+    gap: .75rem;
+    min-width: 9.6rem;
+    justify-content: center;
+    padding: .8rem 1rem;
+    border: 1px solid var(--rule-strong);
+    background: transparent;
+    cursor: pointer;
+    font: .74rem/1 var(--mono);
+  }
+  .search-trigger:hover { border-color: var(--amber); color: var(--amber); }
+  .search-trigger kbd { color: var(--steel-bright); font: inherit; }
+  .menu-button { display: none; }
+
+  @media (max-width: 1120px) {
+    .site-header { grid-template-columns: auto 1fr auto; }
+    .brand span { display: none; }
+    nav { justify-content: center; gap: 1.25rem; }
+  }
+  @media (max-width: 760px) {
+    .site-header { grid-template-columns: 1fr auto auto; min-height: 4.5rem; padding-inline: 1.1rem; }
+    .brand img { width: 5.2rem; }
+    .menu-button {
+      display: inline-flex;
+      align-items: center;
+      gap: .55rem;
+      border: 0;
+      background: transparent;
+      font: .7rem/1 var(--mono);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .menu-button i { display: block; width: .55rem; height: .55rem; border-right: 1px solid var(--amber); border-bottom: 1px solid var(--amber); transform: rotate(45deg) translateY(-2px); }
+    nav {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      left: 0;
+      display: none;
+      align-items: stretch;
+      flex-direction: column;
+      gap: 0;
+      padding: .7rem 1.1rem 1rem;
+      border-bottom: 1px solid var(--rule);
+      background: var(--ink);
+    }
+    nav[data-open] { display: flex; }
+    nav a { padding: .9rem 0; border-bottom: 1px solid var(--rule); }
+    nav a::after { display: none; }
+    .search-trigger { margin-left: .4rem; border: 0; padding: .5rem; }
+    .search-trigger span, .search-trigger kbd { display: none; }
+  }
+</style>

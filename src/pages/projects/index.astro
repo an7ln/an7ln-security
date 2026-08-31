@@ -1,0 +1,15 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArchiveRail from '../../components/ArchiveRail.astro';
+import ArrowIcon from '../../components/ArrowIcon.astro';
+const projects=(await getCollection('projects',({data})=>!data.draft)).sort((a,b)=>a.data.order-b.data.order);
+const statusNames={active:'活跃开发',maintained:'持续维护',experiment:'实验项目',archived:'已归档'};
+---
+<BaseLayout title="项目 — AN7LN Security" description="在真实安全评估中沉淀的工具与实验。">
+  <div class="page-grid"><ArchiveRail index="005" label="项目"/><div class="page-main"><header class="page-hero"><span class="section-number">// 来自实战现场</span><h1 class="display display-lg">项目</h1><p>在真实安全评估中沉淀的工具与实验。</p></header><div class="project-list">{projects.map((project,i)=><article><div class="project-index">{String(i+1).padStart(2,'0')}</div><div><div class="project-meta"><span>{statusNames[project.data.status]}</span>{project.data.stack.map(item=><b>{item}</b>)}</div><h2>{project.data.title}</h2><p>{project.data.description}</p></div>{project.data.repository?<a class="arrow-link" href={project.data.repository}>代码仓库 <ArrowIcon/></a>:<span class="private">现场项目</span>}</article>)}</div></div></div>
+</BaseLayout>
+<style>
+  .project-list article{display:grid;grid-template-columns:5rem 1fr auto;gap:2rem;align-items:start;padding:2.5rem var(--gutter);border-bottom:1px solid var(--rule)}.project-index{color:var(--amber);font:900 2.5rem/1 var(--display)}.project-meta{display:flex;flex-wrap:wrap;gap:.7rem 1.2rem;color:var(--steel);font:.66rem/1 var(--mono);text-transform:uppercase}.project-meta span{color:var(--amber)}.project-meta b{font-weight:400}.project-list h2{margin:.8rem 0 .4rem;font-family:var(--display);font-size:clamp(2rem,4vw,3.6rem);line-height:1;text-transform:uppercase}.project-list p{max-width:42rem;margin:0;color:var(--steel-bright)}.private{color:var(--steel);font:.7rem/1 var(--mono);text-transform:uppercase}
+  @media(max-width:650px){.project-list article{grid-template-columns:3rem 1fr}.project-list .arrow-link,.project-list .private{grid-column:2}}
+</style>

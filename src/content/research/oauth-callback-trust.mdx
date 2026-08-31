@@ -1,0 +1,35 @@
+---
+title: "追踪 OAuth 回调流程中的信任边界"
+description: "从输入源到危险点审查重定向目标、state 绑定、账号关联与身份提供方混淆。"
+published: 2026-08-17
+category: web
+tags: [OAuth, Open Redirect, Account Linking]
+severity: high
+cwe: CWE-601
+featured: true
+disclosure:
+  status: research
+  vendorConfirmed: false
+---
+
+OAuth 漏洞很少只存在于单个参数中。真正需要回答的是：回调端收到的每一个值，是否都与发起它的浏览器会话和身份提供方事务正确绑定。
+
+## 画出完整事务
+
+从四个主体开始：浏览器、依赖方、身份提供方，以及登录后的目标页面。标记谁创建并消费 `state`、授权码、重定向目标、提供方标识与账号关联意图。
+
+```text
+浏览器 -> /login?next=/settings
+依赖方 -> 身份提供方 /authorize?state=...
+身份提供方 -> /callback?code=...&state=...
+依赖方 -> 经过校验的站内目标
+```
+
+## 高价值失效模式
+
+1. 存在 `state`，但没有与发起会话绑定。
+2. 身份提供方标识可以在发起与回调之间被替换。
+3. 账号关联信任邮箱声明，却没有验证目标登录账号。
+4. 解码后的 `next` 值在认证完成后变成站外重定向。
+
+最稳妥的修复方式是：在服务端保存显式事务状态，设置短有效期和一次性使用，严格绑定身份提供方，并用站内路由标识替代任意目标 URL。

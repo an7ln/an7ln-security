@@ -1,0 +1,17 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ArrowIcon from './ArrowIcon.astro';
+
+interface Props { entry: CollectionEntry<'research'>; prefix?: string; }
+const { entry, prefix = '/research/' } = Astro.props;
+const categoryNames = { web: 'Web 安全', api: 'API 安全', mobile: '移动安全', 'code-audit': '代码审计', 'ai-security': 'AI 安全' };
+const severityNames = { critical: '严重', high: '高危', medium: '中危', low: '低危', info: '信息', research: '研究' };
+const date = entry.data.published.toISOString().slice(0, 10).replaceAll('-', '.');
+---
+<a class="research-row" href={`${prefix}${entry.id}/`}>
+  <time datetime={entry.data.published.toISOString()}>{date}</time>
+  <h3>{entry.data.title}</h3>
+  <span class="field">{categoryNames[entry.data.category]}</span>
+  <span class:list={['severity', `severity-${entry.data.severity}`]}>{severityNames[entry.data.severity]}</span>
+  <span class="row-arrow"><ArrowIcon size={19} /></span>
+</a>
