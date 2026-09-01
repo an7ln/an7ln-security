@@ -7,7 +7,7 @@ tags: [WebView, Android, iOS, Origin]
 severity: research
 cwe: CWE-749
 featured: false
-draft: true
+draft: false
 disclosure:
   status: research
   vendorConfirmed: false
@@ -80,3 +80,4 @@ iOS 盘点清单：
 8. [WKUserContentController](https://developer.apple.com/documentation/webkit/wkusercontentcontroller)，Apple Developer Documentation。
 9. [userContentController(_:didReceive:replyHandler:)](https://developer.apple.com/documentation/webkit/wkscriptmessagehandlerwithreply/usercontentcontroller(_:didreceive:replyhandler:))，Apple Developer Documentation。
 10. [Build web apps in WebView](https://developer.android.com/develop/ui/views/layout/webapps/webview)，Android Developers。
+
