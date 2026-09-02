@@ -1,5 +1,7 @@
 # AN7LN Security
 
+站点 / Site: https://qqyln.cn
+
 A static security-research publication built with Astro 6, Markdown/MDX, Tailwind CSS 4, Pagefind and Giscus. It is designed for Cloudflare Workers static assets and a GitHub-first writing workflow.
 
 ## Local development
