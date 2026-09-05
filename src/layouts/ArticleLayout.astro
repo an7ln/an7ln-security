@@ -1,0 +1,32 @@
+---
+import type { MarkdownHeading } from 'astro';
+import BaseLayout from './BaseLayout.astro';
+import ArchiveRail from '../components/ArchiveRail.astro';
+import ArticleToc from '../components/ArticleToc.astro';
+import Giscus from '../components/Giscus.astro';
+import { contentDate, formatDate } from '../lib/content-dates';
+interface Props {
+  title: string; description: string; published: Date; updated?: Date;
+  topic: string; tags: string[]; headings: MarkdownHeading[]; index: string;
+}
+const { title, description, published, updated, topic, tags, headings, index } = Astro.props;
+const date = contentDate({ published, updated });
+---
+<BaseLayout title={`${title} — AN7LN Security`} description={description} type="article">
+  <div class="page-grid">
+    <ArchiveRail index={index} label={topic} updated={date} />
+    <article class="page-main reading-page" data-pagefind-body>
+      <header class="reading-hero">
+        <div class="reading-meta"><span>{topic}</span><span>发布于 <time datetime={formatDate(published)}>{formatDate(published)}</time></span>{date > published && <span>更新于 <time datetime={formatDate(date)}>{formatDate(date)}</time></span>}</div>
+        <h1 data-pagefind-meta="title">{title}</h1>
+        <p>{description}</p>
+        <div class="tag-list">{tags.map(tag => <span>{tag}</span>)}</div>
+        <slot name="metadata" />
+      </header>
+      <div class="reading-layout">
+        <ArticleToc headings={headings} />
+        <div class="reading-body"><div class="prose"><slot /></div><Giscus /></div>
+      </div>
+    </article>
+  </div>
+</BaseLayout>
