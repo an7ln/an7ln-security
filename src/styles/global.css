@@ -30,7 +30,7 @@ html {
 
 body {
   margin: 0;
-  min-width: 320px;
+  min-width: 0;
   background:
     linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px) 0 0 / 100% 4rem,
     var(--ink);
@@ -168,17 +168,50 @@ button { color: inherit; }
   color: var(--paper-dim);
   font-size: 1.06rem;
   line-height: 1.85;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
-.prose h2, .prose h3 { color: var(--paper); font-family: var(--display); text-transform: uppercase; letter-spacing: -.015em; }
-.prose h2 { margin: 3.4rem 0 1rem; font-size: 2.3rem; line-height: 1; }
+.prose h2, .prose h3 { color: var(--paper); font-family: var(--sans); letter-spacing: -.015em; scroll-margin-top: 2rem; }
+.prose h2 { margin: 3rem 0 1rem; font-size: 1.7rem; line-height: 1.4; }
 .prose h3 { margin: 2.5rem 0 .8rem; font-size: 1.6rem; }
 .prose a { color: var(--amber); text-decoration: underline; text-underline-offset: .22em; }
 .prose code { padding: .15em .35em; background: var(--ink-soft); color: var(--paper); font: .9em/1.5 var(--mono); }
-.prose pre { overflow-x: auto; margin: 1.5rem 0; padding: 1.25rem; border: 1px solid var(--rule); background: var(--ink-deep) !important; }
-.prose pre code { padding: 0; background: transparent; }
+.prose pre { max-width: 100%; overflow-x: auto; margin: 1.5rem 0; padding: 1.25rem; border: 1px solid var(--rule); background: var(--ink-deep) !important; white-space: pre !important; overflow-wrap: normal; }
+.prose pre code { padding: 0; background: transparent; white-space: inherit; overflow-wrap: normal; }
 .prose blockquote { margin: 1.5rem 0; padding-left: 1.25rem; border-left: 3px solid var(--amber); color: var(--steel-bright); }
-.prose table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+.prose table { display: block; max-width: 100%; overflow-x: auto; width: 100%; border-collapse: collapse; font-size: .95rem; }
 .prose th, .prose td { padding: .8rem; border: 1px solid var(--rule); text-align: left; }
+.prose img, .prose video, .prose svg { max-width: 100%; height: auto; }
+.prose > :first-child { margin-top: 0; }
+.prose ul, .prose ol { padding-left: 1.5em; }
+.prose li + li { margin-top: .5rem; }
+
+.reading-hero { padding: 3rem var(--gutter) 2.5rem; border-bottom: 1px solid var(--rule); }
+.reading-meta { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; color: var(--steel-bright); font: .78rem/1.6 var(--mono); }
+.reading-meta > span:first-child { color: var(--amber); }
+.reading-hero h1 { max-width: 54rem; margin: 1.1rem 0; font-family: var(--sans); font-size: clamp(2rem, 3.3vw, 3.2rem); font-weight: 800; line-height: 1.3; letter-spacing: -.025em; text-wrap: pretty; overflow-wrap: break-word; }
+.reading-hero > p { max-width: 48rem; margin: 0; font-size: 1.05rem; line-height: 1.8; color: var(--steel-bright); }
+.reading-layout { display: grid; grid-template-columns: minmax(0, 50rem) minmax(12rem, 16rem); align-items: start; gap: 3rem; padding: 2.5rem var(--gutter) 5rem; }
+.reading-body { grid-column: 1; grid-row: 1; min-width: 0; }
+.reading-body .prose { max-width: 50rem; font-size: 1.1rem; line-height: 1.85; }
+.case-facts { display: flex; flex-wrap: wrap; gap: 1rem 2rem; margin: 1.5rem 0 0; padding-top: 1rem; border-top: 1px solid var(--rule); font: .8rem/1.5 var(--mono); }
+.case-facts div { display: flex; gap: .65rem; align-items: baseline; }
+.case-facts dt { color: var(--steel-bright); }
+.case-facts dd { margin: 0; }
+@media (max-width: 1100px) {
+  .reading-layout { grid-template-columns: minmax(0, 50rem); justify-content: center; gap: 1.5rem; }
+  .reading-body { grid-row: 2; }
+}
+@media (max-width: 760px) {
+  .reading-hero { padding-block: 2rem; }
+  .reading-hero h1 { font-size: 2rem; line-height: 1.3; letter-spacing: -.02em; }
+  .reading-layout { padding-top: 1.5rem; }
+  .reading-body .prose { font-size: 1.0625rem; }
+  .prose h2 { font-size: 1.4rem; }
+  .prose h3 { font-size: 1.15rem; line-height: 1.5; }
+  .prose pre { padding: 1rem; }
+  .prose th, .prose td { min-width: 7rem; padding: .65rem; }
+}
 
 .page-hero { padding: 5.5rem var(--gutter) 4rem; border-bottom: 1px solid var(--rule); }
 .page-hero p { max-width: 43rem; margin: 1.5rem 0 0; color: var(--steel-bright); font: 1rem/1.7 var(--mono); }

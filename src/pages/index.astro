@@ -2,15 +2,17 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArchiveRail from '../components/ArchiveRail.astro';
-import ResearchRow from '../components/ResearchRow.astro';
+import { contentDate, formatDate } from '../lib/content-dates';
 import ArrowIcon from '../components/ArrowIcon.astro';
 
 const research = (await getCollection('research', ({ data }) => !data.draft))
   .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
 const notes = (await getCollection('notes', ({ data }) => !data.draft))
   .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
-const latest = research.slice(0, 2);
-const index = research.slice(0, 5);
+const featured = research.filter(entry => entry.data.featured).slice(0, 2);
+const selected = new Set(featured.map(entry => entry.id));
+const latest = [...research.filter(entry => !selected.has(entry.id)), ...notes]
+  .sort((a, b) => contentDate(b.data).valueOf() - contentDate(a.data).valueOf()).slice(0, 6);
 const arsenal = {
   侦察: ['subfinder', 'httpx', 'Nuclei'],
   Web: ['Burp Suite', 'Caido'],
@@ -30,11 +32,11 @@ const arsenal = {
           <p>专注 Web、API、移动端与 AI 安全研究。公开记录技术笔记、负责任披露与实战工具。</p>
           <div class="hero-actions">
             <a class="button button-primary" href="/research/">浏览研究 <ArrowIcon /></a>
-            <a class="button" href="/cve/">查看 CVE 索引 <ArrowIcon /></a>
+            <a class="button" href="/notes/">阅读笔记 <ArrowIcon /></a>
           </div>
         </div>
         <div class="hero-visual" aria-label="漏洞链路示意图">
-          <div class="field-note"><span>现场笔记 — 2026-08-31</span><p>最有价值的漏洞，往往出现在信任、上下文与错误假设的交界处。</p></div>
+          <div class="field-note"><span>研究手记</span><p>最有价值的漏洞，往往出现在信任、上下文与错误假设的交界处。</p></div>
           <svg viewBox="0 0 650 380" role="img" aria-labelledby="chain-title chain-desc">
             <title id="chain-title">漏洞链路</title>
             <desc id="chain-desc">不可信输入经过入口、校验缺口和逻辑缺陷，最终形成安全影响。</desc>
@@ -64,41 +66,39 @@ const arsenal = {
         </div>
       </section>
 
-      <section aria-labelledby="latest-heading">
+      <section aria-labelledby="featured-heading">
         <div class="latest-heading content-pad">
-          <h2 id="latest-heading">最新研究</h2>
-          <a class="arrow-link" href="/research/">查看全部研究 <ArrowIcon /></a>
+          <h2 id="featured-heading">精选研究</h2>
+          <a class="arrow-link" href="/research/">全部研究 <ArrowIcon /></a>
         </div>
-        <div class="ruled-list">{latest.map((entry) => <ResearchRow entry={entry} />)}</div>
+        <div class="featured-list">{featured.map(entry => (
+          <a class="featured-entry" href={`/research/${entry.id}/`}>
+            <time datetime={formatDate(entry.data.published)}>{formatDate(entry.data.published)}</time>
+            <h3>{entry.data.title}</h3><p>{entry.data.description}</p>
+            <span class="arrow-link">阅读研究 <ArrowIcon /></span>
+          </a>
+        ))}</div>
       </section>
     </div>
   </div>
 
-  <section class="index-section" aria-labelledby="index-heading">
+  <section class="index-section" aria-labelledby="latest-heading">
     <div class="section-heading-row">
-      <div><span class="section-number">// 02</span><h2 id="index-heading" class="display display-lg">研究索引</h2><p class="section-intro">精选漏洞研究、技术复盘与公开披露记录。</p></div>
-      <a class="arrow-link" href="/research/">浏览研究档案 <ArrowIcon /></a>
+      <div><span class="section-number">// 02</span><h2 id="latest-heading" class="display display-md">最新更新</h2><p class="section-intro">研究与笔记的新进展，按内容更新时间排列。</p></div>
+      <a class="arrow-link" href="/notes/">全部笔记 <ArrowIcon /></a>
     </div>
-    <div class="ruled-list">{index.map((entry) => <ResearchRow entry={entry} />)}</div>
-  </section>
-
-  <section class="notes-section" aria-labelledby="notes-heading">
-    <div class="notes-intro">
-      <span class="section-number">// 03</span>
-      <h2 id="notes-heading" class="display display-md">现场笔记</h2>
-      <p class="section-intro">来自进行中研究的工作记录。</p>
-      <a class="arrow-link" href="/notes/">阅读全部笔记 <ArrowIcon /></a>
-    </div>
-    <ol class="note-list">
-      {notes.slice(0, 4).map((note, i) => (
-        <li><a href={`/notes/${note.id}/`}><b>{String(i + 1).padStart(2, '0')}</b><time>{note.data.published.toISOString().slice(0, 10)}</time><strong>{note.data.title}</strong><ArrowIcon /></a></li>
-      ))}
-    </ol>
+    <div class="updates-list">{latest.map(entry => (
+      <a class="update-entry" href={`/${entry.collection}/${entry.id}/`}>
+        <time datetime={formatDate(contentDate(entry.data))}>{formatDate(contentDate(entry.data))}</time>
+        <span class="update-type">{entry.collection === 'research' ? '研究' : '笔记'}</span>
+        <div><h3>{entry.data.title}</h3><p>{entry.data.description}</p></div><ArrowIcon />
+      </a>
+    ))}</div>
   </section>
 
   <section class="arsenal-section" aria-labelledby="arsenal-heading">
     <div class="arsenal-intro">
-      <span class="section-number">// 04</span>
+      <span class="section-number">// 03</span>
       <h2 id="arsenal-heading" class="display display-md">武器库</h2>
       <p>在真实评估中沉淀的工具、方法与小型实用程序。</p>
       <a class="arrow-link" href="/arsenal/">打开武器库 <ArrowIcon /></a>
@@ -109,7 +109,7 @@ const arsenal = {
   </section>
 
   <section class="timeline-section" aria-labelledby="timeline-heading">
-    <div class="timeline-title"><span class="section-number">// 05</span><h2 id="timeline-heading" class="display display-md">研究时间线</h2></div>
+    <div class="timeline-title"><span class="section-number">// 04</span><h2 id="timeline-heading" class="display display-md">研究时间线</h2></div>
     <ol>
       <li><b>01</b><time>2026 / 08</time><span>多租户授权边界研究</span></li>
       <li><b>02</b><time>2026 / 07</time><span>WordPress 插件披露专项</span></li>
@@ -120,15 +120,15 @@ const arsenal = {
   </section>
 
   <section class="now-section" aria-labelledby="now-heading">
-    <span class="section-number">// 06</span>
+    <span class="section-number">// 05</span>
     <h2 id="now-heading" class="display display-lg">正在探索<span aria-hidden="true"></span></h2>
     <ul><li>AI 辅助漏洞研究</li><li>自主渗透测试智能体</li><li>从输入源到危险点的代码审计</li></ul>
   </section>
 </BaseLayout>
 
 <style>
-  .hero { display: grid; grid-template-columns: minmax(24rem, 1fr) minmax(25rem, 1fr); gap: 2rem; min-height: 39rem; padding: 3rem var(--gutter) 2.3rem; }
-  .hero .display-xl { font-size: clamp(4rem, 7.3vw, 7.3rem); }
+  .hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; min-height: 30rem; padding: 3rem var(--gutter) 2.3rem; }
+  .hero .display-xl { font-size: clamp(3.5rem, 6vw, 6rem); }
   .hero-copy { align-self: end; }
   .hero-copy p { max-width: 40rem; margin: 1.7rem 0 0; color: var(--paper-dim); font-size: clamp(1rem, 1.4vw, 1.18rem); line-height: 1.55; }
   .hero-actions { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.8rem; }
@@ -144,18 +144,18 @@ const arsenal = {
   .latest-heading h2 { margin: 0; font: 400 1.1rem/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
 
   .index-section { border-top: 1px solid var(--rule); }
-  .notes-section { display: grid; grid-template-columns: minmax(18rem, .7fr) 1.3fr; border-top: 1px solid var(--rule); }
-  .notes-intro { padding: 5rem var(--gutter); }
-  .notes-intro .arrow-link { margin-top: 2.2rem; }
-  .note-list { margin: 0; padding: 3.5rem var(--gutter); border-left: 1px solid var(--rule); list-style: none; }
-  .note-list li { border-top: 1px solid var(--rule); }
-  .note-list li:last-child { border-bottom: 1px solid var(--rule); }
-  .note-list a { display: grid; grid-template-columns: 4rem 7rem 1fr auto; align-items: center; gap: 1rem; min-height: 5.6rem; }
-  .note-list b { color: var(--paper); font: 900 2.2rem/1 var(--display); }
-  .note-list time { color: var(--steel); font: .72rem/1 var(--mono); }
-  .note-list strong { font-size: 1rem; }
-  .note-list svg { color: var(--amber); transition: transform 180ms ease; }
-  .note-list a:hover svg { transform: translateX(.35rem); }
+  .featured-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .featured-entry { padding: 1.6rem var(--gutter) 2rem; min-width: 0; border-top: 1px solid var(--rule); }
+  .featured-entry + .featured-entry { border-left: 1px solid var(--rule); }
+  .featured-entry:hover, .update-entry:hover { background: rgba(242,239,231,.04); }
+  .featured-entry time, .update-entry time { color: var(--steel-bright); font: .76rem/1.5 var(--mono); }
+  .featured-entry h3 { margin: .75rem 0; font-size: 1.25rem; line-height: 1.5; }
+  .featured-entry p, .update-entry p { margin: .5rem 0 1.25rem; color: var(--steel-bright); font-size: .9rem; line-height: 1.7; }
+  .update-entry { display: grid; grid-template-columns: 7rem 3rem minmax(0,1fr) auto; align-items: start; gap: 1.5rem; padding: 1.5rem var(--gutter); border-bottom: 1px solid var(--rule); }
+  .update-entry h3 { margin: 0; font-size: 1.1rem; line-height: 1.5; }
+  .update-entry p { margin-bottom: 0; max-width: 50rem; }
+  .update-type { color: var(--amber); font: .76rem/1.5 var(--mono); }
+  .update-entry svg { color: var(--amber); }
 
   .arsenal-section { display: grid; grid-template-columns: minmax(18rem, .7fr) 1.3fr; background: var(--paper); color: var(--ink); }
   .arsenal-intro { padding: 4.5rem var(--gutter); border-right: 1px solid rgba(9,16,24,.3); }
@@ -188,14 +188,15 @@ const arsenal = {
   }
   @media (max-width: 760px) {
     .hero { min-height: auto; padding-block: 4rem 2.5rem; }
+    .hero .display-xl { font-size: clamp(2.8rem, 12vw, 3.5rem); line-height: 1.05; }
     .hero-visual { display: block; margin-top: 2rem; }
     .field-note { max-width: none; }
     .hero-actions .button { width: 100%; }
-    .notes-section, .arsenal-section { grid-template-columns: 1fr; }
-    .note-list, .arsenal-intro { border-left: 0; border-right: 0; border-top: 1px solid var(--rule); }
-    .note-list { padding-top: 1rem; }
-    .note-list a { grid-template-columns: 3rem 1fr auto; }
-    .note-list time { display: none; }
+    .arsenal-section, .featured-list { grid-template-columns: 1fr; }
+    .arsenal-intro, .featured-entry + .featured-entry { border-left: 0; border-right: 0; border-top: 1px solid var(--rule); }
+    .update-entry { grid-template-columns: 1fr auto; gap: .65rem; }
+    .update-entry > div { grid-column: 1 / -1; }
+    .update-entry > svg { display: none; }
     .tool-index { grid-template-columns: repeat(2, 1fr); padding-top: 3rem; }
     .timeline-section li { grid-template-columns: 2.5rem 7.8rem 1fr; gap: .5rem; font-size: .78rem; }
   }

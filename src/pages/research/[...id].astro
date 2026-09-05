@@ -1,58 +1,22 @@
 ---
 import { getCollection, render } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import ArchiveRail from '../../components/ArchiveRail.astro';
-import Giscus from '../../components/Giscus.astro';
-
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
 export async function getStaticPaths() {
   const entries = await getCollection('research', ({ data }) => !data.draft);
-  return entries.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+  return entries.map(entry => ({ params: { id: entry.id }, props: { entry } }));
 }
-
 const { entry } = Astro.props;
-const { Content } = await render(entry);
+const { Content, headings } = await render(entry);
 const categoryNames = { web: 'Web 安全', api: 'API 安全', mobile: '移动安全', 'code-audit': '代码审计', 'ai-security': 'AI 安全' };
 const severityNames = { critical: '严重', high: '高危', medium: '中危', low: '低危', info: '信息', research: '研究' };
 const disclosureNames = { research: '研究中', reported: '已报告', triaged: '已确认', fixed: '已修复', published: '已公开' };
 ---
-<BaseLayout title={`${entry.data.title} — AN7LN Security`} description={entry.data.description} type="article">
-  <div class="page-grid">
-    <ArchiveRail index="R-001" label={severityNames[entry.data.severity]} />
-    <article class="page-main" data-pagefind-body>
-      <header class="article-hero">
-        <div class="article-meta"><span>{categoryNames[entry.data.category]}</span><span>{severityNames[entry.data.severity]}</span><time datetime={entry.data.published.toISOString()}>{entry.data.published.toISOString().slice(0,10)}</time></div>
-        <h1 data-pagefind-meta="title">{entry.data.title}</h1>
-        <p>{entry.data.description}</p>
-        <div class="tag-list">{entry.data.tags.map((tag) => <span>{tag}</span>)}</div>
-      </header>
-      <div class="article-layout">
-        <aside class="case-file">
-          <span class="mono-label">研究档案</span>
-          <dl>
-            <div><dt>方向</dt><dd>{categoryNames[entry.data.category]}</dd></div>
-            <div><dt>等级</dt><dd class:list={['severity', `severity-${entry.data.severity}`]}>{severityNames[entry.data.severity]}</dd></div>
-            {entry.data.cwe && <div><dt>CWE</dt><dd>{entry.data.cwe}</dd></div>}
-            {entry.data.cve && <div><dt>CVE</dt><dd>{entry.data.cve}</dd></div>}
-            {entry.data.disclosure && <div><dt>状态</dt><dd>{disclosureNames[entry.data.disclosure.status]}</dd></div>}
-          </dl>
-        </aside>
-        <div class="article-body"><div class="prose"><Content /></div><Giscus /></div>
-      </div>
-    </article>
-  </div>
-</BaseLayout>
-
-<style>
-  .article-hero { padding: 5rem var(--gutter) 3.5rem; border-bottom: 1px solid var(--rule); }
-  .article-meta { display: flex; flex-wrap: wrap; gap: .65rem 1.2rem; color: var(--steel-bright); font: .7rem/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
-  .article-meta span:first-child { color: var(--amber); }
-  .article-hero h1 { max-width: 65rem; margin: 1.4rem 0 1rem; font-family: var(--display); font-size: clamp(3rem, 6.4vw, 6.5rem); line-height: .94; letter-spacing: -.03em; text-transform: uppercase; }
-  .article-hero > p { max-width: 48rem; color: var(--steel-bright); font-size: 1.08rem; }
-  .article-layout { display: grid; grid-template-columns: 15rem minmax(0, 1fr); gap: 4rem; padding: 4rem var(--gutter) 7rem; }
-  .case-file { align-self: start; position: sticky; top: 2rem; }
-  .case-file dl { margin-top: 1rem; border-top: 1px solid var(--rule); }
-  .case-file dl div { padding: .8rem 0; border-bottom: 1px solid var(--rule); }
-  .case-file dt { color: var(--steel); font: .66rem/1 var(--mono); text-transform: uppercase; }
-  .case-file dd { margin: .35rem 0 0; color: var(--paper-dim); font: .76rem/1.35 var(--mono); text-transform: uppercase; }
-  @media (max-width: 760px) { .article-layout { grid-template-columns: 1fr; gap: 2rem; } .case-file { position: static; } }
-</style>
+<ArticleLayout {...entry.data} topic={categoryNames[entry.data.category]} headings={headings} index="RESEARCH">
+  <dl slot="metadata" class="case-facts">
+    <div><dt>等级</dt><dd class:list={['severity', `severity-${entry.data.severity}`]}>{severityNames[entry.data.severity]}</dd></div>
+    {entry.data.cwe && <div><dt>CWE</dt><dd>{entry.data.cwe}</dd></div>}
+    {entry.data.cve && <div><dt>CVE</dt><dd>{entry.data.cve}</dd></div>}
+    {entry.data.disclosure && <div><dt>状态</dt><dd>{disclosureNames[entry.data.disclosure.status]}</dd></div>}
+  </dl>
+  <Content />
+</ArticleLayout>
