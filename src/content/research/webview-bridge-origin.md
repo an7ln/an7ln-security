@@ -21,8 +21,6 @@ disclosure:
 
 事实来自平台文档。Android 明确建议用 `addWebMessageListener` 配合 `allowedOriginRules`，并把 `addJavascriptInterface` 标为低安全性、不推荐。[1] 该接口对所有 frame 可见，且因为 WebView 的异步行为，无法安全判断是哪个 frame 在调用；不能用 `WebView.getUrl()` 做校验。[1][2] Apple 侧需要自己检查 `WKScriptMessage.frameInfo` 的 `securityOrigin`，没有与 `addWebMessageListener` 对等的内置允许清单。[3]
 
-与现场笔记[《Android 初步分析中的实用 Frida 模式》](/notes/frida-android-triage/)的分工：笔记回答运行时怎么看见桥，本文回答看见之后如何判断起源校验是否成立。
-
 ## 技术分析
 
 先画加载链，再盘桥，再问每一座桥“谁可以调用、调用后做什么”。
