@@ -2,7 +2,7 @@
 title: "不明 AI 中转站会在代理层终结 TLS，并把提示词与执行权一并暴露"
 description: "基于国家安全部公开提示、Chaofan Shou 公开主张与 arXiv 测量论文，说明第三方大模型 API 中转站的信任边界、主要危害与缓解条件。"
 published: 2026-09-11
-updated: 2026-09-11
+updated: 2026-09-20
 category: ai-security
 tags: [LLM, API, Supply-chain, Agent]
 severity: research
@@ -25,6 +25,10 @@ disclosure:
 ## 技术分析
 
 先画信任边界，再谈危害。
+
+![AI 中转站信任边界：客户端到中转站再到官方 API，TLS 在中转层终结](/uploads/ai-relay-station-risks/tls-trust-boundary.webp)
+
+上图把公开边界画清楚：两段 TLS，中转节点可读载荷；Agent 若自动执行工具，风险会落到本机。
 
 ```text
 客户端 / Coding Agent
@@ -76,6 +80,11 @@ disclosure:
 4. Agent 放进无凭据瞬时沙盒，不挂载 SSH、云配置、Docker Socket 与生产环境文件；出站只允许官方 API 与任务必需目标。[4]
 5. 若曾在高权限模式下接入不明中转站，按“可能已暴露”处置：轮换 SSH、云密钥、GitHub Token 与发布 Token，并检查云审计与仓库访问记录。删本地配置不等于让已外传密钥失效。[1][4]
 6. 使用前对个人隐私与项目资料脱敏；发现异常扣费、封号或数据异常时立即停用并留存证据。[1]
+
+
+## 修订说明
+
+2026-09-20：补信任边界示意图；周日定时发文未触发，本周已有 ASC 研究稿，故只做旧文小改。
 
 ## 参考资料
 
