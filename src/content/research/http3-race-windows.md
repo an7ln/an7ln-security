@@ -2,6 +2,7 @@
 title: "HTTP/3 竞态：单数据报与 QPACK 阻塞流为何能压过单包攻击"
 description: "HTTP/3 不消灭 TOCTOU。公开材料显示，单数据报与 QPACK 阻塞流可比 HTTP/2 单包攻击把请求捆得更紧；降级路径上的 Transfer-Encoding 注入仍是协议回退边界问题。"
 published: 2026-09-24
+updated: 2026-09-27
 category: web
 tags: [HTTP/3, QUIC, Race Condition, TOCTOU, QPACK, Request Smuggling]
 severity: research
@@ -57,6 +58,8 @@ HTTP/3 换了承载层，没有改掉「检查与使用不同步」这一类逻�
 
 同一篇文章还覆盖 HTTP/3 **降级**场景：当请求从 HTTP/3 回落到 HTTP/1 风格处理时，可在 kettled 语法里尝试注入 `Transfer-Encoding: chunked` 一类头。公开示例的意图是说明：**协议回退边界**上，前端以为自己在说 HTTP/3，后端却可能按 HTTP/1 语义解析新注入的长度编码头。
 
+![HTTP/3 降级边界：网关回退时 Transfer-Encoding / Content-Length 语义检查点](/uploads/http3-race-windows/h3-downgrade-te-boundary.webp)
+
 这不是「必须 HTTP/3 才能走私」的新魔法，而是经典请求走私/降级问题在新协商路径上的延续。失败与误判模式：
 
 - 没有真实降级，只有端到端 HTTP/3：注入头不会变成 HTTP/1 语义。
@@ -88,6 +91,10 @@ HTTP/3 换了承载层，没有改掉「检查与使用不同步」这一类逻�
 - 未独立复现 PortSwigger 给出的 RPS 数字；数字仅作原文陈述。
 - *QUIC-er Races* 与 *Chaos by Design* 以原文标题引用；若后续出现稳定公开 URL，应补链，而非改写结论。
 - 不提供针对真实目标的利用步骤、完整脚本或可直接粘贴的走私序列。
+
+## 修订说明
+
+2026-09-27 周日例行：本周研究档位已由本文（PR 16）占用，故仅做小改：补充 HTTP/3→HTTP/1 降级路径上的 Transfer-Encoding / Content-Length 边界示意图。
 
 ## 参考
 
