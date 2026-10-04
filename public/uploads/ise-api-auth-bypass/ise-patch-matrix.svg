@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="460" viewBox="0 0 980 460" role="img" aria-label="Cisco ISE CVE-2026-76460 修复版本矩阵">
+  <rect width="980" height="460" fill="#0b1220"/>
+  <text x="490" y="34" text-anchor="middle" fill="#e8eefc" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="20" font-weight="600">CVE-2026-76460 修复版本矩阵</text>
+  <text x="490" y="58" text-anchor="middle" fill="#8aa4d6" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="13">Cisco 公告 Fixed Software · 首次修复版本 · 2026-09-16</text>
+  <rect x="60" y="90" width="860" height="44" rx="10" fill="#1a2740" stroke="#2a3957"/>
+  <text x="200" y="118" text-anchor="middle" fill="#9db0d0" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="14" font-weight="600">ISE / ISE-PIC 发布线</text>
+  <text x="620" y="118" text-anchor="middle" fill="#9db0d0" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="14" font-weight="600">首次含修复的版本</text>
+  <rect x="60" y="146" width="860" height="40" rx="8" fill="#121a2b" stroke="#3a1d24"/>
+  <text x="200" y="172" text-anchor="middle" fill="#ffb4b4" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="14">3.0（EoSM）</text>
+  <text x="620" y="172" text-anchor="middle" fill="#ff8e8e" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="14">无补丁 · 迁移到受支持修复版</text>
+  <rect x="60" y="196" width="860" height="40" rx="8" fill="#121a2b" stroke="#143028"/>
+  <text x="200" y="222" text-anchor="middle" fill="#e8eefc" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="14">3.1</text>
+  <text x="620" y="222" text-anchor="middle" fill="#9dffc8" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="14">3.1 Patch 12</text>
+  <rect x="60" y="246" width="860" height="40" rx="8" fill="#121a2b" stroke="#143028"/>
+  <text x="200" y="272" text-anchor="middle" fill="#e8eefc" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="14">3.2</text>
+  <text x="620" y="272" text-anchor="middle" fill="#9dffc8" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="14">3.2 Patch 11</text>
+  <rect x="60" y="296" width="860" height="40" rx="8" fill="#121a2b" stroke="#143028"/>
+  <text x="200" y="322" text-anchor="middle" fill="#e8eefc" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="14">3.3</text>
+  <text x="620" y="322" text-anchor="middle" fill="#9dffc8" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="14">3.3 Patch 12</text>
+  <rect x="60" y="346" width="860" height="40" rx="8" fill="#121a2b" stroke="#143028"/>
+  <text x="200" y="372" text-anchor="middle" fill="#e8eefc" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="14">3.4</text>
+  <text x="620" y="372" text-anchor="middle" fill="#9dffc8" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="14">3.4 Patch 7</text>
+  <rect x="60" y="396" width="860" height="40" rx="8" fill="#121a2b" stroke="#143028"/>
+  <text x="200" y="422" text-anchor="middle" fill="#e8eefc" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="14">3.5</text>
+  <text x="620" y="422" text-anchor="middle" fill="#9dffc8" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="14">3.5 Patch 4</text>
+</svg>
