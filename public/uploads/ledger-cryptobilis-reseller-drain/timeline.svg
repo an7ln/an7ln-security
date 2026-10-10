@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" font-family="Noto Sans CJK SC, Noto Serif CJK SC, sans-serif">
+<rect width="1200" height="720" fill="#0f1115"/>
+<text x="40" y="52" fill="#e8e8e8" font-size="26" font-weight="bold">Ledger / CryptoBilis 事件：公开时间线与信任链（去敏）</text>
+<text x="40" y="82" fill="#9aa0a6" font-size="15">时间为 UTC+8（北京时间）；链上时间点据 Bitquery 2026-10-10 报告，声明据 X 公开帖。无地址、无交易细节。</text>
+<line x1="80" y1="170" x2="1120" y2="170" stroke="#555" stroke-width="3"/>
+<g font-size="14" fill="#e8e8e8">
+<circle cx="110" cy="170" r="9" fill="#6c8ebf"/><text x="70" y="140">09-25</text><text x="70" y="205">攻击者控制地址</text><text x="70" y="225">首次获得资金</text>
+<circle cx="290" cy="170" r="9" fill="#6c8ebf"/><text x="240" y="140">09-26 ~ 10-07</text><text x="240" y="205">TRON/ETH 各约 20 次</text><text x="240" y="225">小额测试循环</text>
+<circle cx="490" cy="170" r="11" fill="#d9534f"/><text x="440" y="140">10-09 13:00</text><text x="440" y="205">30 个 TRON 钱包权限</text><text x="440" y="225">被同一新 key 接管</text>
+<circle cx="650" cy="170" r="11" fill="#d9534f"/><text x="610" y="140">13:07 ~ 13:54</text><text x="610" y="205">五条链集中转出</text><text x="610" y="225">（TRON 首波数秒内）</text>
+<circle cx="820" cy="170" r="9" fill="#f0ad4e"/><text x="780" y="140">20:00 ~ 20:24</text><text x="780" y="205">链上研究者公开</text><text x="780" y="225">攻击者地址；Tether 冻结</text>
+<circle cx="990" cy="170" r="11" fill="#5cb85c"/><text x="950" y="140">21:32</text><text x="950" y="205">@Ledger_Support 声明：</text><text x="950" y="225">暂停该经销商销售发货</text>
+</g>
+<text x="40" y="300" fill="#e8e8e8" font-size="20" font-weight="bold">信任链：用户默认信任的每一环，哪一环可能断（原因未经官方确认）</text>
+<g font-size="15">
+<rect x="40" y="330" width="200" height="90" rx="10" fill="#1d2a3a" stroke="#6c8ebf"/><text x="60" y="365" fill="#e8e8e8">Ledger 工厂 / 固件</text><text x="60" y="392" fill="#5cb85c">官方：系统未被入侵</text>
+<rect x="290" y="330" width="220" height="90" rx="10" fill="#3a1d1d" stroke="#d9534f"/><text x="310" y="365" fill="#e8e8e8">授权经销商 CryptoBilis</text><text x="310" y="392" fill="#f0ad4e">待查：设备是否经手被改</text>
+<rect x="560" y="330" width="200" height="90" rx="10" fill="#3a1d1d" stroke="#d9534f"/><text x="580" y="365" fill="#e8e8e8">物流 / 包装</text><text x="580" y="392" fill="#f0ad4e">待查：二次封装</text>
+<rect x="810" y="330" width="160" height="90" rx="10" fill="#1d2a3a" stroke="#6c8ebf"/><text x="830" y="365" fill="#e8e8e8">用户初始化</text><text x="830" y="392" fill="#9aa0a6">生成 24 词助记词</text>
+<rect x="1010" y="330" width="150" height="90" rx="10" fill="#3a1d1d" stroke="#d9534f"/><text x="1030" y="365" fill="#e8e8e8">链上资产</text><text x="1030" y="392" fill="#d9534f">助记词泄露即失守</text>
+<g stroke="#888" stroke-width="2" fill="none"><path d="M240 375 H290"/><path d="M510 375 H560"/><path d="M760 375 H810"/><path d="M970 375 H1010"/></g>
+</g>
+<rect x="40" y="460" width="1120" height="220" rx="10" fill="#161a20" stroke="#333"/>
+<g font-size="15" fill="#c8c8c8">
+<text x="64" y="495" fill="#e8e8e8" font-size="17" font-weight="bold">事实 / 推断 分开看</text>
+<text x="64" y="528">事实：Ledger 确认在调查、已叫停该经销商；未确认损失金额与原因。</text>
+<text x="64" y="556">事实（链上）：Bitquery 统计 311 个钱包、约 9,290 万美元；多钱包数秒内签同一授权，指向单一行为体握有全部密钥。</text>
+<text x="64" y="584">推断：密钥在交付前或初始化时泄露的可能性高于钓鱼签名；具体环节（设备、助记词卡、App、其他）未定。</text>
+<text x="64" y="612">未证实：「间谍模块读屏外传助记词」来自独立研究者对非授权渠道设备的拆解，尚不能直接套用到本事件。</text>
+<text x="64" y="650" fill="#9aa0a6">AN7LN Security · qqyln.cn · 2026-10-10</text>
+</g>
+</svg>
