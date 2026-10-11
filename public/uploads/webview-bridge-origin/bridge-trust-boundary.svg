@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520" font-family="system-ui, -apple-system, 'PingFang SC', 'Noto Sans CJK SC', sans-serif">
+  <rect width="960" height="520" fill="#0f172a"/>
+  <text x="480" y="40" fill="#e2e8f0" font-size="22" font-weight="700" text-anchor="middle">WebView 桥接信任边界：谁能调用原生能力</text>
+  <text x="480" y="66" fill="#94a3b8" font-size="14" text-anchor="middle">通用示意（依据 Android / Apple / OWASP 公开文档），不对应任何具体应用</text>
+  <g font-size="15">
+    <rect x="30" y="100" width="250" height="300" rx="12" fill="#1e293b" stroke="#475569"/>
+    <text x="155" y="128" fill="#e2e8f0" font-weight="700" text-anchor="middle">WebView 加载链</text>
+    <rect x="50" y="146" width="210" height="40" rx="8" fill="#14532d"/><text x="155" y="171" fill="#dcfce7" text-anchor="middle">允许清单内 https 起源</text>
+    <rect x="50" y="196" width="210" height="40" rx="8" fill="#7f1d1d"/><text x="155" y="221" fill="#fee2e2" text-anchor="middle">第三方 iframe</text>
+    <rect x="50" y="246" width="210" height="40" rx="8" fill="#7f1d1d"/><text x="155" y="271" fill="#fee2e2" text-anchor="middle">重定向 / 深度链接 URL</text>
+    <rect x="50" y="296" width="210" height="40" rx="8" fill="#7f1d1d"/><text x="155" y="321" fill="#fee2e2" text-anchor="middle">file:// 或用户 HTML</text>
+    <rect x="50" y="346" width="210" height="40" rx="8" fill="#78350f"/><text x="155" y="371" fill="#fef3c7" text-anchor="middle">信任域上的 XSS</text>
+
+    <rect x="355" y="100" width="250" height="300" rx="12" fill="#1e293b" stroke="#f59e0b" stroke-dasharray="6 4"/>
+    <text x="480" y="128" fill="#fbbf24" font-weight="700" text-anchor="middle">桥接层（信任边界）</text>
+    <rect x="375" y="150" width="210" height="100" rx="8" fill="#3f1d1d" stroke="#ef4444"/>
+    <text x="480" y="176" fill="#fecaca" text-anchor="middle" font-weight="700">addJavascriptInterface</text>
+    <text x="480" y="200" fill="#fecaca" text-anchor="middle" font-size="13">注入每个 frame，无起源校验</text>
+    <text x="480" y="222" fill="#fecaca" text-anchor="middle" font-size="13">getUrl() 不能当调用方身份</text>
+    <rect x="375" y="270" width="210" height="110" rx="8" fill="#12332a" stroke="#22c55e"/>
+    <text x="480" y="296" fill="#bbf7d0" text-anchor="middle" font-weight="700">addWebMessageListener</text>
+    <text x="480" y="318" fill="#bbf7d0" text-anchor="middle" font-size="13">allowedOriginRules 写具体起源</text>
+    <text x="480" y="340" fill="#bbf7d0" text-anchor="middle" font-size="13">iOS：校验 frameInfo</text>
+    <text x="480" y="360" fill="#bbf7d0" text-anchor="middle" font-size="13">.securityOrigin</text>
+
+    <rect x="680" y="100" width="250" height="300" rx="12" fill="#1e293b" stroke="#475569"/>
+    <text x="805" y="128" fill="#e2e8f0" font-weight="700" text-anchor="middle">原生能力（应用进程权限）</text>
+    <text x="805" y="180" fill="#cbd5e1" text-anchor="middle">会话 Token / Cookie</text>
+    <text x="805" y="225" fill="#cbd5e1" text-anchor="middle">本地文件读写</text>
+    <text x="805" y="270" fill="#cbd5e1" text-anchor="middle">已登录的网络请求</text>
+    <text x="805" y="315" fill="#cbd5e1" text-anchor="middle">支付 / 设备能力</text>
+  </g>
+  <g stroke-width="3" fill="none">
+    <path d="M260 166 L375 310" stroke="#22c55e"/>
+    <path d="M260 216 L375 200" stroke="#ef4444"/>
+    <path d="M260 266 L375 205" stroke="#ef4444"/>
+    <path d="M260 316 L375 210" stroke="#ef4444"/>
+    <path d="M260 366 L375 330" stroke="#f59e0b" stroke-dasharray="6 4"/>
+    <path d="M585 200 L680 240" stroke="#ef4444"/>
+    <path d="M585 325 L680 260" stroke="#22c55e"/>
+  </g>
+  <g font-size="13">
+    <rect x="30" y="430" width="900" height="70" rx="10" fill="#111827" stroke="#334155"/>
+    <circle cx="60" cy="452" r="6" fill="#22c55e"/><text x="74" y="457" fill="#cbd5e1">起源在允许清单内，经平台层放行</text>
+    <circle cx="380" cy="452" r="6" fill="#ef4444"/><text x="394" y="457" fill="#cbd5e1">遗留桥：任意 frame 都能直达原生方法</text>
+    <circle cx="60" cy="482" r="6" fill="#f59e0b"/><text x="74" y="487" fill="#cbd5e1">XSS 以被允许的起源发言：允许清单挡不住，仍需消息体校验与 CSP</text>
+  </g>
+</svg>
