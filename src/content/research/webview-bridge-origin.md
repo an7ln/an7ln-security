@@ -2,6 +2,7 @@
 title: "WebView 桥接在缺少源校验时会把原生能力交给任意页面"
 description: "一套用于盘点 Android/iOS WebView 桥接是否对调用方起源做允许清单校验的通用方法。"
 published: 2026-09-01
+updated: 2026-10-11
 category: mobile
 tags: [WebView, Android, iOS, Origin]
 severity: research
@@ -24,6 +25,8 @@ disclosure:
 ## 技术分析
 
 先画加载链，再盘桥，再问每一座桥“谁可以调用、调用后做什么”。
+
+![WebView 桥接信任边界：遗留桥对任意 frame 开放，起源限定的消息监听只放行允许清单内的起源，信任域 XSS 仍可绕过允许清单](/uploads/webview-bridge-origin/bridge-trust-boundary.svg)
 
 加载链至少覆盖：写死的 `https://`、深度链接改写的 URL、服务端重定向、`file://`、以及把用户 HTML 塞进 WebView 的路径。OWASP 测试 MASTG-TEST-0334 把失败条件写成三件事同时成立：`setJavaScriptEnabled(true)`、至少一次 `addJavascriptInterface`、暴露的方法能接触敏感数据或敏感操作且可被不受信任内容触达。[4]
 
@@ -64,7 +67,9 @@ iOS 盘点清单：
 4. 对消息体做类型与字段校验。起源允许清单不能替代输入校验。
 5. `WKContentWorld` 或 Android 的 `JavaScriptExecutionWorld` 只隔离注入脚本，不能代替起源授权。[5]
 
-维护者发布前仍需确认：正文只有通用方法，没有未公开目标证据。
+## 修订说明
+
+2026-10-11 周日例行：本周研究档位已由《Ledger 经销商渠道失窃复盘》（PR 19）占用，故仅做小改：补充桥接信任边界示意图（依据公开平台文档绘制，不对应具体应用），并删除正文末尾遗留的内部发布检查备注。
 
 ## 参考资料
 
