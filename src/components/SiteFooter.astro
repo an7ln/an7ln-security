@@ -10,7 +10,10 @@
     <a href="/about/#contact">联系</a>
   </nav>
   <small>© 2026 浅笑新柔</small>
-  <div class="filing"><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">豫ICP备20019899号-3</a></div>
+  <div class="filing">
+    <span>豫ICP备20019899号-3</span>
+    <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">工信部备案管理系统</a>
+  </div>
 </footer>
 
 <style>
@@ -22,7 +25,8 @@
   nav { display: flex; gap: 1.5rem; font: .72rem/1 var(--mono); letter-spacing: .07em; text-transform: uppercase; }
   nav a:hover { color: var(--amber); }
   small { color: var(--steel); font: .7rem/1 var(--mono); white-space: nowrap; }
-  .filing { grid-column: 1 / -1; padding-top: .9rem; border-top: 1px solid var(--rule); font: .78rem/1.5 var(--mono); }
+  .filing { grid-column: 1 / -1; display: grid; justify-items: center; gap: .35rem; padding-top: .9rem; border-top: 1px solid var(--rule); text-align: center; font: .78rem/1.5 var(--mono); }
+  .filing span { color: var(--steel-bright); }
   .filing a { color: var(--steel-bright); text-decoration: underline; text-underline-offset: .2em; }
   .filing a:hover { color: var(--amber); }
   @media (max-width: 820px) { .site-footer { grid-template-columns: 1fr 1fr; } }
