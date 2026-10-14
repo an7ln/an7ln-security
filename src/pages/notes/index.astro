@@ -5,7 +5,7 @@ import ArchiveRail from '../../components/ArchiveRail.astro';
 import ArrowIcon from '../../components/ArrowIcon.astro';
 const notes = (await getCollection('notes', ({ data }) => !data.draft)).sort((a,b) => b.data.published.valueOf() - a.data.published.valueOf());
 ---
-<BaseLayout title="现场笔记 — AN7LN Security" description="来自进行中安全研究的工作记录。">
+<BaseLayout title="现场笔记 — 浅笑新柔" description="来自进行中安全研究的工作记录。">
   <div class="page-grid"><ArchiveRail index="003" label="笔记" /><div class="page-main"><header class="page-hero"><span class="section-number">// 工作笔记本</span><h1 class="display display-lg">现场笔记</h1><p>来自进行中安全研究的工作记录。</p></header><ol class="notes-list">{notes.map((note,i)=><li><a href={`/notes/${note.id}/`}><b>{String(i+1).padStart(2,'0')}</b><time>{note.data.published.toISOString().slice(0,10)}</time><div><span>{note.data.topic}</span><h2>{note.data.title}</h2><p>{note.data.description}</p></div><ArrowIcon /></a></li>)}</ol></div></div>
 </BaseLayout>
 <style>

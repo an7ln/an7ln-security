@@ -12,7 +12,7 @@ interface Props {
 const { title, description, published, updated, topic, tags, headings, index } = Astro.props;
 const date = contentDate({ published, updated });
 ---
-<BaseLayout title={`${title} — AN7LN Security`} description={description} type="article">
+<BaseLayout title={`${title} — 浅笑新柔`} description={description} type="article">
   <div class="page-grid">
     <ArchiveRail index={index} label={topic} updated={date} />
     <article class="page-main reading-page" data-pagefind-body>
