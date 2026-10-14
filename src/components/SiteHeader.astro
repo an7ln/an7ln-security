@@ -11,8 +11,8 @@ const pathname = Astro.url.pathname;
 ---
 
 <header class="site-header">
-  <a class="brand" href="/" aria-label="AN7LN Security 首页">
-    <img src="/an7ln-wordmark.png" alt="AN7LN" width="120" height="40" />
+  <a class="brand" href="/" aria-label="浅笑新柔 首页">
+    <strong>浅笑新柔</strong>
     <span>/ 安全研究</span>
   </a>
 
@@ -60,7 +60,7 @@ const pathname = Astro.url.pathname;
     background: rgba(9, 16, 24, .96);
   }
   .brand { display: inline-flex; align-items: center; gap: 1.3rem; width: fit-content; }
-  .brand img { width: 8rem; height: auto; object-fit: contain; }
+  .brand strong { color: var(--paper); font: 900 1.8rem/1 var(--display); letter-spacing: .04em; white-space: nowrap; }
   .brand span { padding-left: 1.3rem; border-left: 1px solid var(--rule-strong); font: .72rem/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
   nav { display: flex; align-items: center; gap: clamp(1.2rem, 2.6vw, 2.8rem); }
   nav a { position: relative; padding: 2.35rem 0; color: var(--paper-dim); font-size: .84rem; font-weight: 650; }
@@ -91,7 +91,7 @@ const pathname = Astro.url.pathname;
   }
   @media (max-width: 760px) {
     .site-header { grid-template-columns: 1fr auto auto; min-height: 4.5rem; padding-inline: 1.1rem; }
-    .brand img { width: 5.2rem; }
+    .brand strong { font-size: 1.35rem; }
     .menu-button {
       display: inline-flex;
       align-items: center;
