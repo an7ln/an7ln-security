@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="520" viewBox="0 0 980 520" role="img" aria-label="BeyondTrust Remote Support CVE-2026-102764 信任边界示意">
+  <rect width="980" height="520" fill="#0b1220"/>
+  <text x="490" y="34" text-anchor="middle" fill="#e8eefc" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="20" font-weight="600">CVE-2026-102764：远程支持设备信任边界</text>
+  <text x="490" y="58" text-anchor="middle" fill="#8aa4d6" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="13">依据 BeyondTrust BT26-05 / CISA 公开材料整理 · 非利用步骤 · 仅失败模式示意</text>
+
+  <!-- Untrusted -->
+  <rect x="36" y="100" width="210" height="220" rx="14" fill="#121a2b" stroke="#ff6b6b" stroke-width="2"/>
+  <text x="141" y="132" text-anchor="middle" fill="#ff8a8a" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="14" font-weight="600">不可信网络</text>
+  <text x="141" y="168" text-anchor="middle" fill="#c9d4ea" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="13">未认证远程调用方</text>
+  <text x="141" y="196" text-anchor="middle" fill="#8aa4d6" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12">零日窗口内可达</text>
+  <text x="141" y="222" text-anchor="middle" fill="#8aa4d6" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12">自托管暴露面优先</text>
+  <text x="141" y="260" text-anchor="middle" fill="#6b7fa3" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="11">（CISA：活跃利用）</text>
+
+  <!-- Arrow 1 -->
+  <path d="M256 210 H320" stroke="#ff6b6b" stroke-width="2.5" fill="none" marker-end="url(#arr)"/>
+  <text x="288" y="198" text-anchor="middle" fill="#ff8a8a" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="11">源未充分校验</text>
+
+  <!-- Broken boundary -->
+  <rect x="330" y="100" width="280" height="220" rx="14" fill="#1a1520" stroke="#f0a030" stroke-width="2" stroke-dasharray="8 5"/>
+  <text x="470" y="132" text-anchor="middle" fill="#f0c060" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="14" font-weight="600">失败点：内部消息组件</text>
+  <text x="470" y="168" text-anchor="middle" fill="#c9d4ea" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="13">CWE-290 源/来源校验不足</text>
+  <text x="470" y="196" text-anchor="middle" fill="#c9d4ea" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="13">消息来源未充分验证</text>
+  <text x="470" y="224" text-anchor="middle" fill="#8aa4d6" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12">后果类：设备上文件操作</text>
+  <text x="470" y="252" text-anchor="middle" fill="#8aa4d6" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12">CISA 表述：认证绕过</text>
+  <text x="470" y="290" text-anchor="middle" fill="#6b7fa3" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="11">BT26-05 · CVSSv4 9.3</text>
+
+  <!-- Arrow 2 -->
+  <path d="M620 210 H684" stroke="#f0a030" stroke-width="2.5" fill="none" marker-end="url(#arr2)"/>
+  <text x="652" y="198" text-anchor="middle" fill="#f0c060" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="11">进入设备面</text>
+
+  <!-- Appliance -->
+  <rect x="694" y="100" width="250" height="220" rx="14" fill="#121a2b" stroke="#4dabf7" stroke-width="2"/>
+  <text x="819" y="132" text-anchor="middle" fill="#74c0fc" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="14" font-weight="600">Remote Support 设备</text>
+  <text x="819" y="168" text-anchor="middle" fill="#c9d4ea" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="13">自托管 ≤ 26.2.3</text>
+  <text x="819" y="196" text-anchor="middle" fill="#c9d4ea" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="13">中介凭据 / 会话 / Jump</text>
+  <text x="819" y="224" text-anchor="middle" fill="#8aa4d6" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12">失陷后可触达下游端点</text>
+  <text x="819" y="260" text-anchor="middle" fill="#6b7fa3" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="11">SaaS 已于 10-09 打补丁</text>
+
+  <!-- Bottom note -->
+  <rect x="36" y="360" width="908" height="120" rx="12" fill="#121a2b" stroke="#2a3957"/>
+  <text x="490" y="392" text-anchor="middle" fill="#e8eefc" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="14" font-weight="600">防守要点（公开建议摘要）</text>
+  <text x="490" y="422" text-anchor="middle" fill="#c9d4ea" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="13">1) 立即应用 BT26-05-RS（&lt;24.3.1 须先升级）　2) 收敛管理面与对外暴露</text>
+  <text x="490" y="448" text-anchor="middle" fill="#c9d4ea" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="13">3) 日志外送 SIEM（本地日志可能被擦）　4) 假定失陷时重建并轮换中介凭据</text>
+
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#ff6b6b"/>
+    </marker>
+    <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#f0a030"/>
+    </marker>
+  </defs>
+</svg>
