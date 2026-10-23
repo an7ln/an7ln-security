@@ -6,7 +6,7 @@ import ArrowIcon from '../../components/ArrowIcon.astro';
 const projects=(await getCollection('projects',({data})=>!data.draft)).sort((a,b)=>a.data.order-b.data.order);
 const statusNames={active:'活跃开发',maintained:'持续维护',experiment:'实验项目',archived:'已归档'};
 ---
-<BaseLayout title="项目 — 浅笑新柔" description="在真实安全评估中沉淀的工具与实验。">
+<BaseLayout title="项目 — AN7LN Security" description="在真实安全评估中沉淀的工具与实验。">
   <div class="page-grid"><ArchiveRail index="005" label="项目"/><div class="page-main"><header class="page-hero"><span class="section-number">// 来自实战现场</span><h1 class="display display-lg">项目</h1><p>在真实安全评估中沉淀的工具与实验。</p></header><div class="project-list">{projects.map((project,i)=><article><div class="project-index">{String(i+1).padStart(2,'0')}</div><div><div class="project-meta"><span>{statusNames[project.data.status]}</span>{project.data.stack.map(item=><b>{item}</b>)}</div><h2>{project.data.title}</h2><p>{project.data.description}</p></div>{project.data.repository?<a class="arrow-link" href={project.data.repository}>代码仓库 <ArrowIcon/></a>:<span class="private">现场项目</span>}</article>)}</div></div></div>
 </BaseLayout>
 <style>

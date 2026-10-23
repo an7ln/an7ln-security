@@ -7,7 +7,7 @@ import ArrowIcon from '../../components/ArrowIcon.astro';
 const records = (await getCollection('research', ({ data }) => !data.draft && Boolean(data.cve)))
   .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
 ---
-<BaseLayout title="CVE 索引 — 浅笑新柔" description="公开 CVE 记录、厂商协调状态与漏洞披露时间线。">
+<BaseLayout title="CVE 索引 — AN7LN Security" description="公开 CVE 记录、厂商协调状态与漏洞披露时间线。">
   <div class="page-grid">
     <ArchiveRail index="CVE" label="公告" />
     <div class="page-main">
