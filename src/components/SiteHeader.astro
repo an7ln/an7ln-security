@@ -11,9 +11,9 @@ const pathname = Astro.url.pathname;
 ---
 
 <header class="site-header">
-  <a class="brand" href="/" aria-label="AN7LN Security 首页">
+  <a class="brand" href="/" aria-label="浅笑新柔 首页">
     <img src="/an7ln-wordmark.png" alt="AN7LN" width="120" height="40" />
-    <span>/ 安全研究</span>
+    <b>浅笑新柔</b>
   </a>
 
   <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav">
@@ -61,6 +61,7 @@ const pathname = Astro.url.pathname;
   }
   .brand { display: inline-flex; align-items: center; gap: 1.3rem; width: fit-content; }
   .brand img { width: 8rem; height: auto; object-fit: contain; }
+  .brand b { color: var(--paper); font-size: 1rem; white-space: nowrap; }
   .brand span { padding-left: 1.3rem; border-left: 1px solid var(--rule-strong); font: .72rem/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
   nav { display: flex; align-items: center; gap: clamp(1.2rem, 2.6vw, 2.8rem); }
   nav a { position: relative; padding: 2.35rem 0; color: var(--paper-dim); font-size: .84rem; font-weight: 650; }
