@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="340" viewBox="0 0 880 340" font-family="sans-serif" font-size="15">
+<rect width="880" height="340" fill="#fff"/>
+<text x="440" y="30" text-anchor="middle" font-size="18" font-weight="bold">被盗资产流向与冻结分层（截至发稿，去敏）</text>
+<g fill="#f3f3f3" stroke="#333"><rect x="30" y="70" width="220" height="200" rx="8"/><rect x="330" y="70" width="220" height="200" rx="8"/><rect x="630" y="70" width="220" height="200" rx="8"/></g>
+<text x="140" y="100" text-anchor="middle" font-weight="bold">被盗资产</text>
+<text x="50" y="135">BTC ≈ 15 亿美元</text><text x="50" y="165">ETH ≈ 9 亿美元</text><text x="50" y="195">USDT/USDC ≈ 14 亿</text><text x="50" y="225">其他代币</text>
+<text x="440" y="100" text-anchor="middle" font-weight="bold">转换</text>
+<text x="350" y="135">DEX 换币（Uniswap 等）</text><text x="350" y="165">借贷：USDT 抵押</text><text x="350" y="195">→ 借出约 2 万 WETH</text><text x="350" y="225" fill="#b00">目的：换成难冻结资产</text>
+<text x="740" y="100" text-anchor="middle" font-weight="bold">冻结层</text>
+<text x="650" y="135">发行人：Tether / Circle</text><text x="650" y="160">Ripple / WLFI</text><text x="650" y="185">L2：Arbitrum 安全委员会</text><text x="650" y="210">协议：Aave 冻结市场</text><text x="650" y="240" fill="#b00">BTC/ETH：无发行人冻结</text>
+<g stroke="#333" stroke-width="2"><line x1="250" y1="170" x2="328" y2="170"/><line x1="550" y1="170" x2="628" y2="170"/></g>
+<text x="440" y="310" text-anchor="middle" fill="#555">冻结 ≠ 已归还；数字为多方公开口径</text>
+</svg>

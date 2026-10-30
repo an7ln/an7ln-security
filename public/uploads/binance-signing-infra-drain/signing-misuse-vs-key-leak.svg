@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="360" viewBox="0 0 880 360" font-family="sans-serif" font-size="15">
+<rect width="880" height="360" fill="#fff"/>
+<text x="440" y="30" text-anchor="middle" font-size="18" font-weight="bold">签名路径被滥用 vs 私钥泄露（概念对照，去敏）</text>
+<g fill="none" stroke="#333"><rect x="30" y="60" width="390" height="270" rx="8"/><rect x="460" y="60" width="390" height="270" rx="8"/></g>
+<text x="225" y="88" text-anchor="middle" font-weight="bold" fill="#b00">A. 签名基础设施滥用（公开初步判断）</text>
+<text x="50" y="125">1. 私钥仍在签名系统/HSM 内，未被导出</text>
+<text x="50" y="160">2. 攻击者让系统签出"合法"请求</text>
+<text x="50" y="195">3. 热钱包签出委托授权（EIP-7702）</text>
+<text x="50" y="230">4. 执行权交给攻击者合约</text>
+<text x="50" y="265">5. 资产被批量抽走</text>
+<text x="50" y="305" fill="#555">防线断点：策略/审批/请求来源校验</text>
+<text x="655" y="88" text-anchor="middle" font-weight="bold" fill="#036">B. 私钥泄露（对照）</text>
+<text x="480" y="125">1. 私钥或助记词被复制到系统外</text>
+<text x="480" y="160">2. 攻击者在自有环境任意签名</text>
+<text x="480" y="195">3. 直接发起转账</text>
+<text x="480" y="230">4. 修复必须换钥并迁移资产</text>
+<text x="480" y="305" fill="#555">防线断点：密钥存储与访问控制</text>
+</svg>
