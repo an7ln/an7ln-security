@@ -1,7 +1,8 @@
 ---
 title: "币安热钱包被盗复盘：公开分析指向签名基础设施被滥用，而非私钥泄露"
-description: "2026-10-29（UTC）币安热钱包被抽走约 53–59 亿美元，史上最大。公开链上分析初步指向签名路径与 EIP-7702 委托授权被滥用；稳定币与 L2 冻结已锁住数十亿，BTC/ETH 无发行人可冻。币安尚未确认根因。"
+description: "币安被盗复盘：热钱包约 53–59 亿美元外流，公开分析指向签名基础设施与 EIP-7702 委托被滥用；稳定币/L2 已冻结数十亿，BTC/ETH 难冻。根因未确认。"
 published: 2026-10-30
+updated: 2026-10-30
 category: web
 tags: [Binance, Hot Wallet, EIP-7702, Signing Infrastructure, Stablecoin Freeze, Incident Review, Crypto]
 severity: critical
@@ -14,6 +15,8 @@ featured: false
 draft: false
 ---
 
+> **币安被盗**事件复盘：焦点在 **热钱包签名路径** 与 **EIP-7702 委托授权**，不是「私钥被拷走」这一条叙事；并对照稳定币/L2 冻结边界。同属链上失窃主题，可对照站内 [Ledger 经销商渠道失窃复盘](/research/ledger-cryptobilis-reseller-drain/)。
+
 ## 执行摘要
 
 结论先说：**截至发稿，主流公开分析认为这次是币安热钱包的签名路径被滥用，而不是私钥本身被盗走。** 链上可见热钱包签出了 EIP-7702 委托授权，执行权随后落到攻击者合约手里，资产被批量抽走。**币安尚未确认具体手法。**
@@ -24,7 +27,7 @@ draft: false
 
 本文只整理公开报道与链上分析中的事实、推断与防守建议；不提供攻击步骤、授权构造细节或攻击者地址。
 
-![签名路径被滥用 vs 私钥泄露（概念对照，去敏）](/uploads/binance-signing-infra-drain/signing-misuse-vs-key-leak.svg)
+![币安热钱包被盗：签名基础设施滥用与私钥泄露的概念对照示意](/uploads/binance-signing-infra-drain/signing-misuse-vs-key-leak.svg)
 
 ## 事实：截至发稿的公开记录
 
@@ -86,7 +89,7 @@ EIP-7702 让 EOA 可以把执行逻辑委托给一个合约。公开机制结论
 
 ## 冻结机制的边界
 
-![被盗资产流向与冻结分层（去敏）](/uploads/binance-signing-infra-drain/funds-freeze-layers.svg)
+![币安被盗资金流向：DEX/借贷换币与稳定币、L2 冻结分层示意](/uploads/binance-signing-infra-drain/funds-freeze-layers.svg)
 
 - **稳定币发行方**（Tether、Circle、Ripple、WLFI）：合约内置黑名单 / 冻结权，响应快，是本次冻结金额的大头。
 - **L2 安全委员会**（Arbitrum）：公开声明已把相关约 3050 万美元资产转入中转冻结钱包，后续只能由安全委员会或 Arbitrum DAO 治理进一步处置。这证明 L2 治理层仍有中心化止损能力，也意味着止损依赖委员会响应，而不是协议自动没收。
@@ -117,7 +120,7 @@ EIP-7702 让 EOA 可以把执行逻辑委托给一个合约。公开机制结论
 
 ## 边界与未确认项
 
-- 币安尚未公布根因，「签名基础设施滥用」仍是第三方初步判断。
+- 币安尚未公布根因，「签名基础设施滥用」仍是第三方初步判断。供应链/交付链失窃与交易所签名路径失窃是不同断点，参见 [Ledger 经销商渠道失窃复盘](/research/ledger-cryptobilis-reseller-drain/)。
 - 损失与冻结数字来自不同时间点和口径，后续可能修正。
 - 朝鲜归因仅为研究者说法。
 - 攻击可能仍在进行，本文不更新实时数字。
