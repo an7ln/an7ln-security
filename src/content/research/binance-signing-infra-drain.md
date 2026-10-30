@@ -32,10 +32,10 @@ draft: false
 
 ### 时间线
 
-- **2026-10-29 美东下午 / UTC 当晚**：多名链上研究者发现币安关联钱包异常外流（[Cointelegraph](https://cointelegraph.com/news/binance-linked-wallet-faces-possible-exploit-blockchain-researcher-warns)）。Blockaid 称 Binance 14 热钱包约在 **20:24 UTC**（北京 10-30 04:24）被抽干。
-- **北京 10-30 凌晨起**：币安暂停充提；联席 CEO 何一表示由币安承担全部损失、用户资金安全；CZ 称看起来像黑客攻击（[CoinDesk](https://www.coindesk.com/business/2026/10/29/potential-multi-billion-binance-hack-hitting-crypto-markets)、[BBC](https://www.bbc.com/news/articles/cwg7xp8kx4v5o)）。
-- **Binance.US 不受影响**（[CNA](https://www.channelnewsasia.com/world/cryptocurrency-binance-hack-funds-losses-6505586)）。
-- **10-30 上午**：币安核实冻结金额从 25.4 亿美元更新到约 30 亿美元，称仍可能增加（[CNBC](https://www.cnbc.com/2026/10/30/billions-in-crypto-frozen-in-binance-hack-heres-what-happens-next-.html)）。
+- **2026-10-29 UTC 晚间**：链上研究者发现币安关联钱包异常外流（[Cointelegraph 滚动更新](https://cointelegraph.com/news/binance-linked-wallet-faces-possible-exploit-blockchain-researcher-warns)）。Blockaid 公开称 Binance 14 热钱包约在 **20:24 UTC**（北京 10-30 04:24）被抽干。
+- **随后数小时**：币安暂停充提；联席 CEO 何一称由币安承担全部损失、用户资金安全（[CoinDesk](https://www.coindesk.com/business/2026/10/29/potential-multi-billion-binance-hack-hitting-crypto-markets)、[CNA](https://www.channelnewsasia.com/business/binances-possible-hack-triggers-3-billion-freeze-in-crypto-assets-6505091)）；CZ 称「看起来像黑客攻击」（[BBC](https://www.bbc.com/news/articles/cwg7xp8kx4v5o)）。
+- **Binance.US 不受影响**（[BBC](https://www.bbc.com/news/articles/cwg7xp8kx4v5o)）。
+- **冻结口径更新**：币安核实冻结金额从约 25.4 亿美元更新到约 30 亿美元，称仍可能增加（[Cointelegraph](https://cointelegraph.com/news/binance-linked-wallet-faces-possible-exploit-blockchain-researcher-warns)、[BBC](https://www.bbc.com/news/articles/cwg7xp8kx4v5o)）。
 
 ### 损失规模（多方口径）
 
@@ -55,22 +55,22 @@ draft: false
 | Tether | USDT | 约 15.7 亿 |
 | Circle | USDC | 超过 8 亿 |
 | Arbitrum Security Council | 约 7460 万 ARB + 8425 ETH | 约 3050 万 |
-| Ripple | 相关 RLUSD | 未见统一数字 |
-| World Liberty Financial | 约 2700 万 USD1 + 约 200 万 WLFI | — |
+| Ripple | 相关 RLUSD | 公开称在冻结，未见统一总额（[Cointelegraph](https://cointelegraph.com/news/binance-linked-wallet-faces-possible-exploit-blockchain-researcher-warns)） |
+| World Liberty Financial | 约 2700 万 USD1 + 约 200 万 WLFI | 何一转述 / WLFI 声明（[CNA](https://www.channelnewsasia.com/business/binances-possible-hack-triggers-3-billion-freeze-in-crypto-assets-6505091)） |
 
 **冻结不等于已归还**，后续需要法律与发行方流程。
 
 ### 资金动向（公开）
 
-- 攻击者经 Uniswap 等 DEX 换币；
-- 在 Aave 以被盗 USDT 作抵押，借出约 1.976 万–2 万 WETH（约 4400–4460 万美元）；Aave 随后冻结相关市场作预防。
+- 攻击者经 Uniswap 等 DEX 换币（[CoinDesk](https://www.coindesk.com/business/2026/10/29/potential-multi-billion-binance-hack-hitting-crypto-markets)）；
+- 在 Aave 以被盗 USDT 作抵押，借出约 1.976 万–2 万 WETH（约 4400–4460 万美元）；Aave 随后冻结相关市场作预防（[Cointelegraph](https://cointelegraph.com/news/binance-linked-wallet-faces-possible-exploit-blockchain-researcher-warns)）。
 
 ### 机制方面的公开说法
 
 - Blockaid CEO Ido Ben-Natan 初步判断为**签名基础设施被滥用（key misuse），而非私钥被盗**（[Cointelegraph](https://cointelegraph.com/news/binance-hack-may-involve-private-key-misuse-not-theft-blockaid-ceo)）。
-- 链上可见针对 Binance 14 的 EIP-7702 委托授权批次，公开报道称单笔交易打包了 50 条授权。
-- Arkham CEO 称信息仍不足，攻击可能仍在进行。
-- ZachXBT、Blockaid 等称链上准备手法与 Bybit 等事件相似，**可能**与朝鲜关联团伙有关。这是研究者说法，不是官方归因。
+- 同一报道与 Blockaid 链上分析称：针对 Binance 14 的 EIP-7702 委托授权被打包进单笔交易（公开报道称约 50 条授权），其中一条匹配所需 nonce 后被接受，账户被委托给未验证的清扫合约。
+- Arkham CEO Miguel Morel 称当时信息仍不足，攻击可能仍在进行（同上 Cointelegraph 报道）。
+- Ben-Natan 称链上准备与 Bybit 等事件「非常相似」，并称其复杂程度**像**此前与朝鲜关联的行动模式。这是第三方初步判断，不是执法机构归因，币安也未确认。
 
 ## 推断：签名路径滥用和私钥泄露差在哪
 
@@ -80,7 +80,7 @@ draft: false
 
 EIP-7702 让 EOA 可以把执行逻辑委托给一个合约。公开机制结论是：热钱包一旦签出指向攻击者合约的委托授权，后续执行权就交给了对方，资产可以被批量转走。签名策略如果只看「是不是普通转账、金额多少」，而没有把「委托授权」当成高危操作单独审批，就会出现这种盲区。
 
-这和 Bybit 2025 的公开取证叙事属于同一类问题：Bybit 案中，签名人在被篡改的界面上批准了看似正常的交易，私钥本身没有外泄。两起事件都说明，**大额资产的风险正在从「密钥被偷」转向「签名人或签名系统被骗着签」**。
+这和 Bybit 2025 年公开复盘中的签名路径问题属于同一类：**断点在「系统签了不该签的请求」，而不等于私钥被复制带走。** Bybit 案里，公开材料描述为攻击者篡改了签名人看到的界面，诱导批准恶意交易；私钥本身未外泄。两起事件都说明，**大额资产的风险正在从「密钥被偷」转向「签名人或签名系统被骗着签」**。
 
 **换币和借贷的动机**很直接：USDT、USDC 有发行人可以冻结，攻击者需要尽快把它们换成 ETH 等没有发行人的资产。在 Aave 用 USDT 抵押借 WETH，等于在冻结落地前把可冻结资产「借」成难冻结资产。
 
@@ -89,7 +89,7 @@ EIP-7702 让 EOA 可以把执行逻辑委托给一个合约。公开机制结论
 ![被盗资产流向与冻结分层（去敏）](/uploads/binance-signing-infra-drain/funds-freeze-layers.svg)
 
 - **稳定币发行方**（Tether、Circle、Ripple、WLFI）：合约内置黑名单 / 冻结权，响应快，是本次冻结金额的大头。
-- **L2 安全委员会**（Arbitrum）：拥有紧急升级权限，可以冻结链上资产。这次被用来止损，但也再次证明这类 L2 存在中心化控制点。
+- **L2 安全委员会**（Arbitrum）：公开声明已把相关约 3050 万美元资产转入中转冻结钱包，后续只能由安全委员会或 Arbitrum DAO 治理进一步处置。这证明 L2 治理层仍有中心化止损能力，也意味着止损依赖委员会响应，而不是协议自动没收。
 - **借贷协议**（Aave）：可以冻结市场，阻止继续借出，但不能没收已借出的资产。
 - **BTC、ETH 主网资产**：没有发行人，不能冻结。只能靠追踪和下游交易所配合拦截。
 
@@ -97,13 +97,13 @@ EIP-7702 让 EOA 可以把执行逻辑委托给一个合约。公开机制结论
 
 ## 与 Bybit（2025-02）对比
 
-| 维度 | Bybit 2025-02 | 币安 2026-10 |
+| 维度 | Bybit 2025-02（公开复盘口径） | 币安 2026-10（截至发稿） |
 |---|---|---|
 | 规模 | 约 15 亿美元 | 约 53–59 亿美元 |
-| 资产结构 | 以 ETH 及衍生品为主 | BTC、ETH、稳定币混合 |
-| 冻结 | 占比较小 | 截至发稿约 30 亿（各方口径） |
-| 签名路径叙事 | 多签界面被篡改，签名人被骗签 | 公开初步判断为签名基础设施滥用 + EIP-7702 委托授权 |
-| 归因 | FBI 公开归因朝鲜 | 研究者称可能相似，尚无官方归因 |
+| 资产结构 | 公开报道以 ETH 等为主 | BTC、ETH、稳定币混合 |
+| 冻结 | 可冻结资产占比相对有限（多数为无发行人资产） | 币安核实约 30 亿；稳定币与 L2 冻结贡献大 |
+| 签名路径叙事 | 公开材料：签名界面被篡改，签名人被诱导批准 | 第三方初步判断：签名基础设施滥用 + EIP-7702 委托授权 |
+| 归因 | 公开报道称执法机构归因朝鲜关联团伙 | 第三方称模式相似；尚无本次官方/执法归因 |
 | 平台兜底 | 承担损失 | 承担损失 |
 
 ## 建议：普通用户怎么防
@@ -125,8 +125,8 @@ EIP-7702 让 EOA 可以把执行逻辑委托给一个合约。公开机制结论
 ## 参考链接
 
 - [CoinDesk：Potential multi-billion Binance hack hitting crypto markets](https://www.coindesk.com/business/2026/10/29/potential-multi-billion-binance-hack-hitting-crypto-markets)
-- [BBC](https://www.bbc.com/news/articles/cwg7xp8kx4v5o)
-- [CNA：Binance hack funds losses](https://www.channelnewsasia.com/world/cryptocurrency-binance-hack-funds-losses-6505586)
-- [Cointelegraph：Binance-linked wallet faces possible exploit](https://cointelegraph.com/news/binance-linked-wallet-faces-possible-exploit-blockchain-researcher-warns)
+- [BBC：Crypto worth billions frozen after suspected Binance hack](https://www.bbc.com/news/articles/cwg7xp8kx4v5o)
+- [CNA：Binance possible hack triggers $3 billion freeze](https://www.channelnewsasia.com/business/binances-possible-hack-triggers-3-billion-freeze-in-crypto-assets-6505091)
+- [Cointelegraph：Binance-linked wallet faces possible exploit（滚动更新）](https://cointelegraph.com/news/binance-linked-wallet-faces-possible-exploit-blockchain-researcher-warns)
 - [Cointelegraph：Binance hack may involve private key misuse, not theft — Blockaid CEO](https://cointelegraph.com/news/binance-hack-may-involve-private-key-misuse-not-theft-blockaid-ceo)
-- [CNBC：Billions in crypto frozen in Binance hack](https://www.cnbc.com/2026/10/30/billions-in-crypto-frozen-in-binance-hack-heres-what-happens-next-.html)
+- [CNBC：Billions in crypto frozen in Binance hack. Here's what happens next](https://www.cnbc.com/2026/10/30/billions-in-crypto-frozen-in-binance-hack-heres-what-happens-next-.html)
