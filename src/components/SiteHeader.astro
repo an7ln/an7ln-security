@@ -1,4 +1,5 @@
 ---
+import { site } from '../config/site';
 const nav = [
   ['研究', '/research/'],
   ['CVE', '/cve/'],
@@ -11,9 +12,9 @@ const pathname = Astro.url.pathname;
 ---
 
 <header class="site-header">
-  <a class="brand" href="/" aria-label="浅笑新柔 首页">
-    <img src="/an7ln-wordmark.png" alt="AN7LN" width="120" height="40" />
-    <b>浅笑新柔</b>
+  <a class="brand" href="/" aria-label={`${site.name} 首页`}>
+    <span class="brand-name" aria-hidden="true"><img src="/an7ln-wordmark.png" alt="" width="120" height="40" /><b>Security</b></span>
+    <span class="registered-name">{site.registeredName}</span>
   </a>
 
   <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav">
@@ -52,17 +53,18 @@ const pathname = Astro.url.pathname;
     position: relative;
     z-index: 20;
     display: grid;
-    grid-template-columns: minmax(17rem, 1fr) auto minmax(10rem, .45fr);
+    grid-template-columns: minmax(19rem, 1fr) auto minmax(10rem, .45fr);
     align-items: center;
     min-height: 6rem;
     padding: 0 var(--gutter);
     border-bottom: 1px solid var(--rule);
     background: rgba(9, 16, 24, .96);
   }
-  .brand { display: inline-flex; align-items: center; gap: 1.3rem; width: fit-content; }
+  .brand { display: inline-flex; align-items: center; gap: 1rem; width: fit-content; }
+  .brand-name { display: inline-flex; align-items: center; gap: .5rem; }
   .brand img { width: 8rem; height: auto; object-fit: contain; }
-  .brand b { color: var(--paper); font-size: 1rem; white-space: nowrap; }
-  .brand span { padding-left: 1.3rem; border-left: 1px solid var(--rule-strong); font: .72rem/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+  .brand b { color: var(--paper); font-size: 1.05rem; font-weight: 700; white-space: nowrap; }
+  .registered-name { padding-left: 1rem; border-left: 1px solid var(--rule-strong); color: var(--steel-bright); font: .72rem/1 var(--mono); white-space: nowrap; }
   nav { display: flex; align-items: center; gap: clamp(1.2rem, 2.6vw, 2.8rem); }
   nav a { position: relative; padding: 2.35rem 0; color: var(--paper-dim); font-size: .84rem; font-weight: 650; }
   nav a::after { content: ''; position: absolute; right: 0; bottom: 1.75rem; left: 0; height: 2px; transform: scaleX(0); background: var(--amber); transition: transform 180ms ease; }
@@ -87,12 +89,13 @@ const pathname = Astro.url.pathname;
 
   @media (max-width: 1120px) {
     .site-header { grid-template-columns: auto 1fr auto; }
-    .brand span { display: none; }
+    .registered-name { display: none; }
     nav { justify-content: center; gap: 1.25rem; }
   }
   @media (max-width: 760px) {
     .site-header { grid-template-columns: 1fr auto auto; min-height: 4.5rem; padding-inline: 1.1rem; }
     .brand img { width: 5.2rem; }
+    .brand b { font-size: .9rem; }
     .menu-button {
       display: inline-flex;
       align-items: center;
