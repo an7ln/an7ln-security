@@ -9,7 +9,7 @@ const research = defineCollection({
     description: z.string(),
     published: z.coerce.date(),
     updated: z.coerce.date().optional(),
-    category: z.enum(['web', 'api', 'mobile', 'code-audit', 'ai-security']),
+    category: z.enum(['web', 'api', 'mobile', 'code-audit', 'ai-security', 'security-news', 'security-tools']),
     tags: z.array(z.string()).default([]),
     severity: z.enum(['critical', 'high', 'medium', 'low', 'info', 'research']),
     cwe: z.string().optional(),
