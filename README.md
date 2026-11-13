@@ -17,6 +17,8 @@ npm run dev
 
 ## Writing
 
+Site branding and title formatting are defined in `src/config/site.ts`. Use `AN7LN Security` as the public brand and retain the registered website name `浅笑新柔` in page titles. Pass only the page or article name to `BaseLayout`; it adds the shared site identity to browser and social-sharing titles.
+
 - Research and public disclosure posts: `src/content/research/`
 - Field notes: `src/content/notes/`
 - Projects: `src/content/projects/`

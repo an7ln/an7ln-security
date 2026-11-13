@@ -1,11 +1,12 @@
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
+import { site, siteTitle } from '../config/site';
 
 export async function GET(context: { site?: URL }) {
   const research = (await getCollection('research', ({ data }) => !data.draft)).sort((a,b)=>b.data.published.valueOf()-a.data.published.valueOf());
   return rss({
-    title: '浅笑新柔',
-    description: '漏洞研究、技术笔记与负责任披露记录。',
+    title: siteTitle,
+    description: site.description,
     site: context.site ?? 'https://qqyln.cn',
     items: research.map((entry) => ({
       title: entry.data.title,
