@@ -2,7 +2,7 @@
 title: "ASC：面向移动安全研究与 AI Agent 的 Android 按需反编译工具"
 description: "从 Manifest、字符串引用到目标类源码，介绍 Droid ASC 的命令行用法，以及如何把按需反编译接入 Android 安全分析流程。"
 published: 2026-09-17
-category: mobile
+category: security-tools
 tags: [Android, ASC, 逆向分析, 工具分享, AI Agent]
 severity: research
 featured: false
