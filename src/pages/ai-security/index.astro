@@ -1,0 +1,65 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArchiveRail from '../../components/ArchiveRail.astro';
+import ArrowIcon from '../../components/ArrowIcon.astro';
+import { contentDate, formatDate } from '../../lib/content-dates';
+
+const [research, notes] = await Promise.all([
+  getCollection('research', ({ data }) => !data.draft && data.category === 'ai-security'),
+  getCollection('notes', ({ data }) => !data.draft && data.topic.includes('AI')),
+]);
+const articles = [...research, ...notes].sort((a, b) => contentDate(b.data).valueOf() - contentDate(a.data).valueOf());
+---
+<BaseLayout title="AI 安全" description="提示词注入、Agent 权限与 AI 系统的信任边界。">
+  <div class="page-grid">
+    <ArchiveRail index="AI" label="AI 安全" />
+    <div class="page-main" data-pagefind-body>
+      <header class="page-hero">
+        <span class="section-number">// AI 安全研究</span>
+        <h1 class="display display-lg" data-pagefind-meta="title">AI 安全</h1>
+        <p>提示词注入、Agent 权限与 AI 系统的信任边界。</p>
+      </header>
+      <section class="learning" aria-labelledby="learning-title">
+        <div><span class="mono-label">交互学习</span><h2 id="learning-title">提示词注入精讲</h2><p>通过章节图示、场景练习与模拟实验，理解不可信输入如何影响 Agent 行为。</p></div>
+        <a class="button" href="/learn/prompt-injection/">开始学习 <ArrowIcon /></a>
+      </section>
+      <section aria-labelledby="articles-title">
+        <div class="section-heading"><h2 id="articles-title">研究与笔记</h2><span>{articles.length} 篇公开记录</span></div>
+        <ol class="article-list">
+          {articles.map(entry => <li><a href={`/${entry.collection}/${entry.id}/`}>
+            <div class="article-meta"><time datetime={formatDate(contentDate(entry.data))}>{formatDate(contentDate(entry.data))}</time><span>{entry.collection === 'research' ? '研究' : '笔记复盘'}</span></div>
+            <div><h3>{entry.data.title}</h3><p>{entry.data.description}</p></div><ArrowIcon />
+          </a></li>)}
+        </ol>
+        {!articles.length && <p class="empty">暂无公开记录。</p>}
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+<style>
+  .learning { display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding: 2rem var(--gutter); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); background: var(--ink-soft); }
+  .learning .mono-label { color: var(--amber); }
+  .learning h2 { margin: .7rem 0; font-size: 1.5rem; line-height: 1.4; }
+  .learning p { max-width: 42rem; margin: 0; color: var(--steel-bright); font-size: .9rem; line-height: 1.8; }
+  .learning .button { flex-shrink: 0; }
+  .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.5rem var(--gutter); border-bottom: 1px solid var(--rule); }
+  .section-heading h2 { margin: 0; font-size: 1.15rem; }
+  .section-heading span { color: var(--steel); font: .72rem/1.5 var(--mono); }
+  .article-list { margin: 0; padding: 0; list-style: none; }
+  .article-list li { border-bottom: 1px solid var(--rule); }
+  .article-list a { display: grid; grid-template-columns: 8rem minmax(0, 1fr) auto; gap: 1.5rem; padding: 1.8rem var(--gutter); }
+  .article-list a:hover { background: rgba(242,239,231,.04); }
+  .article-meta { display: grid; align-content: start; gap: .7rem; color: var(--steel-bright); font: .72rem/1.5 var(--mono); }
+  .article-meta span { color: var(--amber); }
+  .article-list h3 { margin: 0 0 .7rem; font-size: 1.2rem; line-height: 1.6; }
+  .article-list p { margin: 0; color: var(--steel-bright); font-size: .9rem; line-height: 1.8; }
+  .article-list svg { color: var(--amber); }
+  .empty { padding: 2rem var(--gutter); color: var(--steel-bright); }
+  @media (max-width: 760px) {
+    .learning { flex-direction: column; align-items: flex-start; }
+    .section-heading { flex-wrap: wrap; }
+    .article-list a { grid-template-columns: minmax(0,1fr) auto; gap: .8rem; }
+    .article-meta { display: flex; flex-wrap: wrap; grid-column: 1 / -1; gap: 1rem; }
+  }
+</style>
