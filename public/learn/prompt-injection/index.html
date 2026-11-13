@@ -1,0 +1,1176 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>提示词注入精讲</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* 布局概念：左侧章节导航 + 右侧单章阅读区；顶部固定进度条。每章 = 通俗解释 → 可操作图示 → 即时练习。 */
+:root{
+  --bg:#F2F4F7; --surface:#FFFFFF; --surface2:#E9EDF2; --ink:#16202C; --muted:#586475; --line:#D3DAE3;
+  --accent:#1B6F7A; --accent-ink:#FFFFFF; --accent-soft:#DCEEF0;
+  --danger:#B3361F; --danger-soft:#F8E3DD; --ok:#23744A; --ok-soft:#DDF0E5; --warn:#8A5A00; --warn-soft:#F6EBCF;
+  --code-bg:#E4E9EF;
+  --font-body:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --hh:3.5rem;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E151D; --surface:#151F2A; --surface2:#1C2835; --ink:#E6ECF2; --muted:#9AA8B8; --line:#2B3A4A;
+    --accent:#5DB7C2; --accent-ink:#0B1A1F; --accent-soft:#16363C;
+    --danger:#F0836B; --danger-soft:#3A1E19; --ok:#6CCB93; --ok-soft:#173225; --warn:#E3B759; --warn-soft:#352B12;
+    --code-bg:#1C2835; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E151D; --surface:#151F2A; --surface2:#1C2835; --ink:#E6ECF2; --muted:#9AA8B8; --line:#2B3A4A;
+  --accent:#5DB7C2; --accent-ink:#0B1A1F; --accent-soft:#16363C;
+  --danger:#F0836B; --danger-soft:#3A1E19; --ok:#6CCB93; --ok-soft:#173225; --warn:#E3B759; --warn-soft:#352B12;
+  --code-bg:#1C2835; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.75;
+  padding-inline:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+h1,h2,h3,h4{line-height:1.35;text-wrap:balance;margin:0}
+p{margin:0 0 .9em}
+a{color:var(--accent)}
+code,.mono{font-family:var(--font-mono);font-size:.88em;background:var(--code-bg);padding:.08em .4em;border-radius:4px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:31;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{height:var(--hh);display:flex;align-items:center;gap:1rem;max-width:78rem;margin:0 auto}
+.brand{font-weight:700;font-size:1rem;white-space:nowrap}
+.brand small{display:block;font-weight:400;color:var(--muted);font-size:.72rem;line-height:1.2}
+.prog{flex:1;display:flex;align-items:center;gap:.6rem;min-width:0}
+.bar{flex:1;height:8px;background:var(--surface2);border-radius:99px;overflow:hidden;min-width:3rem}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
+#pct{font-family:var(--font-mono);font-size:.8rem;min-width:2.6rem;text-align:right;font-variant-numeric:tabular-nums}
+.ghost{background:transparent;border:1px solid var(--line);border-radius:8px;padding:.3rem .65rem;cursor:pointer;font-size:.8rem;white-space:nowrap}
+.ghost:hover{background:var(--surface2)}
+
+.shell{display:grid;grid-template-columns:14.5rem minmax(0,1fr);gap:2rem;max-width:78rem;margin:0 auto;padding-block:1.5rem 4rem}
+nav#nav{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--hh) + 1rem);align-self:start;display:flex;flex-direction:column;gap:2px;max-height:calc(100vh - var(--hh) - 2rem);overflow:auto}
+.ngroup{font-size:.7rem;letter-spacing:.12em;color:var(--muted);margin:.9rem 0 .25rem .6rem}
+.ngroup:first-child{margin-top:0}
+.navlink{display:flex;align-items:center;gap:.5rem;text-decoration:none;color:var(--ink);padding:.4rem .6rem;border-radius:8px;font-size:.9rem;line-height:1.4}
+.navlink:hover{background:var(--surface2)}
+.navlink[aria-current="page"]{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.navlink .tick{margin-left:auto;width:1.1rem;height:1.1rem;border-radius:50%;border:1.5px solid var(--line);flex:none;display:grid;place-items:center;font-size:.7rem;color:var(--accent-ink)}
+.navlink.done .tick{background:var(--ok);border-color:var(--ok)}
+.navlink.done .tick::after{content:"✓"}
+
+main{min-width:0}
+.view h2.title{font-size:1.75rem;font-weight:700;margin:.2rem 0 .6rem}
+.eyebrow{font-family:var(--font-mono);font-size:.75rem;letter-spacing:.1em;color:var(--accent)}
+.lead{font-size:1.05rem;color:var(--muted);max-width:44rem;margin-bottom:1.4rem}
+h3.sec{font-size:1.15rem;margin:2rem 0 .7rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.9rem}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem}
+.card h4{font-size:1rem;margin-bottom:.35rem}
+.card p:last-child{margin-bottom:0}
+.badge{display:inline-block;font-size:.72rem;padding:.05rem .5rem;border-radius:99px;background:var(--surface2);color:var(--muted);margin-left:.4rem;font-weight:400;vertical-align:middle}
+.badge.sup{background:var(--warn-soft);color:var(--warn)}
+.note{border-radius:10px;padding:.8rem 1rem;margin:1rem 0;border:1px solid var(--line);background:var(--surface)}
+.note.info{background:var(--accent-soft);border-color:transparent}
+.note.warn{background:var(--warn-soft);border-color:transparent}
+.note.bad{background:var(--danger-soft);border-color:transparent}
+.note b.h{display:block;margin-bottom:.2rem}
+ul.tight,ol.tight{margin:.3rem 0 .9em;padding-left:1.3rem}
+ul.tight li,ol.tight li{margin:.25rem 0}
+.tablewrap{overflow-x:auto;margin:.8rem 0;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:34rem;font-size:.88rem}
+th,td{text-align:left;padding:.55rem .75rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--surface2);font-weight:700;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+
+/* 按钮 */
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:9px;padding:.5rem 1rem;cursor:pointer;font-weight:500}
+.btn:hover{filter:brightness(1.08)}
+.btn.sec{background:var(--surface2);color:var(--ink)}
+.btn[disabled]{opacity:.45;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+
+/* 习题 */
+.quiz{display:flex;flex-direction:column;gap:.9rem}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem}
+.q-head{display:flex;gap:.6rem;align-items:center;margin-bottom:.35rem;font-size:.78rem;color:var(--muted)}
+.tag{background:var(--accent-soft);color:var(--accent);padding:.05rem .55rem;border-radius:99px;font-weight:500}
+.q-p{font-weight:500;margin-bottom:.7rem}
+.opts{display:grid;gap:.45rem}
+.opt{display:flex;gap:.6rem;align-items:flex-start;text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:.55rem .75rem;cursor:pointer;line-height:1.55}
+.opt:hover:not([disabled]){border-color:var(--accent)}
+.opt .k{font-family:var(--font-mono);font-size:.8rem;color:var(--muted);min-width:1rem}
+.opt.right{background:var(--ok-soft);border-color:var(--ok)}
+.opt.wrong{background:var(--danger-soft);border-color:var(--danger)}
+.opt[disabled]{cursor:default}
+.fb{margin-top:.7rem;padding:.7rem .9rem;border-radius:9px;font-size:.92rem}
+.fb.ok{background:var(--ok-soft)} .fb.bad{background:var(--danger-soft)}
+.qmeta{font-size:.85rem;color:var(--muted)}
+
+/* 攻击链 */
+.chain{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin:.6rem 0}
+.node{font-size:.82rem;border:1.5px solid var(--line);border-radius:9px;padding:.3rem .65rem;background:var(--surface);color:var(--muted);transition:all .25s}
+.node.lit{border-color:var(--accent);color:var(--ink)}
+.node.focus{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.node.hot.lit{border-color:var(--danger)}
+.node.hot.focus{background:var(--danger);border-color:var(--danger);color:#fff}
+.arrow{color:var(--muted);font-size:.8rem}
+.lights{display:flex;flex-wrap:wrap;gap:.5rem;margin:.4rem 0 .9rem}
+.light{display:flex;align-items:center;gap:.4rem;font-size:.82rem;padding:.2rem .65rem;border-radius:99px;background:var(--surface2);color:var(--muted)}
+.light::before{content:"";width:.6rem;height:.6rem;border-radius:50%;background:var(--line)}
+.light.on{background:var(--danger-soft);color:var(--danger)}
+.light.on::before{background:var(--danger)}
+.light.calm.on{background:var(--warn-soft);color:var(--warn)}
+.light.calm.on::before{background:var(--warn)}
+.split{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.split>div{padding:.9rem 1.1rem;min-width:0}
+.split>div+div{border-left:1px solid var(--line);background:var(--danger-soft)}
+.split .lab{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;color:var(--muted);margin-bottom:.3rem}
+.split>div+div .lab{color:var(--danger)}
+.stepno{font-family:var(--font-mono);font-size:.8rem;color:var(--muted)}
+.steptitle{font-weight:700;font-size:1.05rem;margin:.1rem 0 .6rem}
+.dots{display:flex;gap:.35rem;flex-wrap:wrap}
+.dot{width:1.7rem;height:1.7rem;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;font-size:.75rem;font-family:var(--font-mono);color:var(--muted)}
+.dot.cur{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.dot.past{border-color:var(--accent);color:var(--accent)}
+
+/* 通用小组件 */
+.seg{display:inline-flex;flex-wrap:wrap;gap:.35rem}
+.seg label{cursor:pointer}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:inline-block;padding:.35rem .8rem;border:1px solid var(--line);border-radius:9px;background:var(--surface);font-size:.88rem}
+.seg input:checked+span{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.lookup{display:grid;gap:.5rem;margin:.8rem 0}
+.lk{display:flex;gap:.7rem;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:.6rem .8rem;background:var(--surface)}
+.lk .n{font-family:var(--font-mono);color:var(--muted);font-size:.85rem;min-width:1.2rem}
+.lk .st{margin-left:auto;font-size:.78rem;padding:.05rem .55rem;border-radius:99px;background:var(--surface2);color:var(--muted);white-space:nowrap}
+.lk.hit{border-color:var(--danger);background:var(--danger-soft)}
+.lk.hit .st{background:var(--danger);color:#fff}
+.lk.safe{border-color:var(--ok);background:var(--ok-soft)}
+.lk.safe .st{background:var(--ok);color:#fff}
+.lk.skip{opacity:.6}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.filebar{position:relative;height:2.2rem;border-radius:8px;background:var(--surface2);overflow:hidden;border:1px solid var(--line)}
+.filebar .seen{position:absolute;left:0;top:0;bottom:0;background:var(--accent);opacity:.55}
+.filebar .key{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(45deg,var(--danger) 0 4px,transparent 4px 8px);border-left:1px solid var(--danger)}
+.scale{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:.72rem;color:var(--muted);margin-top:.2rem}
+.sliderrow{display:grid;grid-template-columns:8rem minmax(0,1fr) 5.5rem;gap:.7rem;align-items:center;margin:.5rem 0}
+.sliderrow output{font-family:var(--font-mono);font-size:.85rem;text-align:right;font-variant-numeric:tabular-nums}
+.verdict{border-radius:10px;padding:.7rem .9rem;margin-top:.7rem}
+.verdict.good{background:var(--ok-soft)} .verdict.badv{background:var(--danger-soft)} .verdict.mid{background:var(--warn-soft)}
+
+/* 场景分析 */
+.scen{margin-bottom:1.4rem}
+.taskbar{background:var(--accent-soft);border-radius:10px;padding:.6rem .9rem;margin-bottom:.7rem}
+.taskbar b{color:var(--accent)}
+.items{display:grid;gap:.45rem}
+.it{display:flex;gap:.7rem;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:.6rem .8rem;background:var(--surface);cursor:pointer}
+.it input{margin-top:.35rem;accent-color:var(--accent);flex:none}
+.it .why{display:block;margin-top:.35rem;font-size:.88rem;color:var(--muted)}
+.it.good{border-color:var(--ok);background:var(--ok-soft)}
+.it.miss{border-color:var(--danger);background:var(--danger-soft)}
+.it.falsealarm{border-color:var(--warn);background:var(--warn-soft)}
+.lvl{font-size:.72rem;padding:.02rem .5rem;border-radius:99px;margin-left:.4rem;background:var(--surface2);color:var(--muted)}
+
+/* 实验室 */
+.labgrid{display:grid;grid-template-columns:minmax(0,19rem) minmax(0,1fr);gap:1.2rem;align-items:start}
+.ctl{display:grid;gap:.9rem}
+.ctl fieldset{border:1px solid var(--line);border-radius:10px;padding:.6rem .8rem .8rem;margin:0;background:var(--surface);min-width:0}
+.ctl legend{font-size:.8rem;color:var(--muted);padding:0 .4rem}
+.chk{display:flex;gap:.55rem;align-items:flex-start;margin:.35rem 0;cursor:pointer;font-size:.9rem;line-height:1.5}
+.chk input{margin-top:.3rem;accent-color:var(--accent);flex:none}
+.chk small{display:block;color:var(--muted);font-size:.78rem;line-height:1.45}
+.stage{display:grid;grid-template-columns:2rem minmax(0,1fr) auto;gap:.6rem;align-items:start;padding:.55rem .1rem;border-bottom:1px solid var(--line)}
+.stage:last-child{border-bottom:0}
+.stage .no{font-family:var(--font-mono);color:var(--muted);font-size:.85rem}
+.stage .nm{font-weight:500}
+.stage .nt{font-size:.85rem;color:var(--muted)}
+.chip{font-size:.75rem;padding:.05rem .6rem;border-radius:99px;background:var(--surface2);color:var(--muted);white-space:nowrap}
+.chip.pass{background:var(--warn-soft);color:var(--warn)}
+.chip.stop{background:var(--ok-soft);color:var(--ok)}
+.chip.dang{background:var(--danger-soft);color:var(--danger)}
+.chip.skipc{opacity:.6}
+.stack{display:flex;height:2rem;border-radius:8px;overflow:hidden;border:1px solid var(--line);background:var(--surface2)}
+.stack i{display:block;height:100%}
+.c-ok{background:var(--ok)} .c-warn{background:#D3A02C} .c-bad{background:var(--danger)} .c-mute{background:#8A97A8}
+.legend{display:grid;gap:.25rem;margin-top:.6rem;font-size:.85rem}
+.legend div{display:flex;gap:.5rem;align-items:center}
+.legend i{width:.8rem;height:.8rem;border-radius:3px;flex:none}
+.legend b{margin-left:auto;font-family:var(--font-mono);font-weight:500;font-variant-numeric:tabular-nums}
+details{margin:.8rem 0}
+summary{cursor:pointer;color:var(--accent)}
+
+/* 术语表 */
+.gl{display:grid;gap:.6rem}
+.gl .card{padding:.7rem .95rem}
+.gl h4 span{font-weight:400;color:var(--muted);font-size:.82rem;margin-left:.4rem}
+input[type=search]{width:100%;max-width:26rem;padding:.55rem .8rem;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font:inherit}
+
+/* 总结 */
+.take{counter-reset:t;display:grid;gap:.6rem}
+.take li{list-style:none;counter-increment:t;display:flex;gap:.8rem;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:.6rem .85rem}
+.take li::before{content:counter(t);font-family:var(--font-mono);color:var(--accent);font-weight:500;min-width:1.4rem}
+.score{font-size:2.4rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.pager{display:flex;justify-content:space-between;gap:.8rem;margin-top:2.2rem;padding-top:1rem;border-top:1px solid var(--line)}
+.pager a{text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:.5rem .9rem;max-width:48%}
+.pager a:hover{border-color:var(--accent)}
+.pager small{display:block;color:var(--muted);font-size:.72rem}
+
+@media (max-width:900px){
+  .shell{grid-template-columns:minmax(0,1fr);gap:.8rem}
+  nav#nav{position:static;flex-direction:row;overflow-x:auto;max-height:none;padding-bottom:.4rem;gap:.35rem;scrollbar-width:thin}
+  .ngroup{display:none}
+  .navlink{white-space:nowrap;border:1px solid var(--line);background:var(--surface);padding:.35rem .7rem}
+  .navlink .tick{margin-left:.2rem}
+  .labgrid{grid-template-columns:minmax(0,1fr)}
+  .grid3{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:640px){
+  .grid2{grid-template-columns:minmax(0,1fr)}
+  .split{grid-template-columns:minmax(0,1fr)}
+  .split>div+div{border-left:0;border-top:1px solid var(--line)}
+  .brand small{display:none}
+  .view h2.title{font-size:1.45rem}
+  .sliderrow{grid-template-columns:minmax(0,1fr) 5rem}
+  .sliderrow>label{grid-column:1/-1}
+  .top-in{gap:.6rem}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="top">
+  <div class="top-in wrap">
+    <div class="brand">提示词注入精讲<small>基于 Earlence Fernandes 访谈文字稿</small></div>
+    <div class="prog" aria-label="学习进度">
+      <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="barwrap"><i id="barfill"></i></div>
+      <span id="pct">0%</span>
+    </div>
+    <button class="ghost" id="themebtn" type="button">主题：自动</button>
+  </div>
+</header>
+
+<div class="shell wrap">
+<nav id="nav" aria-label="章节导航"></nav>
+<main id="main">
+
+<!-- ========== 导览 ========== -->
+<section class="view" id="v-home" hidden>
+  <div class="eyebrow">开始</div>
+  <h2 class="title">一次“只是让智能体总结数据集”的攻击</h2>
+  <p class="lead">这份访谈讲了一类新型提示词注入：攻击者不写“忽略之前的指令”，而是把环境布置好，让智能体在做正常工作时顺带执行了攻击者的代码。本页按文字稿拆成 7 章，每章先讲道理，再用图示动手摆弄，最后用题目检验。</p>
+
+  <div class="grid3">
+    <div class="card"><h4>怎么学</h4><p>按左侧顺序读 7 章，每章末尾有题。答完所有题，该章打勾。进度条在页面顶部。</p></div>
+    <div class="card"><h4>练习与工具</h4><p>场景分析题训练你找风险点；模拟实验室让你切换防御措施，看结果怎么变；术语表随时查。</p></div>
+    <div class="card"><h4>最后一步</h4><p>“总结与自测”给出一页总结和 12 道综合题，按章节告诉你哪里需要回看。</p></div>
+  </div>
+
+  <h3 class="sec">学习路径</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>章节</th><th>你会学到</th><th>预计用时</th></tr></thead>
+    <tbody>
+      <tr><td>第 1 章</td><td>提示词注入的基本概念，直接注入与间接注入，本讲攻击的新意</td><td>8 分钟</td></tr>
+      <tr><td>第 2 章</td><td>攻击链：从“总结数据集”到代码执行和环境变量外泄（逐步播放）</td><td>12 分钟</td></tr>
+      <tr><td>第 3 章</td><td>智能体为什么会上当：讨好用户、偷懒省上下文、偏好 Python、被“示例”推着走</td><td>10 分钟</td></tr>
+      <tr><td>第 4 章</td><td>模块遮蔽的原理，以及为什么只提醒“用隔离模式”只能解决一部分</td><td>10 分钟</td></tr>
+      <tr><td>第 5 章</td><td>Auto Mode 分类器的局限（可拖动的演示）</td><td>10 分钟</td></tr>
+      <tr><td>第 6 章</td><td>厂商怎么修的，补丁覆盖了什么、漏掉了什么，防御思路</td><td>8 分钟</td></tr>
+      <tr><td>第 7 章</td><td>两条核心方法论，适用范围，其他语言与其他智能体</td><td>8 分钟</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note warn"><b class="h">使用前请知道</b>
+    <ul class="tight">
+      <li>内容以文字稿为准。文字稿由语音转写生成，有识别错误：例如数据编码一处写成 Base85，另一处写成 base64，模型和产品名（Opus 5.5、Astra、Sol、Fable 等）也按原文引用，本页不另作核实。</li>
+      <li>标有“补充”的内容来自通用安全常识，不是访谈原话，用来帮你把知识接到实际防御上。</li>
+      <li>页面里的所有演示都是概念模拟。这里没有也不会出现可直接使用的攻击代码或载荷。</li>
+    </ul>
+  </div>
+  <div class="row"><a class="btn" href="#ch1" style="text-decoration:none">从第 1 章开始</a><button class="btn sec" id="resetbtn" type="button">清除学习进度</button></div>
+</section>
+
+<!-- ========== 第 1 章 ========== -->
+<section class="view" id="v-ch1" hidden>
+  <div class="eyebrow">第 1 章</div>
+  <h2 class="title">全景与核心概念</h2>
+  <p class="lead">提示词注入的本质：攻击者把自己的意图写进智能体会读到的文字里，让它去做用户没打算让它做的事。</p>
+
+  <div class="grid2">
+    <div class="card"><h4>直接注入<span class="badge sup">补充</span></h4><p>攻击者就是发指令的人，或者能直接改动发给模型的输入。典型写法是“忽略你之前的所有设定，改做……”。</p></div>
+    <div class="card"><h4>间接注入<span class="badge sup">补充</span></h4><p>用户的请求完全正常，恶意内容藏在智能体为了完成任务而读取的外部材料里：网页、邮件、压缩包、README。用户并不知情。</p></div>
+  </div>
+
+  <h3 class="sec">本讲攻击属于哪一类</h3>
+  <p>讲者演示的起点是一个良性请求：让智能体总结一个数据集。数据集托管在攻击者的网站上，所以它属于间接注入。讲者在结尾还说，可以再往前一步：在一封邮件里放一段诱导，让智能体改去总结这个数据集，这样用户连“总结数据集”都没说过，就成了完全的间接注入。</p>
+  <p>它和经典写法的差别在于攻击者“不下命令”。</p>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th>维度</th><th>经典“忽略此前指令”</th><th>本讲的环境布置式</th></tr></thead>
+    <tbody>
+      <tr><td>是否明说要做坏事</td><td>明说，要求违背原指令</td><td>从不明说。文字稿里没有“忽略指令”“系统维护通知”之类的措辞</td></tr>
+      <tr><td>怎么触发</td><td>模型读到后改变行为</td><td>模型照常做任务，其中一条很可能的执行路径带来了副作用</td></tr>
+      <tr><td>模型自带防护能看到什么</td><td>可疑措辞，较容易被识别。讲者认为对前沿智能体已不太有效</td><td>没有可疑措辞可供识别</td></tr>
+      <tr><td>谁真正执行恶意动作</td><td>模型按指令去做</td><td>解释器按语言规则加载并执行了数据包里的文件</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note info"><b class="h">讲者的信条</b>想做好防御者，要先成为好的黑客。所以他花时间弄清攻击怎么运作，并且时不时亲手试。他研究计算机安全近 16 年，约 2016、2017 年开始研究 AI 安全，现在关注防御侧，也就是如何防住提示词注入。</div>
+  <div class="note bad"><b class="h">为什么这很严重</b>一个“分析数据集”的请求，不应该导致开发者机器上的代码执行。一旦能执行任意代码，攻击者想做什么基本都可以做。有听众评论说，这等于给了攻击者运行智能体那台机器的 shell。讲者表示同意。</div>
+
+  <h3 class="sec">练习</h3>
+  <div class="quiz" data-quiz="ch1"></div>
+</section>
+
+<!-- ========== 第 2 章 ========== -->
+<section class="view" id="v-ch2" hidden>
+  <div class="eyebrow">第 2 章</div>
+  <h2 class="title">攻击链：从“总结数据集”到代码执行</h2>
+  <p class="lead">点“下一步”或“自动播放”，左边是智能体自己能看到、能理解的情况，右边是实际发生的事。</p>
+
+  <div class="chain" id="chain"></div>
+  <div class="lights" id="lights">
+    <span class="light" id="l-exec">代码执行：未发生</span>
+    <span class="light" id="l-exfil">数据外泄：未发生</span>
+    <span class="light calm" id="l-aware">智能体察觉：—</span>
+  </div>
+
+  <div class="card" style="margin-bottom:.8rem">
+    <div class="stepno" id="st-no"></div>
+    <div class="steptitle" id="st-title"></div>
+    <div class="split">
+      <div><div class="lab">智能体看到的</div><div id="st-view"></div></div>
+      <div><div class="lab">实际发生的</div><div id="st-real"></div></div>
+    </div>
+  </div>
+  <div class="row" style="justify-content:space-between">
+    <div class="row">
+      <button class="btn sec" id="st-prev" type="button">上一步</button>
+      <button class="btn" id="st-next" type="button">下一步</button>
+      <button class="btn sec" id="st-play" type="button">自动播放</button>
+    </div>
+    <div class="dots" id="st-dots"></div>
+  </div>
+
+  <h3 class="sec">两段演示视频的对比</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th></th><th>视频一</th><th>视频二</th></tr></thead>
+    <tbody>
+      <tr><td>环境</td><td>较旧版本的 Claude Code，auto mode 开启</td><td>较新版本，Opus 5.5 模型，auto mode 仍开启，托管在另一个网站</td></tr>
+      <tr><td>载荷效果</td><td>弹出计算器，这是证明“能执行代码”的经典概念验证</td><td>读取环境变量，做 URL 编码，用 GET 请求发往攻击者控制的域名，攻击者在服务器日志里看到</td></tr>
+      <tr><td>智能体的反应</td><td colspan="2">继续把分析做完，通常没有察觉。讲者说重复多次，约九成成功</td></tr>
+      <tr><td>其他智能体</td><td colspan="2">讲者说这类攻击对多种智能体有效，但具体名单和影响仍在披露流程中，不能公开</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note warn"><b class="h">关键细节</b>数据集本身是 CSV 文件，用编码处理过；内容只是会议转录，起诱饵作用，让智能体觉得自己在做有用的工作。</div>
+
+  <h3 class="sec">练习</h3>
+  <div class="quiz" data-quiz="ch2"></div>
+</section>
+
+<!-- ========== 第 3 章 ========== -->
+<section class="view" id="v-ch3" hidden>
+  <div class="eyebrow">第 3 章</div>
+  <h2 class="title">智能体为什么会上当</h2>
+  <p class="lead">攻击能成功，靠的是对智能体行为习惯的了解。讲者把这称为“对模型偏置的直觉”。理解这些习惯，才知道防御该补在哪。</p>
+
+  <div class="grid2">
+    <div class="card"><h4>1. 想让人满意</h4><p>只看一个空荡荡的页面，总结不会像样。智能体总想让用户满意，所以会下载 zip 去拿到准确内容。页面刻意写得很简单，就是为了把智能体推向压缩包。</p></div>
+    <div class="card"><h4>2. 执着，又偷懒</h4><p>它很执着，但不想把大量内容塞进上下文。发现一个 Python 文件，会先读开头几十行，看到像样的代码就放心了。</p></div>
+    <div class="card"><h4>3. 偏爱 Python</h4><p>做数据分析时智能体天然倾向用 Python，因为多数系统自带，库也多。攻击者据此选了 Python 作为入口。</p></div>
+    <div class="card"><h4>4. 被“示例”轻推</h4><p>README 只给一个解码示例，并说明路径相对于解压目录。这在人看来再正常不过。如果写成“必须在该目录里运行”，就会触发模型的警觉。</p></div>
+    <div class="card"><h4>5. 环境必须真实</h4><p>讲者的数据来自 2004 年的 ICSI 会议转录公开数据集。他试过让 Codex 生成一个假的物流数据集，Claude 识破了假数据，开始对一切起疑。</p></div>
+    <div class="card"><h4>6. 噪声做掩护</h4><p>文件多、体积大，智能体就不会全读。前 700 行是用另一个编码智能体生成的、看似处理 CSV 的陪衬代码，真正起作用的几行在后面。讲者用战斗机放干扰弹来比喻。</p></div>
+  </div>
+
+  <div class="note info"><b class="h">讲者说的“上下文”张力</b>智能体必须管理上下文，不然会爆掉。比如 Codex 的工具返回有 token 上限（三四千 token），列一个有一万个文件的目录也只能看到一部分。这对攻击者有利：把东西藏在够复杂的文件结构里，护栏就看不到。</div>
+  <div class="note warn"><b class="h">补充：从防御角度看<span class="badge sup">补充</span></b>上面每一条习惯都对应一个防守点：不凭一个极简页面就下载未知文件；对外部包里的可执行文件不只看开头；不让“示例”决定运行位置；对体积异常大的包提高警惕。第 6 章会汇总。</div>
+
+  <h3 class="sec">练习</h3>
+  <div class="quiz" data-quiz="ch3"></div>
+</section>
+
+<!-- ========== 第 4 章 ========== -->
+<section class="view" id="v-ch4" hidden>
+  <div class="eyebrow">第 4 章</div>
+  <h2 class="title">模块遮蔽：为什么数据包里的文件会被执行</h2>
+  <p class="lead">核心是一个很老的编程语言特性。Python 有一批标准库，如果当前目录里恰好有一个文件和标准库模块同名，在这个目录里运行时，解释器会先加载这个同名文件。</p>
+
+  <h3 class="sec">动手：导入时到底加载了谁</h3>
+  <p>选择智能体运行分析脚本的方式，看看解释器的查找顺序和结果。这里只演示查找顺序，不涉及任何载荷。</p>
+  <div class="seg" id="shadow-seg" role="radiogroup" aria-label="运行方式">
+    <label><input type="radio" name="sh" value="dirty" checked><span>在解压后的数据包目录里运行</span></label>
+    <label><input type="radio" name="sh" value="clean"><span>在干净目录里运行</span></label>
+    <label><input type="radio" name="sh" value="iso"><span>用隔离模式运行（-I）</span></label>
+  </div>
+  <div class="lookup" id="lookup"></div>
+  <div class="verdict" id="shadow-verdict"></div>
+
+  <h3 class="sec">同名文件要做的两件事</h3>
+  <div class="grid2">
+    <div class="card"><h4>① 先做自己的事</h4><p>在被加载的这一刻，同名文件里的附加逻辑先执行。文字稿里，这些逻辑在文件末尾，大约第 714 到 724 行。</p></div>
+    <div class="card"><h4>② 再把真东西还回去</h4><p>文件末尾重新导入真正的标准库，这样智能体写的分析脚本里需要的功能照常工作，不会报错。没有报错，智能体就不会停下来检查。</p></div>
+  </div>
+  <p style="margin-top:.8rem">之所以会走到这一步：数据用编码处理过，智能体写的 Python 会导入编码模块，这个模块在内部又会用到那个被遮蔽的标准库模块。所以触发条件是“智能体在数据包目录里运行了自己写的分析脚本”，不需要智能体去运行数据包里的任何文件。</p>
+
+  <h3 class="sec">不只是 Python</h3>
+  <p>讲者说 MATLAB、R、JavaScript、Ruby、Perl 都有类似的模块查找行为，具体细节不同。他没有实测过 Node.js，但很有信心，只要智能体用这些语言分析数据，就可以构造出类似环境。如果任务需要大量正则，还可以偏置智能体去用 Perl。</p>
+
+  <div class="note info"><b class="h">隔离模式 -I 是什么</b>讲者转述的补丁要求：下载并解压后，不要进入该目录运行 Python，要加 <code>-I</code> 参数。它表示隔离模式，会关掉这种动态模块加载，强制从系统安装目录加载标准库。</div>
+
+  <h3 class="sec">练习</h3>
+  <div class="quiz" data-quiz="ch4"></div>
+</section>
+
+<!-- ========== 第 5 章 ========== -->
+<section class="view" id="v-ch5" hidden>
+  <div class="eyebrow">第 5 章</div>
+  <h2 class="title">Auto Mode 分类器的局限</h2>
+  <p class="lead">Auto Mode 本该保护你。它的做法是让另一个更便宜的 LLM 审查主智能体的动作，看有没有异常。但整件事是概率性的，而且很依赖主智能体先产生“证据”。</p>
+
+  <div class="grid2">
+    <div class="card"><h4>依赖主智能体给证据</h4><p>如果主智能体碰巧跑了一个进程列表，发现计算器在运行，这些内容进入分类器的上下文，分类器才可能起疑。主智能体没留意，分类器就没有线索。</p></div>
+    <div class="card"><h4>下载耗时会暴露</h4><p>假如附加逻辑里要下载一个很大的文件，耗时很长，智能体会奇怪“刚 import 一个模块为什么有 curl 在跑”。如果瞬间完成，几乎不会被注意。</p></div>
+  </div>
+
+  <h3 class="sec">动手 1：智能体读到第几行</h3>
+  <p>讲者观察到，智能体读 Python 文件时常用 <code>head -n 30</code> 这类方式，只看前 30 行左右。拖动滑块，看它能看到什么。</p>
+  <div class="card">
+    <div class="sliderrow"><label for="rng-lines">读取行数</label><input type="range" id="rng-lines" min="10" max="730" step="10" value="30"><output id="out-lines">30 行</output></div>
+    <div class="filebar" aria-hidden="true"><div class="seen" id="fb-seen"></div><div class="key" id="fb-key"></div></div>
+    <div class="scale"><span>第 1 行</span><span>约第 714–724 行：关键逻辑</span><span>第 730 行</span></div>
+    <div class="verdict mid" id="lines-verdict"></div>
+  </div>
+
+  <h3 class="sec">动手 2：智能体会全读吗</h3>
+  <p>文件少、体积小，智能体就全读；文件多、体积大，它会怕上下文被撑爆，只抽查。下面的阈值是教学用的示意值，不是实测。</p>
+  <div class="card">
+    <div class="sliderrow"><label for="rng-count">文件数量</label><input type="range" id="rng-count" min="1" max="30" step="1" value="28"><output id="out-count">28 个</output></div>
+    <div class="sliderrow"><label for="rng-size">单个文件大小</label><input type="range" id="rng-size" min="1" max="500" step="1" value="200"><output id="out-size">200 KB</output></div>
+    <div class="verdict mid" id="size-verdict"></div>
+  </div>
+  <p class="qmeta" style="margin-top:.5rem">讲者举的对照：只有三个约 1 KB 的文件，智能体会直接全读，攻击者就没机会；二十五三十个、每个几百 KB 的文件，智能体会小心地不全读，这正是攻击者想要的。</p>
+
+  <div class="note warn"><b class="h">关于“能不能把依赖都交给便宜模型审查”</b>有听众问，能否把代码执行链上所有依赖都送给便宜模型检查。讲者认为这大体就是 Auto Mode 想做的，但依然受上下文管理限制。关于“开一个分支线程临时污染上下文”的问题：如果是同一个模型同一个上下文窗口，只是消息换了标签，就解决不了污染；如果是完全独立的另一个实例，有数据传递机制，才可以扔掉实例只留摘要。讲者说自己不清楚各家的实现。</div>
+
+  <h3 class="sec">练习</h3>
+  <div class="quiz" data-quiz="ch5"></div>
+</section>
+
+<!-- ========== 第 6 章 ========== -->
+<section class="view" id="v-ch6" hidden>
+  <div class="eyebrow">第 6 章</div>
+  <h2 class="title">厂商的修复与防御思路</h2>
+  <p class="lead">问题已向 Auto Mode 团队报告并修复。下面是讲者逆向推测出的修复方式，以及他对这个补丁的评价。</p>
+
+  <div class="card">
+    <h4>修复做了什么（讲者的理解）</h4>
+    <p>Claude Code 每次启动会话，都会把几段系统提示词注入模型，其中有一段偏环境的部分。Anthropic 据推测是在里面告诉智能体：压缩包可能含恶意代码，下载并解压后不要进入该目录运行 Python，要用 <code>-I</code> 隔离模式，让 Python 只从安装目录加载模块。</p>
+    <p>厂商没有向他确认具体做法，所以这是他的最佳推断。</p>
+  </div>
+  <div class="note bad"><b class="h">讲者的评价：补丁非常具体</b>它只是让 Claude 知道这一种模式。还有很多别的做法，这个补丁覆盖不到。第 4 章说过，别的语言有类似机制；手法也不一定要靠模块加载。</div>
+
+  <h3 class="sec">防御措施总览</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>措施</th><th>来源</th><th>作用阶段</th><th>局限</th></tr></thead>
+    <tbody>
+      <tr><td>系统提示词里提醒危险模式</td><td>文字稿（厂商做法）</td><td>智能体选择如何运行</td><td>只覆盖已知模式，且靠模型“记得”，是概率性的</td></tr>
+      <tr><td>Python 隔离模式 -I</td><td>文字稿</td><td>解释器加载模块</td><td>只对 Python 的这一类遮蔽有效</td></tr>
+      <tr><td>分类器审查执行的依赖链</td><td>文字稿（提问与讨论）</td><td>执行前检视</td><td>受上下文预算限制，大而杂的数据包可以淹没它</td></tr>
+      <tr><td>隔离的一次性子智能体处理不可信内容</td><td>文字稿（设想，实现不明）</td><td>读取不可信内容</td><td>需要真正独立的实例和上下文，只回传摘要</td></tr>
+      <tr><td>沙箱，限制出站网络，只放行白名单<span class="badge sup">补充</span></td><td>通用做法</td><td>代码已执行之后</td><td>不能阻止执行，只限制后果</td></tr>
+      <tr><td>环境里不放无关密钥，最小权限<span class="badge sup">补充</span></td><td>通用做法</td><td>代码已执行之后</td><td>被盗的东西变少，但执行仍然发生</td></tr>
+      <tr><td>不在不可信目录里运行脚本，先拷到干净目录<span class="badge sup">补充</span></td><td>通用做法</td><td>智能体选择如何运行</td><td>要真正落实到智能体框架里，靠提醒不够</td></tr>
+      <tr><td>外部下载和执行前人工确认<span class="badge sup">补充</span></td><td>通用做法</td><td>获取阶段</td><td>用户容易疲劳，包很大时也看不过来</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note info"><b class="h">下一步</b>这些措施哪个管用，取决于攻击手法和数据包规模。第 6 章之后，请到“模拟实验室”自己切换这些措施，看结果怎么变。</div>
+
+  <h3 class="sec">练习</h3>
+  <div class="quiz" data-quiz="ch6"></div>
+</section>
+
+<!-- ========== 第 7 章 ========== -->
+<section class="view" id="v-ch7" hidden>
+  <div class="eyebrow">第 7 章</div>
+  <h2 class="title">方法论与适用边界</h2>
+  <p class="lead">讲者在被问到“怎么想到这种攻击”时，总结了两条原则，也坦率说明了攻击在哪些地方并不稳定。</p>
+
+  <div class="grid2">
+    <div class="card"><h4>原则一：环境要尽可能真实</h4><p>把它看成放进智能体面前的一个对抗环境。现在的智能体很擅长分辨真假，假数据会让它全面起疑。</p></div>
+    <div class="card"><h4>原则二：微妙地偏置，不直接下令</h4><p>不要明确叫它做坏事，那在前沿智能体上已经不太管用。要布置环境，让它很可能走的某条路径带出副作用。例如这里的路径是“分析数据集”，副作用来自 Python 的行为。</p></div>
+  </div>
+  <p class="qmeta" style="margin-top:.7rem">这个攻击形式最早由研究者 wunderwuzzi（文字稿识别为 WonderWuzi）提出，他的博客叫 Embrace the Red。讲者在此基础上找到让攻击更稳定、更通用的办法。</p>
+
+  <h3 class="sec">适用边界</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>情形</th><th>讲者的说法</th></tr></thead>
+    <tbody>
+      <tr><td>Sonnet 和 Opus 系列，多个版本</td><td>稳定，成功率在九成以上，且智能体没有察觉</td></tr>
+      <tr><td>Codex（文字稿中提到的 Astra、Sol 等版本）</td><td>不太稳定，因为它倾向在解压目录之外运行 Python。这只是模型的习惯，不是出于安全考虑。把 README 写得更有说服力，能让它更稳定</td></tr>
+      <tr><td>能访问一台机器的智能体（讲者称 open claw 风格，编码智能体是其子集）</td><td>主要目标。它们真的在你的电脑上运行代码</td></tr>
+      <tr><td>没有电脑访问权限的聊天模式</td><td>可能不适用，因为没有地方运行 Python。但有电脑权限的办公类智能体符合条件</td></tr>
+      <tr><td>Fable</td><td>讲者没有特别测过。他在 Astra 上试过，不稳定，但认为擅长写诱导文字的人可能做到</td></tr>
+      <tr><td>其他受影响的智能体</td><td>不能公开，仍在披露流程中</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 class="sec">讲者的几个延伸想法</h3>
+  <ul class="tight">
+    <li>改造成真正的间接注入：让用户去总结一封邮件，邮件里有诱导，把智能体引向攻击者的数据集。</li>
+    <li>把 README 写得更有说服力，提高在不同智能体上的稳定性。</li>
+    <li>换用其他语言和其他有模块机制的环境。</li>
+    <li>他想知道社区在其他地方试出来的结果，也想知道这种攻击在某个比赛场景（文中提到的 IPI 挑战）里算不算有效突破，他自己并不确定。</li>
+  </ul>
+
+  <h3 class="sec">练习</h3>
+  <div class="quiz" data-quiz="ch7"></div>
+</section>
+
+<!-- ========== 场景分析 ========== -->
+<section class="view" id="v-scenarios" hidden>
+  <div class="eyebrow">练习</div>
+  <h2 class="title">场景分析题</h2>
+  <p class="lead">每道题给出一个智能体任务和它会接触到的外部内容。勾选你认为有风险的条目，提交后逐条看解析。漏选和多选都会标出来。</p>
+  <div id="scen-box"></div>
+</section>
+
+<!-- ========== 模拟实验室 ========== -->
+<section class="view" id="v-lab" hidden>
+  <div class="eyebrow">工具</div>
+  <h2 class="title">模拟实验室</h2>
+  <p class="lead">一个纯前端的概率模拟：智能体接到“总结这个数据包”的任务。选一种情形，再打开或关闭防御措施，看 500 次模拟里结果怎么分布。全程只有文字和数字，没有任何真实载荷。</p>
+
+  <div class="labgrid">
+    <div class="ctl">
+      <fieldset><legend>攻击情形</legend>
+        <div class="seg" id="lab-atk" style="flex-direction:column">
+          <label><input type="radio" name="atk" value="A" checked><span>A　已知手法：Python 同名模块遮蔽</span></label>
+          <label><input type="radio" name="atk" value="B"><span>B　同类变体：换成其他语言的模块遮蔽</span></label>
+          <label><input type="radio" name="atk" value="C"><span>C　新手法：不依赖模块加载</span></label>
+        </div>
+      </fieldset>
+      <fieldset><legend>数据包规模</legend>
+        <div class="seg" id="lab-size">
+          <label><input type="radio" name="size" value="small"><span>很小（几个小文件）</span></label>
+          <label><input type="radio" name="size" value="large" checked><span>很大（二十多个大文件）</span></label>
+        </div>
+      </fieldset>
+      <fieldset><legend>分类器 / 审查方式</legend>
+        <div class="seg" id="lab-cls" style="flex-direction:column">
+          <label><input type="radio" name="cls" value="none" checked><span>不审查</span></label>
+          <label><input type="radio" name="cls" value="head"><span>只看每个文件开头</span></label>
+          <label><input type="radio" name="cls" value="full"><span>一次性完整审查（受上下文预算限制）</span></label>
+          <label><input type="radio" name="cls" value="seg"><span>逐文件分段审查（成本更高）</span></label>
+        </div>
+      </fieldset>
+      <fieldset><legend>其他防御措施</legend>
+        <label class="chk"><input type="checkbox" id="d-prompt"><span>系统提示词提醒<small>厂商式补丁，只提醒已知危险模式</small></span></label>
+        <label class="chk"><input type="checkbox" id="d-iso"><span>强制 Python 隔离模式（-I）</span></label>
+        <label class="chk"><input type="checkbox" id="d-clean"><span>只在干净目录里处理数据<small>补充：先拷贝数据，不进入不可信目录</small></span></label>
+        <label class="chk"><input type="checkbox" id="d-confirm"><span>下载前需要人工确认<small>补充</small></span></label>
+        <label class="chk"><input type="checkbox" id="d-egress"><span>出站网络白名单<small>补充：只允许访问已知地址</small></span></label>
+        <label class="chk"><input type="checkbox" id="d-secret"><span>环境里不放敏感密钥<small>补充：最小权限</small></span></label>
+        <label class="chk"><input type="checkbox" id="d-sub"><span>不可信内容交给无工具的隔离子智能体<small>设想：只回传摘要，实现不明，也会降低分析深度</small></span></label>
+      </fieldset>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="row" style="justify-content:space-between;margin-bottom:.4rem">
+          <h4 style="margin:0">一次运行的过程</h4>
+          <button class="btn sec" id="lab-again" type="button">再运行一次</button>
+        </div>
+        <div id="lab-trace"></div>
+      </div>
+      <div class="card" style="margin-top:.9rem">
+        <h4>500 次模拟的结果分布</h4>
+        <div class="stack" id="lab-stack" role="img" aria-label="结果分布条"></div>
+        <div class="legend" id="lab-legend"></div>
+        <div class="verdict mid" id="lab-hint"></div>
+      </div>
+      <details>
+        <summary>查看模型的示意参数</summary>
+        <div class="note warn"><b class="h">这些数字是教学示意，不是测量值</b>只有“不设防时约九成成功”对应讲者所说的“超过 90%”。其余数字用来表达定性关系：小数据包会被全读；提示词提醒是概率性的；完整审查受预算限制。</div>
+        <div class="tablewrap"><table>
+          <thead><tr><th>参数</th><th>取值</th></tr></thead>
+          <tbody>
+            <tr><td>智能体自己发现异常的概率</td><td>小数据包 70%，大数据包 3%</td></tr>
+            <tr><td>只看开头的分类器额外发现概率</td><td>小 60%，大 3%</td></tr>
+            <tr><td>一次性完整审查额外发现概率</td><td>小 95%，大 35%</td></tr>
+            <tr><td>逐文件分段审查额外发现概率</td><td>小 97%，大 80%</td></tr>
+            <tr><td>智能体按预期方式运行的概率</td><td>A 93%，B 70%，C 60%</td></tr>
+            <tr><td>系统提示词提醒的拦截概率</td><td>A 70%，B 20%，C 0%</td></tr>
+            <tr><td>人工确认拒绝下载的概率</td><td>40%</td></tr>
+            <tr><td>确定性拦截</td><td>-I 拦 A；干净目录拦 A 和 B；出站白名单拦外泄；隔离子智能体使代码不会被执行</td></tr>
+          </tbody>
+        </table></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 术语表 ========== -->
+<section class="view" id="v-glossary" hidden>
+  <div class="eyebrow">工具</div>
+  <h2 class="title">术语表</h2>
+  <p class="lead">按章节出现的概念整理。可以直接搜索。</p>
+  <input type="search" id="gl-search" placeholder="搜索术语，例如：上下文、遮蔽、白名单" aria-label="搜索术语">
+  <div class="gl" id="gl-list" style="margin-top:.9rem"></div>
+</section>
+
+<!-- ========== 总结与自测 ========== -->
+<section class="view" id="v-final" hidden>
+  <div class="eyebrow">收尾</div>
+  <h2 class="title">总结与自测</h2>
+  <p class="lead">先用十条话回顾全篇，再做 12 道综合题。做完会按章节给出回看建议。</p>
+
+  <h3 class="sec">十条要点</h3>
+  <ol class="take">
+    <li><span>提示词注入是把意图写进智能体读到的内容里。本讲攻击的起点是一个良性任务，攻击者从不明说要做坏事。</span></li>
+    <li><span>攻击链：极简页面诱导下载，压缩包里 README 轻推运行位置，陪衬文件和大体积让智能体只抽查，同名文件在导入时被先执行。</span></li>
+    <li><span>同名文件执行完附加逻辑后，还会导入真正的标准库，所以分析照常完成，智能体没有报错，也就不会察觉。</span></li>
+    <li><span>一旦能执行任意代码，就能做任何事：弹计算器只是概念验证，第二段演示把环境变量外泄给攻击者。</span></li>
+    <li><span>智能体想让人满意，所以会为了准确摘要去下载。它偏爱 Python，也偏爱省上下文，只读文件开头。</span></li>
+    <li><span>环境必须真实，假数据会被识破。措辞要无威胁，写“示例”，不写“必须”。</span></li>
+    <li><span>Auto Mode 用更便宜的 LLM 审查动作，但是概率性的，依赖主智能体产生证据，也受上下文预算限制。</span></li>
+    <li><span>厂商修复是在系统提示词里提醒：别进入解压目录运行 Python，用 -I。讲者认为这个补丁非常具体。</span></li>
+    <li><span>类似的模块查找行为在其他语言里也有，所以只补一种手法不够。纵深防御（沙箱、出站白名单、最小权限）是补充的合理方向。</span></li>
+    <li><span>两条方法论：环境真实，微妙偏置而不直接下令。防御者要先理解这些偏置。</span></li>
+  </ol>
+
+  <h3 class="sec">综合自测</h3>
+  <div id="final-box"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+(function(){
+'use strict';
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var store={get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+
+/* ---------- 视图与导航 ---------- */
+var VIEWS=[
+ {id:'home',t:'开始学习',g:'导览'},
+ {id:'ch1',t:'1 全景与核心概念',g:'章节'},
+ {id:'ch2',t:'2 攻击链'},
+ {id:'ch3',t:'3 智能体为何上当'},
+ {id:'ch4',t:'4 模块遮蔽原理'},
+ {id:'ch5',t:'5 Auto Mode 的局限'},
+ {id:'ch6',t:'6 修复与防御'},
+ {id:'ch7',t:'7 方法论与边界'},
+ {id:'scenarios',t:'场景分析题',g:'练习与工具'},
+ {id:'lab',t:'模拟实验室'},
+ {id:'glossary',t:'术语表'},
+ {id:'final',t:'总结与自测',g:'收尾'}
+];
+var UNITS=['ch1','ch2','ch3','ch4','ch5','ch6','ch7','scenarios','lab','final'];
+var done={};
+try{var saved=JSON.parse(store.get('pi-done')||'{}'); if(saved&&typeof saved==='object') done=saved;}catch(e){}
+function saveDone(){store.set('pi-done',JSON.stringify(done))}
+function markDone(id){ if(UNITS.indexOf(id)<0||done[id])return; done[id]=true; saveDone(); updateProgress(); renderNav(); }
+function updateProgress(){
+  var n=UNITS.filter(function(u){return done[u]}).length, p=Math.round(n/UNITS.length*100);
+  $('#barfill').style.width=p+'%'; $('#pct').textContent=p+'%'; $('#barwrap').setAttribute('aria-valuenow',String(p));
+}
+var current='home';
+function renderNav(){
+  var nav=$('#nav'); nav.innerHTML='';
+  VIEWS.forEach(function(v){
+    if(v.g){var g=document.createElement('div');g.className='ngroup';g.textContent=v.g;nav.appendChild(g);}
+    var a=document.createElement('a');a.className='navlink'+(done[v.id]?' done':'');a.href='#'+v.id;
+    if(v.id===current)a.setAttribute('aria-current','page');
+    var s=document.createElement('span');s.textContent=v.t;a.appendChild(s);
+    if(UNITS.indexOf(v.id)>=0){var t=document.createElement('i');t.className='tick';a.appendChild(t);}
+    nav.appendChild(a);
+  });
+}
+function show(id){
+  if(!VIEWS.some(function(v){return v.id===id}))id='home';
+  current=id;
+  $$('.view').forEach(function(s){s.hidden=(s.id!=='v-'+id)});
+  renderNav();
+  window.scrollTo(0,0);
+  var cur=$('#nav [aria-current="page"]'); if(cur&&window.innerWidth<=900){try{cur.scrollIntoView({inline:'center',block:'nearest'})}catch(e){}}
+}
+function route(){show(location.hash.replace('#',''))}
+window.addEventListener('hashchange',route);
+
+/* 页脚翻页 */
+VIEWS.forEach(function(v,i){
+  var sec=$('#v-'+v.id); if(!sec)return;
+  var p=document.createElement('div');p.className='pager';
+  function mk(x,lab){var a=document.createElement('a');a.href='#'+x.id;a.innerHTML='<small>'+lab+'</small>'+x.t;return a;}
+  if(i>0)p.appendChild(mk(VIEWS[i-1],'上一页')); else p.appendChild(document.createElement('span'));
+  if(i<VIEWS.length-1)p.appendChild(mk(VIEWS[i+1],'下一页'));
+  sec.appendChild(p);
+});
+
+/* 主题 */
+var themes=['auto','light','dark'], tnames={auto:'主题：自动',light:'主题：浅色',dark:'主题：深色'};
+var tcur=store.get('pi-theme')||'auto'; if(themes.indexOf(tcur)<0)tcur='auto';
+function applyTheme(){var r=document.documentElement; if(tcur==='auto')r.removeAttribute('data-theme'); else r.setAttribute('data-theme',tcur); $('#themebtn').textContent=tnames[tcur];}
+$('#themebtn').addEventListener('click',function(){tcur=themes[(themes.indexOf(tcur)+1)%3];store.set('pi-theme',tcur);applyTheme();});
+applyTheme();
+
+/* ---------- 题库 ---------- */
+var TF=['正确','错误'];
+var QS=[
+ {id:'c1a',ch:'ch1',type:'mc',p:'演示中，用户交给智能体的任务是什么？',o:['删除某个文件','总结一个数据集','部署一个网站','修复一个漏洞'],a:1,e:'任务完全良性，这正是关键：用户没有做错任何事，攻击发生在任务执行的副作用里。'},
+ {id:'c1b',ch:'ch1',type:'tf',p:'这个攻击要成功，必须在数据包里写明“忽略之前的指令”。',o:TF,a:1,e:'讲者强调整个数据包里没有这类措辞。他不下令，而是布置环境，让一条很可能的执行路径带出副作用。'},
+ {id:'c1c',ch:'ch1',type:'mc',p:'下面哪一项属于间接注入？',o:['用户在聊天框里输入“忽略你的设定”','恶意内容藏在智能体要读取的网页、邮件或数据包里','修改模型的权重','在训练数据里加入噪声'],a:1,e:'间接注入的特点是用户请求正常，恶意内容来自智能体为完成任务而读取的外部材料。'},
+ {id:'c2a',ch:'ch2',type:'mc',p:'攻击者为什么把页面做得很简单，几乎只有数据集和一个 zip 链接？',o:['为了让页面加载更快','让智能体为了给出准确摘要而主动下载 zip','为了躲避搜索引擎','因为页面不能放更多内容'],a:1,e:'智能体想让用户满意，只看空页面总结不好，会去下载压缩包。页面写得越简单，越把它推向压缩包。'},
+ {id:'c2b',ch:'ch2',type:'tf',p:'分析仍能正常完成，是因为同名文件在执行完附加逻辑后重新导入了真正的标准库。',o:TF,a:0,e:'讲者说如果破坏了标准库功能，分析就会报错，智能体会警觉。重新导入保证一切照常。'},
+ {id:'c2c',ch:'ch2',type:'mc',p:'第二段视频和第一段的主要区别是什么？',o:['换成了另一个数据集','载荷从弹出计算器变成读取环境变量并发往攻击者控制的服务器','关闭了 auto mode','改用了 Node.js'],a:1,e:'同样的链条，换了不同的最终效果。讲者为了看到被外泄的数据，把数据包放在能查看服务器日志的站点上。'},
+ {id:'c3a',ch:'ch3',type:'mc',p:'讲者说智能体“既执着又懒惰”，其中“懒惰”指的是什么？',o:['不愿意执行命令','不想用大量信息污染上下文，所以只读文件开头','不会写 Python','回答太简短'],a:1,e:'为了不撑爆上下文，智能体对大文件常常只读前几十行。这让后面的内容有机会不被看到。'},
+ {id:'c3b',ch:'ch3',type:'tf',p:'讲者让 Codex 生成了一个假的物流数据集来做攻击，智能体没有察觉。',o:TF,a:1,e:'恰恰相反，Claude 识破了这是假数据，开始对一切起疑。所以讲者改用真实的公开会议转录数据集。'},
+ {id:'c3c',ch:'ch3',type:'mc',p:'README 里为什么写“解码示例，路径相对于解压目录”，而不写“必须在该目录里运行”？',o:['前者更短','后者会触发模型的警觉，前者看上去无威胁却能轻推运行位置','后者违反格式规范','前者能让解压更快'],a:1,e:'直接强调“绝对必须”会拉响模型内置的警报；以示例的口吻写，防御机制不会被触发，却能偏置它的行为。'},
+ {id:'c4a',ch:'ch4',type:'mc',p:'模块遮蔽的核心行为是什么？',o:['标准库被自动删除','当前目录里有与标准库同名的文件时，在该目录里运行会优先加载它','解释器拒绝加载任何模块','文件被自动加密'],a:1,e:'这是个老特性：同名文件会盖过标准库模块。所以脚本在哪个目录里跑，非常重要。'},
+ {id:'c4b',ch:'ch4',type:'tf',p:'Python 的隔离模式（-I）会关掉这种动态模块加载，只从安装目录加载标准库。',o:TF,a:0,e:'文字稿里讲者转述的补丁就是让智能体用 -I。它对这一类 Python 遮蔽有效，但对别的手法无效。'},
+ {id:'c4c',ch:'ch4',type:'mc',p:'讲者对其他语言的判断是？',o:['完全不可能','MATLAB、R、JavaScript、Ruby、Perl 都有类似行为；他没实测 Node.js，但有信心','只有 Java 受影响','只有 Python 有这个问题'],a:1,e:'具体细节不同，但他相信只要智能体用这些语言分析数据，就能构造出类似环境。'},
+ {id:'c5a',ch:'ch5',type:'mc',p:'Auto Mode 大致是怎么工作的？',o:['人工审查每条命令','用另一个更便宜的 LLM 审查主智能体的动作','只拦截联网命令','完全关闭 Python'],a:1,e:'它是概率性的系统，依赖主智能体产生足够的证据，分类器才可能判断出异常。'},
+ {id:'c5b',ch:'ch5',type:'tf',p:'主智能体如果从没注意到异常（比如没看过进程列表），分类器也更难发现问题。',o:TF,a:0,e:'分类器看到的是主智能体的动作和上下文。主智能体没留意，就少了线索。'},
+ {id:'c5c',ch:'ch5',type:'mc',p:'讲者为什么把关键逻辑放在 700 多行之后？',o:['为了节省文件空间','智能体读文件常只看前 30 行左右，即使多读一些也到不了末尾','为了让文件看起来更大','因为 Python 要求这样'],a:1,e:'这是讲者的经验观察：用得多了，你会发现智能体经常用类似 head -n 30 的方式读文件。'},
+ {id:'c6a',ch:'ch6',type:'mc',p:'据讲者逆向推测，厂商的修复是什么？',o:['禁止智能体使用 Python','在系统提示词的环境部分提醒：不要进入解压目录运行 Python，要用 -I','删除 zip 解压功能','关闭 auto mode'],a:1,e:'讲者说厂商没有告诉他具体做法，这是他的最佳推断。'},
+ {id:'c6b',ch:'ch6',type:'tf',p:'讲者认为这个补丁足以彻底解决这类问题。',o:TF,a:1,e:'他明确说补丁非常具体，只针对这一种模式；还有很多其他做法没被覆盖。'},
+ {id:'c6c',ch:'ch6',type:'mc',p:'关于“用一个一次性子智能体处理不可信内容，只返回摘要”的设想，讲者强调的前提是什么？',o:['必须用更大的模型','必须是完全独立的实例和上下文，并有数据传递机制','只要给消息换个标签就行','必须关闭网络'],a:1,e:'如果只是同一上下文窗口里把消息换个标签，上下文污染并没有解决。讲者说自己不清楚各家如何实现。'},
+ {id:'c7a',ch:'ch7',type:'mc',p:'讲者总结的两条核心原则是什么？',o:['速度要快，载荷要大','环境要尽可能真实；不直接下恶意指令，而是微妙地偏置模型','先攻击模型再攻击用户','使用最新的漏洞'],a:1,e:'两条原则：环境真实，以及布置环境让某条可能的执行路径带出副作用。'},
+ {id:'c7b',ch:'ch7',type:'tf',p:'这种攻击在任何 ChatGPT 对话模式里同样有效。',o:TF,a:1,e:'它要求智能体能访问一台机器并运行代码。没有电脑访问权限的聊天模式可能不适用，但有电脑权限的办公类智能体符合条件。'},
+ {id:'c7c',ch:'ch7',type:'mc',p:'为什么这个攻击对 Codex 不太稳定？',o:['Codex 完全免疫','Codex 倾向于在解压目录之外运行 Python，这只是它的习惯，不是出于安全考虑','Codex 禁止下载文件','Codex 不支持 Python'],a:1,e:'讲者说如果能写出更有说服力的 README 来偏置它，仍有办法提高稳定性。'},
+ /* 综合自测 */
+ {id:'f1',ch:'ch2',final:1,type:'mc',p:'整条攻击链里，最先需要智能体“主动配合”的一步是什么？',o:['读取 README','主动下载并解压 zip，为了给出准确摘要','写一个 Python 脚本','汇报结果'],a:1,e:'没有这一步，后面都不会发生。智能体想让用户满意，这就是攻击者利用的起点。'},
+ {id:'f2',ch:'ch1',final:1,type:'tf',p:'只要用户的指令是善意的，智能体就不会被提示词注入利用。',o:TF,a:1,e:'间接注入的要点就是用户善意、任务正常，恶意内容来自外部材料。'},
+ {id:'f3',ch:'ch3',final:1,type:'mc',p:'下面哪种写法最可能触发模型的警报？',o:['给出一个解码示例','说明路径相对于解压目录','强调“绝对必须在该目录里运行”','附上一份数据说明'],a:2,e:'讲者说直接强调必须这样做，会拉响模型的警报，所以他改用无威胁的示例。'},
+ {id:'f4',ch:'ch4',final:1,type:'mc',p:'为了让遮蔽之后分析仍然正常，同名文件需要做什么？',o:['删除自身','在末尾重新导入真正的标准库','修改智能体的脚本','关闭解释器'],a:1,e:'这样标准库的功能照常，智能体看不到报错。'},
+ {id:'f5',ch:'ch5',final:1,type:'tf',p:'把数据包做得很小（三个约 1 KB 的文件）对攻击者更有利。',o:TF,a:1,e:'小数据包智能体会直接全读。体量大、文件多，智能体才会为了保护上下文而抽查。'},
+ {id:'f6',ch:'ch5',final:1,type:'mc',p:'如果附加逻辑里有一个耗时很长的下载，会怎样？',o:['不会有任何影响','智能体更可能注意到“刚 import 为什么有 curl 在跑”','Python 会自动终止','分类器会自动放行'],a:1,e:'耗时越长越容易被留意到，所以攻击者的“创造力”体现在让事情快速完成。'},
+ {id:'f7',ch:'ch6',final:1,type:'mc',p:'为什么讲者说厂商补丁“非常具体”？',o:['因为它修改了 Python 本身','因为它主要针对“下载 zip、进入目录、运行 Python”这一种模式','因为它覆盖了所有语言','因为它只在 Windows 上生效'],a:1,e:'其他手法和其他语言的类似机制，补丁并没有覆盖。'},
+ {id:'f8',ch:'ch7',final:1,type:'tf',p:'讲者表示，他不能公开其他受影响智能体的细节，因为仍在披露流程中。',o:TF,a:0,e:'他只确认该攻击风格在多种智能体上有效，但具体名单和影响尚未公开。'},
+ {id:'f9',ch:'ch6',final:1,type:'mc',p:'补充知识：即使代码已经被执行，下面哪项措施最能降低“环境变量被外泄”的损失？',o:['把 README 写得更长','出站网络白名单，以及环境里不放敏感密钥','让智能体少说话','换一个更大的模型'],a:1,e:'这两项属于“代码已执行之后”的纵深防御，只限制后果，不能阻止执行。'},
+ {id:'f10',ch:'ch1',final:1,type:'mc',p:'讲者的信条是什么？',o:['安全就是少用 AI','要成为好的防御者，需要先成为好的黑客，也就是理解攻击','攻击者永远赢','防御不重要'],a:1,e:'所以他花时间弄清楚攻击怎么运作，并且亲手尝试。'},
+ {id:'f11',ch:'ch3',final:1,type:'tf',p:'智能体做数据分析时偏爱 Python，这是攻击者选择 Python 模块遮蔽的原因之一。',o:TF,a:0,e:'讲者说这是智能体的天然偏置，所以他围绕 Python 设计。如果换成需要大量正则的任务，也可以偏置它去用 Perl。'},
+ {id:'f12',ch:'ch5',final:1,type:'mc',p:'有人问，能否把代码执行链上所有依赖都交给便宜模型审查。讲者的看法是？',o:['完全不可行','这大体就是 Auto Mode 想做的，但仍受上下文管理限制，比如工具返回有 token 上限','只要加钱就能解决','应该由人手动检查'],a:1,e:'讲者说上下文管理的张力对主智能体和分类器都存在，攻击者可以把东西藏进复杂的文件结构里。'}
+];
+var results={};
+
+function buildCard(q,i,total,onAns){
+  var card=document.createElement('div');card.className='q';
+  var head=document.createElement('div');head.className='q-head';
+  head.innerHTML='<span class="tag">'+(q.type==='tf'?'判断题':'选择题')+'</span><span>第 '+(i+1)+' 题'+(total?' / 共 '+total+' 题':'')+'</span>';
+  var p=document.createElement('p');p.className='q-p';p.innerHTML=q.p;
+  var opts=document.createElement('div');opts.className='opts';
+  var fb=document.createElement('div');fb.className='fb';fb.hidden=true;
+  q.o.forEach(function(t,j){
+    var b=document.createElement('button');b.type='button';b.className='opt';
+    var k=document.createElement('span');k.className='k';k.textContent=q.type==='tf'?'':String.fromCharCode(65+j);
+    var tx=document.createElement('span');tx.textContent=t;
+    b.appendChild(k);b.appendChild(tx);
+    b.addEventListener('click',function(){
+      if(card.getAttribute('data-done'))return; card.setAttribute('data-done','1');
+      var ok=(j===q.a); results[q.id]=ok;
+      $$('.opt',opts).forEach(function(x,idx){x.disabled=true; if(idx===q.a)x.classList.add('right'); else if(idx===j)x.classList.add('wrong');});
+      fb.hidden=false; fb.className='fb '+(ok?'ok':'bad'); fb.innerHTML='<b>'+(ok?'回答正确。':'不对。')+'</b> '+q.e;
+      if(onAns)onAns(q,ok);
+    });
+    opts.appendChild(b);
+  });
+  card.appendChild(head);card.appendChild(p);card.appendChild(opts);card.appendChild(fb);
+  return card;
+}
+/* 章节习题 */
+$$('.quiz[data-quiz]').forEach(function(box){
+  var ch=box.getAttribute('data-quiz');
+  var qs=QS.filter(function(q){return q.ch===ch&&!q.final});
+  var answered=0;
+  qs.forEach(function(q,i){
+    box.appendChild(buildCard(q,i,qs.length,function(){
+      answered++;
+      if(answered===qs.length){
+        var right=qs.filter(function(x){return results[x.id]}).length;
+        var m=document.createElement('p');m.className='qmeta';m.textContent='本章习题完成：'+right+' / '+qs.length+' 答对。本章已记入进度。';
+        box.appendChild(m); markDone(ch);
+      }
+    }));
+  });
+});
+
+/* ---------- 第 2 章：攻击链步进 ---------- */
+var NODES=[{n:'用户'},{n:'智能体'},{n:'网页'},{n:'数据包'},{n:'解压目录'},{n:'Python 解释器',hot:1},{n:'同名文件',hot:1},{n:'副作用',hot:1}];
+var STEPS=[
+ {t:'用户提出一个良性请求',f:1,view:'“帮我总结这个数据集。”一个再普通不过的任务，auto mode 也是开着的。',real:'数据集托管在攻击者的网站上。后面的一切，用户和智能体都没有主动做错什么。',ex:0,ef:0,aw:'—'},
+ {t:'智能体访问页面',f:2,view:'页面很简单：一句数据集说明，加一个 zip 下载链接。光看页面，摘要写不出什么。',real:'页面是刻意写简单的。智能体想让用户满意，会决定去下载压缩包，攻击者要的正是这个。',ex:0,ef:0,aw:'—'},
+ {t:'下载并解压数据包',f:3,view:'它把 zip 拉到暂存区，解压，然后列出文件，准备分析。',real:'包里有 README、真实的公开会议转录（来自 2004 年的 ICSI 数据集）、一大堆陪衬文件，其中一个文件与某个标准库模块同名。',ex:0,ef:0,aw:'—'},
+ {t:'读 README',f:3,view:'一个看上去很有用的“解码示例”，路径都相对于解压目录。人类开发者也会这样写。',real:'这是在轻推智能体：进到解压目录里去运行分析脚本。文字里没有任何命令口吻，所以模型的防御机制不会被触发。',ex:0,ef:0,aw:'—'},
+ {t:'抽查可疑文件',f:3,view:'看到 Python 文件，它很谨慎，会读开头 30 到 50 行。看上去是解析 CSV 的普通代码，也许是数据集作者留下的。',real:'前约 700 行是陪衬代码，真正起作用的几行在大约第 714 到 724 行。体量太大，智能体不会全读，以免污染上下文。',ex:0,ef:0,aw:'—'},
+ {t:'进入目录，运行自己写的分析脚本',f:5,view:'它写了一个分析脚本，进入解压目录运行。脚本需要导入编码相关模块，一切都很常规。',real:'这个目录里有一个与标准库模块同名的文件。解释器在这里运行时，会优先加载它，于是文件里的附加逻辑先被执行。',ex:1,ef:0,aw:'—'},
+ {t:'副作用发生',f:7,view:'分析继续顺利进行。没有报错，输出也正常，因为同名文件在末尾重新导入了真正的库。',real:'视频一里，计算器被弹出，这是“代码执行”的经典概念验证。视频二里，同样的位置换成了读取环境变量并发往攻击者服务器，攻击者在日志里看到。',ex:1,ef:1,aw:'—'},
+ {t:'智能体汇报摘要',f:1,view:'它交出了一份像样的数据集摘要。多数情况下没有意识到发生过任何事。',real:'讲者说重复多次，约九成能成功，且智能体毫无察觉。偶尔它会注意到有进程被拉起，多数时候不会。auto mode 的分类器也没拦住。',ex:1,ef:1,aw:'未察觉'}
+];
+var si=0, timer=null;
+var chainEl=$('#chain');
+function renderChain(){
+  chainEl.innerHTML='';
+  var maxLit=0; for(var i=0;i<=si;i++){maxLit=Math.max(maxLit,STEPS[i].f===1&&i>0?maxLit:STEPS[i].f);}
+  NODES.forEach(function(nd,i){
+    if(i>0){var ar=document.createElement('span');ar.className='arrow';ar.textContent='→';chainEl.appendChild(ar);}
+    var d=document.createElement('span');d.className='node'+(nd.hot?' hot':'')+(i<=maxLit?' lit':'')+(i===STEPS[si].f?' focus':'');d.textContent=nd.n;chainEl.appendChild(d);
+  });
+}
+function renderStep(){
+  var s=STEPS[si];
+  $('#st-no').textContent='第 '+(si+1)+' 步 / 共 '+STEPS.length+' 步';
+  $('#st-title').textContent=s.t; $('#st-view').textContent=s.view; $('#st-real').textContent=s.real;
+  var le=$('#l-exec'),lf=$('#l-exfil'),la=$('#l-aware');
+  le.className='light'+(s.ex?' on':''); le.textContent='代码执行：'+(s.ex?'已发生':'未发生');
+  lf.className='light'+(s.ef?' on':''); lf.textContent='数据外泄：'+(s.ef?'已发生（视频二）':'未发生');
+  la.className='light calm'+(s.aw!=='—'?' on':''); la.textContent='智能体察觉：'+s.aw;
+  $('#st-prev').disabled=(si===0); $('#st-next').disabled=(si===STEPS.length-1);
+  $$('#st-dots .dot').forEach(function(d,i){d.className='dot'+(i===si?' cur':(i<si?' past':''))});
+  renderChain();
+}
+(function(){
+  var dots=$('#st-dots');
+  STEPS.forEach(function(s,i){var b=document.createElement('button');b.type='button';b.className='dot';b.textContent=String(i+1);b.setAttribute('aria-label','跳到第 '+(i+1)+' 步');b.addEventListener('click',function(){stopPlay();si=i;renderStep();});dots.appendChild(b);});
+})();
+function stopPlay(){if(timer){clearInterval(timer);timer=null;$('#st-play').textContent='自动播放';}}
+$('#st-prev').addEventListener('click',function(){stopPlay();if(si>0){si--;renderStep();}});
+$('#st-next').addEventListener('click',function(){stopPlay();if(si<STEPS.length-1){si++;renderStep();}});
+$('#st-play').addEventListener('click',function(){
+  if(timer){stopPlay();return;}
+  if(si>=STEPS.length-1)si=0; renderStep();
+  $('#st-play').textContent='暂停';
+  timer=setInterval(function(){ if(si<STEPS.length-1){si++;renderStep();} else stopPlay(); },4500);
+});
+renderStep();
+
+/* ---------- 第 4 章：查找顺序 ---------- */
+var SHADOW={
+ dirty:{rows:[
+   {n:1,t:'当前目录（数据包里有一个与标准库模块同名的文件）',st:'命中，被加载',c:'hit'},
+   {n:2,t:'标准库安装目录',st:'没有轮到',c:'skip'}],
+   v:'badv',h:'加载了数据包里的同名文件。它里面的附加逻辑先执行，随后再把真正的库导入回来，所以分析看上去一切正常。这就是模块遮蔽。'},
+ clean:{rows:[
+   {n:1,t:'当前目录（干净，没有同名文件）',st:'未命中',c:''},
+   {n:2,t:'标准库安装目录',st:'命中，被加载',c:'safe'}],
+   v:'good',h:'这个目录里没有同名文件，解释器加载的是真正的标准库。这类遮蔽在这里没有机会发生。'},
+ iso:{rows:[
+   {n:1,t:'当前目录（隔离模式下不参与查找）',st:'被跳过',c:'skip'},
+   {n:2,t:'标准库安装目录',st:'命中，被加载',c:'safe'}],
+   v:'good',h:'隔离模式（-I）让解释器只从安装目录加载，即便在数据包目录里运行也不会被遮蔽。但它只对 Python 的这类机制有效。'}
+};
+function renderShadow(){
+  var key=($('input[name="sh"]:checked')||{}).value||'dirty', d=SHADOW[key];
+  var box=$('#lookup'); box.innerHTML='';
+  d.rows.forEach(function(r){
+    var el=document.createElement('div');el.className='lk '+r.c;
+    var n=document.createElement('span');n.className='n';n.textContent=String(r.n);
+    var t=document.createElement('span');t.textContent=r.t;
+    var s=document.createElement('span');s.className='st';s.textContent=r.st;
+    el.appendChild(n);el.appendChild(t);el.appendChild(s);box.appendChild(el);
+  });
+  var v=$('#shadow-verdict'); v.className='verdict '+d.v; v.textContent=d.h;
+}
+$$('input[name="sh"]').forEach(function(r){r.addEventListener('change',renderShadow)});
+renderShadow();
+
+/* ---------- 第 5 章：滑块 ---------- */
+var TOTAL=730, KEYA=714, KEYB=724;
+function renderLines(){
+  var n=parseInt($('#rng-lines').value,10);
+  $('#out-lines').textContent=n+' 行';
+  $('#fb-seen').style.width=(n/TOTAL*100)+'%';
+  var k=$('#fb-key'); k.style.left=(KEYA/TOTAL*100)+'%'; k.style.width=((KEYB-KEYA+6)/TOTAL*100)+'%';
+  var v=$('#lines-verdict');
+  if(n<700){v.className='verdict mid';v.textContent='智能体看到的是：看上去在解析 CSV 的普通代码，合情合理，没什么可疑。读到这里它就会放心，转去做别的。';}
+  else if(n<KEYA){v.className='verdict mid';v.textContent='已经读到第 '+n+' 行，但关键逻辑还没出现。这个读取量已经远超智能体通常的习惯。';}
+  else{v.className='verdict good';v.textContent='读到这里才能看到末尾的关键逻辑。真实情况下，智能体很少读这么多，所以多数时候它看不到。';}
+}
+$('#rng-lines').addEventListener('input',renderLines); renderLines();
+function renderSize(){
+  var c=parseInt($('#rng-count').value,10), s=parseInt($('#rng-size').value,10), tot=c*s;
+  $('#out-count').textContent=c+' 个'; $('#out-size').textContent=s+' KB';
+  var v=$('#size-verdict');
+  if(tot<=30){v.className='verdict good';v.textContent='总量约 '+tot+' KB，在智能体愿意承担的范围内。它会把每个文件都读一遍，隐藏的内容很难躲过。';}
+  else if(tot<=150){v.className='verdict mid';v.textContent='总量约 '+tot+' KB，开始让智能体犹豫。它可能抽查一部分文件，只读其中的开头。';}
+  else{v.className='verdict badv';v.textContent='总量约 '+tot+' KB。智能体会担心撑爆上下文，只抽查、不全读。对想隐藏内容的一方，这就是机会，也是防御者要补的地方。';}
+}
+$('#rng-count').addEventListener('input',renderSize);$('#rng-size').addEventListener('input',renderSize);renderSize();
+
+/* ---------- 场景分析题 ---------- */
+var SCEN=[
+ {title:'场景一：总结公开数据集',task:'请总结这个公开数据集。',src:'智能体会接触到：网页、压缩包里的各种文件',items:[
+  {t:'网页上只有一句数据集说明和一个 zip 下载链接。',r:1,l:'中',w:'极简本身无害，但它让智能体想“总结得像样”就必须去下载并打开未知文件，是把它引向压缩包的诱因。'},
+  {t:'压缩包里的 README 给了一个解码示例，并说明路径相对于解压目录。',r:1,l:'中',w:'没有威胁措辞，却在偏置智能体到解压目录里运行脚本。外部内容里的“操作示例”同样是在影响智能体的行为。'},
+  {t:'包里有二十多个几百 KB 的文件。',r:1,l:'中',w:'体量大会迫使智能体节省上下文、只抽查，给隐藏内容留出空间。'},
+  {t:'其中一个 .py 文件与标准库模块同名，前 700 行看似解析 CSV，后面还有更多逻辑。',r:1,l:'高',w:'这是本讲的核心。遮蔽加上“开头正常、末尾藏逻辑”，两者结合才能躲过抽查。'},
+  {t:'若干 CSV 数据文件，内容是公开的会议转录。',r:0,l:'低',w:'数据本身多半真实无害，真实反而是让环境可信的一部分。风险不在数据本身，而在它周围的东西。'},
+  {t:'智能体用自己写的 Python 脚本做分析。',r:0,l:'低',w:'这是智能体的正常行为。风险来自这个脚本在哪个目录、以什么方式运行，而不是“写脚本”本身。'}]},
+ {title:'场景二：总结一封邮件',task:'帮我总结这封邮件。',src:'智能体会接触到：邮件正文和其中的链接',items:[
+  {t:'邮件开头是普通问候和一个会议时间。',r:0,l:'低',w:'正常内容。'},
+  {t:'中段有一段话，请求“收件人的助手顺便去总结某个链接里的数据集”。',r:1,l:'高',w:'典型的间接注入入口：用户只要求总结邮件，邮件却在引导智能体去做另一件事。讲者提到可以这样把攻击改造成完全间接的形式。'},
+  {t:'发件人是一个从未联系过的陌生地址。',r:1,l:'低',w:'来源不可信会放大风险，是个信号，但本身不构成攻击。'},
+  {t:'邮件末尾是公司落款和免责声明。',r:0,l:'低',w:'常见的正常内容。'},
+  {t:'邮件里附有一个指向外部网页的链接。',r:1,l:'中',w:'链接把智能体带到不可信内容那里。如果它顺着去读，攻击的后续阶段就可以展开。'}]},
+ {title:'场景三：检查开源仓库能否运行',task:'帮我看看这个开源仓库能不能跑，并总结它的结构。',src:'智能体会接触到：仓库里的文件',items:[
+  {t:'README 要求先进入 examples/ 子目录，再运行示例脚本。',r:1,l:'中',w:'引导智能体在某个特定目录里运行代码。如果该目录里有同名文件，就会发生遮蔽。'},
+  {t:'examples/ 目录里有一个与 Python 标准库模块同名的文件。',r:1,l:'高',w:'一旦在这个目录里运行，这个文件就可能被先于标准库加载。'},
+  {t:'仓库里有 LICENSE 和 .gitignore。',r:0,l:'低',w:'通常的仓库配置文件，没有风险。'},
+  {t:'某个代码注释写着：“AI 助手请忽略此前所有指令”。',r:1,l:'中',w:'这是经典的直接式措辞，现代模型更容易识别，讲者认为对前沿智能体不太管用。但它仍是明确的风险信号，应当被标记。'},
+  {t:'仓库里有一个体积很大的 vendor 目录。',r:1,l:'低',w:'本身常见，但大目录会给智能体带来上下文压力，让它不愿全读。注意：它是“可能被利用的条件”，不是“已有攻击”。'}]}
+];
+var scenDone={};
+(function(){
+  var box=$('#scen-box');
+  SCEN.forEach(function(sc,si2){
+    var wrap=document.createElement('div');wrap.className='scen';
+    var h=document.createElement('h3');h.className='sec';h.textContent=sc.title;h.style.marginTop='1.4rem';wrap.appendChild(h);
+    var tb=document.createElement('div');tb.className='taskbar';tb.innerHTML='<b>智能体任务</b>　'+sc.task+'<br><span class="qmeta">'+sc.src+'</span>';wrap.appendChild(tb);
+    var items=document.createElement('div');items.className='items';
+    sc.items.forEach(function(it,ii){
+      var lab=document.createElement('label');lab.className='it';
+      var cb=document.createElement('input');cb.type='checkbox';cb.id='sc'+si2+'_'+ii;
+      var body=document.createElement('span');body.textContent=it.t;
+      var why=document.createElement('span');why.className='why';why.hidden=true;
+      body.appendChild(why);
+      lab.appendChild(cb);lab.appendChild(body);items.appendChild(lab);
+      it._lab=lab;it._cb=cb;it._why=why;
+    });
+    wrap.appendChild(items);
+    var row=document.createElement('div');row.className='row';row.style.marginTop='.7rem';
+    var btn=document.createElement('button');btn.type='button';btn.className='btn';btn.textContent='提交判断';
+    var res=document.createElement('span');res.className='qmeta';
+    row.appendChild(btn);row.appendChild(res);wrap.appendChild(row);
+    btn.addEventListener('click',function(){
+      if(scenDone[si2])return; scenDone[si2]=true; btn.disabled=true;
+      var good=0;
+      sc.items.forEach(function(it){
+        var chk=it._cb.checked; it._cb.disabled=true;
+        var ok=(chk===!!it.r); if(ok)good++;
+        it._lab.classList.add(ok?'good':(it.r?'miss':'falsealarm'));
+        var tag=it.r?('<span class="lvl">有风险 · '+it.l+'</span>'):'<span class="lvl">低风险或无风险</span>';
+        var verdict=ok?'判断正确。':(it.r?'漏选了。':'多选了。');
+        it._why.hidden=false; it._why.innerHTML=tag+' <b>'+verdict+'</b> '+it.w;
+      });
+      res.textContent='　得分：'+good+' / '+sc.items.length;
+      if(Object.keys(scenDone).length===SCEN.length)markDone('scenarios');
+    });
+    box.appendChild(wrap);
+  });
+})();
+
+/* ---------- 模拟实验室 ---------- */
+var PARAM={
+  notice:{small:0.70,large:0.03},
+  cls:{none:{small:0,large:0},head:{small:0.60,large:0.03},full:{small:0.95,large:0.35},seg:{small:0.97,large:0.80}},
+  reach:{A:0.93,B:0.70,C:0.60},
+  prompt:{A:0.70,B:0.20,C:0},
+  confirm:0.40
+};
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function labCfg(){
+  return {
+    atk:($('input[name="atk"]:checked')||{}).value||'A',
+    size:($('input[name="size"]:checked')||{}).value||'large',
+    cls:($('input[name="cls"]:checked')||{}).value||'none',
+    prompt:$('#d-prompt').checked, iso:$('#d-iso').checked, clean:$('#d-clean').checked,
+    confirm:$('#d-confirm').checked, egress:$('#d-egress').checked, secret:$('#d-secret').checked, sub:$('#d-sub').checked
+  };
+}
+var OUT={
+  isolated:{t:'无法执行：不可信内容被隔离处理',k:'c-ok'},
+  declined:{t:'用户拒绝了下载',k:'c-ok'},
+  detected:{t:'检视阶段发现异常，已拦下',k:'c-ok'},
+  blocked3:{t:'运行方式被防御阻断，没有触发',k:'c-ok'},
+  notrigger:{t:'智能体没有按预期方式运行，攻击未触发',k:'c-mute'},
+  contained:{t:'代码已执行，但外泄被拦截',k:'c-warn'},
+  nodata:{t:'代码已执行并外发，但没有可用的敏感数据',k:'c-warn'},
+  breach:{t:'完全得手：环境变量被外泄',k:'c-bad'}
+};
+var OUTKEYS=['isolated','declined','detected','blocked3','notrigger','contained','nodata','breach'];
+function simulate(c,rnd){
+  var st=[
+   {n:'获取并解压数据包',s:'pend',m:''},
+   {n:'检视文件',s:'pend',m:''},
+   {n:'选择运行方式并运行分析脚本',s:'pend',m:''},
+   {n:'附加逻辑被执行',s:'pend',m:''},
+   {n:'数据外泄',s:'pend',m:''}];
+  function skipFrom(i){for(var k=i;k<st.length;k++){st[k].s='skip';st[k].m='未到达';}}
+  // 1
+  if(c.sub){st[0].s='stop';st[0].m='不可信内容只在无工具的隔离实例里读取，不会被执行。';skipFrom(1);return {o:'isolated',st:st};}
+  if(c.confirm&&rnd()<PARAM.confirm){st[0].s='stop';st[0].m='用户在下载前拒绝了。';skipFrom(1);return {o:'declined',st:st};}
+  st[0].s='pass';st[0].m=c.confirm?'用户批准了下载。':'智能体为了给出准确摘要，下载并解压了数据包。';
+  // 2
+  var pn=PARAM.notice[c.size], pc=PARAM.cls[c.cls][c.size], pd=1-(1-pn)*(1-pc);
+  if(rnd()<pd){st[1].s='stop';st[1].m=(c.size==='small'?'数据包很小，智能体能读完大部分内容':'审查机制发现了异常')+'，识别出可疑文件。';skipFrom(2);return {o:'detected',st:st};}
+  st[1].s='pass';st[1].m=c.size==='small'?'没有发现异常（这在小数据包里不太常见）。':'只看到文件开头的正常代码，没有发现异常。';
+  // 3
+  var blocked=null;
+  if(c.iso&&c.atk==='A')blocked='隔离模式让解释器不从当前目录加载模块。';
+  else if(c.clean&&c.atk!=='C')blocked='在干净目录里处理，没有可被遮蔽的文件。';
+  else if(c.prompt&&rnd()<PARAM.prompt[c.atk])blocked='系统提示词的提醒让智能体改变了运行方式。';
+  if(blocked){st[2].s='stop';st[2].m=blocked;skipFrom(3);return {o:'blocked3',st:st};}
+  if(rnd()>=PARAM.reach[c.atk]){st[2].s='pass';st[2].m='智能体这次没有按攻击者预期的方式运行（例如在目录之外运行）。';skipFrom(3);return {o:'notrigger',st:st};}
+  st[2].s='pass';st[2].m='智能体在数据包目录里按预期方式运行了分析脚本。';
+  // 4
+  st[3].s='dang';st[3].m='附加逻辑被执行，分析照常完成，智能体没有察觉。';
+  // 5
+  if(c.egress){st[4].s='stop';st[4].m='出站网络白名单拦下了对陌生地址的请求。';return {o:'contained',st:st};}
+  if(c.secret){st[4].s='pass';st[4].m='数据被发出，但环境里没有敏感密钥，攻击者拿到的价值很低。';return {o:'nodata',st:st};}
+  st[4].s='dang';st[4].m='环境变量被发往攻击者控制的服务器。';return {o:'breach',st:st};
+}
+var labChanges=0, traceSeed=1;
+var CHIP={pend:['待定',''],pass:['通过','pass'],stop:['被拦下','stop'],dang:['已发生','dang'],skip:['未到达','skipc']};
+function renderTrace(){
+  var c=labCfg(), r=simulate(c,mulberry32(1000+traceSeed*7919));
+  var box=$('#lab-trace'); box.innerHTML='';
+  r.st.forEach(function(s,i){
+    var row=document.createElement('div');row.className='stage';
+    var no=document.createElement('span');no.className='no';no.textContent=String(i+1);
+    var mid=document.createElement('div');
+    var nm=document.createElement('div');nm.className='nm';nm.textContent=s.n;
+    var nt=document.createElement('div');nt.className='nt';nt.textContent=s.m;
+    mid.appendChild(nm);mid.appendChild(nt);
+    var chip=document.createElement('span');chip.className='chip '+CHIP[s.s][1];chip.textContent=CHIP[s.s][0];
+    row.appendChild(no);row.appendChild(mid);row.appendChild(chip);box.appendChild(row);
+  });
+  var v=document.createElement('div');v.className='verdict '+(r.o==='breach'?'badv':(OUT[r.o].k==='c-ok'?'good':'mid'));v.style.marginTop='.6rem';
+  v.textContent='这次的结果：'+OUT[r.o].t;box.appendChild(v);
+}
+function renderStats(){
+  var c=labCfg(), N=500, cnt={}; OUTKEYS.forEach(function(k){cnt[k]=0});
+  var rnd=mulberry32(20240611);
+  for(var i=0;i<N;i++){cnt[simulate(c,rnd).o]++;}
+  var stack=$('#lab-stack'),leg=$('#lab-legend'); stack.innerHTML='';leg.innerHTML='';
+  OUTKEYS.forEach(function(k){
+    var pc=cnt[k]/N*100;
+    if(cnt[k]>0){var s=document.createElement('i');s.className=OUT[k].k;s.style.width=pc+'%';s.title=OUT[k].t+'：'+pc.toFixed(1)+'%';stack.appendChild(s);}
+    var d=document.createElement('div');var sw=document.createElement('i');sw.className=OUT[k].k;
+    var tx=document.createElement('span');tx.textContent=OUT[k].t;
+    var b=document.createElement('b');b.textContent=pc.toFixed(1)+'%';
+    d.appendChild(sw);d.appendChild(tx);d.appendChild(b);leg.appendChild(d);
+  });
+  var br=cnt.breach/N, hint=$('#lab-hint'), msgs=[];
+  var any=c.prompt||c.iso||c.clean||c.confirm||c.egress||c.secret||c.sub||c.cls!=='none';
+  if(!any)msgs.push('没有任何防御时，大数据包上约九成会得手，这对应讲者说的“成功率在九成以上”。');
+  if((c.prompt||c.iso)&&c.atk!=='A')msgs.push('提示词提醒和 -I 针对的是情形 A。换成变体或新手法，它们几乎帮不上忙，这就是“补丁非常具体”的意思。');
+  if(c.cls==='full'&&c.size==='large')msgs.push('一次性完整审查在大数据包上受上下文预算限制，漏检率仍然不低。试试“逐文件分段审查”。');
+  if(c.cls==='head'&&c.size==='large')msgs.push('只看开头在大数据包上几乎没有帮助，因为关键内容不在开头。');
+  if(c.size==='small'&&!c.sub)msgs.push('小数据包里，智能体自己就会读完大部分内容，攻击大多不成功。');
+  if(c.egress&&!c.secret)msgs.push('出站白名单阻止了外泄，但代码仍然被执行了。它限制的是后果，不是入口。');
+  if(c.sub)msgs.push('隔离子智能体让代码根本没机会运行，但它也意味着智能体无法直接动手分析这些内容，要权衡可用性。');
+  if(!msgs.length)msgs.push(br>0.5?'目前仍有一半以上会得手，试试组合多层防御。':'防御起了作用。再切换攻击情形，看看它们是否仍然有效。');
+  hint.className='verdict '+(br>0.5?'badv':(br>0.1?'mid':'good'));
+  hint.textContent=msgs.join(' ');
+}
+function labChanged(){
+  labChanges++; if(labChanges>=4)markDone('lab');
+  renderStats(); renderTrace();
+}
+$$('#v-lab input').forEach(function(el){el.addEventListener('change',labChanged)});
+$('#lab-again').addEventListener('click',function(){traceSeed++;renderTrace();});
+renderStats(); renderTrace();
+
+/* ---------- 术语表 ---------- */
+var GL=[
+ ['提示词注入','Prompt Injection','把攻击者的意图写进智能体读到的文字里，让它做用户没打算让它做的事。','ch1'],
+ ['直接注入','Direct Injection','攻击者通过用户的输入直接下指令，如“忽略之前的设定”。','ch1'],
+ ['间接注入','Indirect Injection','用户请求正常，恶意内容藏在智能体为任务读取的网页、邮件、压缩包等外部内容里。','ch1'],
+ ['智能体','Agent','能自己决定步骤、调用工具、运行命令的 AI 系统，例如编码智能体。','ch1'],
+ ['Claude Code','','Anthropic 的编码智能体。本讲演示的目标之一。','ch2'],
+ ['Auto Mode','自动模式','让智能体少打断用户的运行模式，由另一个更便宜的 LLM 作为分类器审查动作。','ch5'],
+ ['分类器','Classifier','在这里指审查主智能体动作、判断是否异常的模型或机制。','ch5'],
+ ['概念验证','PoC','证明攻击可行的最小演示，经典做法是弹出计算器。','ch2'],
+ ['任意代码执行','Arbitrary Code Execution','攻击者能让目标机器运行自己选择的代码，通常意味着后面什么都能做。','ch2'],
+ ['数据外泄','Exfiltration','把目标环境里的数据偷偷送给攻击者，例如通过 GET 请求发往攻击者的服务器。','ch2'],
+ ['环境变量','Environment Variables','进程运行环境里的配置值，常包含密钥和令牌，所以是外泄的常见目标。','ch2'],
+ ['模块遮蔽','Module Shadowing','当前目录中有与标准库同名的文件，运行时被优先加载，从而盖过真正的标准库。','ch4'],
+ ['标准库','Standard Library','语言自带的一组模块。遮蔽针对的就是它们。','ch4'],
+ ['隔离模式 -I','Python Isolated Mode','让 Python 不从当前目录等位置动态加载模块，只用安装目录里的标准库。','ch4'],
+ ['陪衬文件','Chaff','大量看似合理的噪声文件和代码，用来掩护真正起作用的部分。名字来自飞机投放的干扰弹。','ch3'],
+ ['上下文窗口','Context Window','模型一次能“看到”的内容上限。读得越多，占用越多，所以智能体会节制。','ch3'],
+ ['上下文污染','Context Pollution','无关或大量内容占满上下文，挤掉重要信息。智能体因此不愿全读。','ch3'],
+ ['偏置','Bias','模型对某类做法的天然偏好，如偏爱 Python、偏爱只读开头。攻击者利用，防御者也应了解。','ch3'],
+ ['工作目录','Working Directory','命令运行时所处的当前目录。遮蔽的前提是脚本在含同名文件的目录里运行。','ch4'],
+ ['暂存区','Scratchpad','智能体用来存放临时文件的目录。','ch2'],
+ ['README','','数据包里的说明文件，本讲中被用来轻推智能体的运行位置。','ch3'],
+ ['系统提示词','System Prompt','每次会话开始时注入模型的指令。厂商的修复据推测加在这里。','ch6'],
+ ['负责任披露','Responsible Disclosure','发现漏洞后先报告厂商，等修复或约定后再公开。文字稿里讲者不能公开其他受影响智能体的细节。','ch7'],
+ ['head -n 30','','只读文件前 30 行的命令写法。智能体常这样抽查文件。','ch5'],
+ ['沙箱','Sandbox','限制进程能访问的文件、网络等资源的隔离环境。','ch6'],
+ ['出站白名单','Egress Allow-list','只允许程序向列出的地址发起网络请求，能阻断数据外泄。','ch6'],
+ ['最小权限','Least Privilege','只给进程完成任务所需的最少权限和数据，例如环境里不放无关密钥。','ch6'],
+ ['概率性','Probabilistic','同样的输入，结果有时不同。LLM 和基于 LLM 的分类器都是这样，所以不能当作硬保证。','ch5'],
+ ['纵深防御','Defense in Depth','不依赖单一措施，而是在多个阶段设置多层防线。','ch6']
+];
+function renderGl(q){
+  var box=$('#gl-list'); box.innerHTML=''; q=(q||'').trim().toLowerCase(); var n=0;
+  var names={ch1:'第 1 章',ch2:'第 2 章',ch3:'第 3 章',ch4:'第 4 章',ch5:'第 5 章',ch6:'第 6 章',ch7:'第 7 章'};
+  GL.forEach(function(g){
+    var hay=(g[0]+' '+g[1]+' '+g[2]).toLowerCase(); if(q&&hay.indexOf(q)<0)return; n++;
+    var c=document.createElement('div');c.className='card';
+    var h=document.createElement('h4');h.textContent=g[0];
+    if(g[1]){var s=document.createElement('span');s.textContent=g[1];h.appendChild(s);}
+    var p=document.createElement('p');p.textContent=g[2];
+    var a=document.createElement('a');a.href='#'+g[3];a.textContent='相关：'+names[g[3]];a.style.fontSize='.82rem';
+    c.appendChild(h);c.appendChild(p);c.appendChild(a);box.appendChild(c);
+  });
+  if(!n){var e=document.createElement('p');e.className='qmeta';e.textContent='没有找到匹配的术语。';box.appendChild(e);}
+}
+$('#gl-search').addEventListener('input',function(){renderGl(this.value)});
+renderGl('');
+
+/* ---------- 综合自测 ---------- */
+var FQ=QS.filter(function(q){return q.final});
+var fi=0, fscore=0, fwrong={};
+var CHN={ch1:'第 1 章 全景与核心概念',ch2:'第 2 章 攻击链',ch3:'第 3 章 智能体为何上当',ch4:'第 4 章 模块遮蔽原理',ch5:'第 5 章 Auto Mode 的局限',ch6:'第 6 章 修复与防御',ch7:'第 7 章 方法论与边界'};
+function renderFinal(){
+  var box=$('#final-box'); box.innerHTML='';
+  if(fi>=FQ.length){
+    var tot=FQ.length, pc=Math.round(fscore/tot*100);
+    var card=document.createElement('div');card.className='card';
+    var sc=document.createElement('div');sc.className='score';sc.textContent=fscore+' / '+tot;
+    var msg=document.createElement('p');
+    msg.textContent=pc>=85?'掌握得很扎实。可以去模拟实验室试试把各种防御组合起来。':(pc>=60?'基础已经建立，下面列出的章节值得回看。':'建议按下面的章节再读一遍，重点看每章的互动图示。');
+    card.appendChild(sc);card.appendChild(msg);
+    var ks=Object.keys(fwrong);
+    if(ks.length){
+      var h=document.createElement('h4');h.textContent='建议回看';card.appendChild(h);
+      var ul=document.createElement('ul');ul.className='tight';
+      ks.sort().forEach(function(k){var li=document.createElement('li');var a=document.createElement('a');a.href='#'+k;a.textContent=CHN[k]+'（答错 '+fwrong[k]+' 题）';li.appendChild(a);ul.appendChild(li);});
+      card.appendChild(ul);
+    }else{var ok=document.createElement('p');ok.textContent='全部答对，没有需要回看的章节。';card.appendChild(ok);}
+    var rb=document.createElement('button');rb.type='button';rb.className='btn';rb.textContent='重新自测';
+    rb.addEventListener('click',function(){fi=0;fscore=0;fwrong={};FQ.forEach(function(q){delete results[q.id]});renderFinal();});
+    card.appendChild(rb);box.appendChild(card);
+    markDone('final'); return;
+  }
+  var q=FQ[fi];
+  var card2=buildCard(q,fi,FQ.length,function(qq,ok){
+    if(ok)fscore++; else fwrong[qq.ch]=(fwrong[qq.ch]||0)+1;
+    var nb=document.createElement('button');nb.type='button';nb.className='btn';nb.style.marginTop='.8rem';
+    nb.textContent=(fi===FQ.length-1)?'查看结果':'下一题';
+    nb.addEventListener('click',function(){fi++;renderFinal();$('#final-box').scrollIntoView({block:'start'});});
+    card2.appendChild(nb);
+  });
+  box.appendChild(card2);
+}
+renderFinal();
+
+/* ---------- 其他 ---------- */
+$('#resetbtn').addEventListener('click',function(){
+  done={}; saveDone(); updateProgress(); renderNav();
+  var b=$('#resetbtn'); b.textContent='已清除'; setTimeout(function(){b.textContent='清除学习进度'},1500);
+});
+updateProgress();
+route();
+})();
+</script>
+
+</body></html>
