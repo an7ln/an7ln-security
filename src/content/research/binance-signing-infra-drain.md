@@ -3,7 +3,7 @@ title: "币安热钱包被盗复盘：公开分析指向签名基础设施被滥
 description: "币安被盗复盘：热钱包约 53–59 亿美元外流，公开分析指向签名基础设施与 EIP-7702 委托被滥用；稳定币/L2 已冻结数十亿，BTC/ETH 难冻。根因未确认。"
 published: 2026-10-30
 updated: 2026-10-30
-category: web
+category: security-news
 tags: [Binance, Hot Wallet, EIP-7702, Signing Infrastructure, Stablecoin Freeze, Incident Review, Crypto]
 severity: critical
 vendor: Binance

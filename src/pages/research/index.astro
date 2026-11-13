@@ -7,7 +7,7 @@ import ResearchRow from '../../components/ResearchRow.astro';
 const research = (await getCollection('research', ({ data }) => !data.draft))
   .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
 const filters = [
-  ['all', '全部'], ['web', 'Web 安全'], ['mobile', '移动安全'],
+  ['all', '全部'], ['web', 'Web 安全'], ['mobile', '移动安全'], ['security-news', '安全动态'], ['security-tools', '安全工具'],
 ];
 ---
 <BaseLayout title="首页" description="精选漏洞研究、技术复盘与公开披露记录。">
@@ -56,6 +56,7 @@ const filters = [
   .filters button[aria-pressed='true']::after { transform: scaleX(1); }
   .table-head { display: grid; grid-template-columns: 8.5rem minmax(18rem,1fr) 10rem 8rem 2rem; gap: 1.25rem; padding: .9rem var(--gutter); color: var(--steel); font: .66rem/1 var(--mono); letter-spacing: .07em; text-transform: uppercase; }
   .research-item { display: contents; }
+  .research-item[hidden] { display: none; }
   .empty { margin: 0; padding: 4rem var(--gutter); color: var(--steel); font-family: var(--mono); }
   @media (max-width: 980px) { .table-head { grid-template-columns: 6.5rem minmax(0,1fr) 7rem 2rem; } .table-head span:nth-child(3) { display:none; } }
   @media (max-width: 760px) { .filters { gap: 1rem 1.4rem; } .table-head { display: none; } }

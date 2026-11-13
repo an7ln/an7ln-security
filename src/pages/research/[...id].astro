@@ -7,7 +7,7 @@ export async function getStaticPaths() {
 }
 const { entry } = Astro.props;
 const { Content, headings } = await render(entry);
-const categoryNames = { web: 'Web 安全', api: 'API 安全', mobile: '移动安全', 'code-audit': '代码审计', 'ai-security': 'AI 安全' };
+const categoryNames = { web: 'Web 安全', api: 'API 安全', mobile: '移动安全', 'code-audit': '代码审计', 'ai-security': 'AI 安全', 'security-news': '安全动态', 'security-tools': '安全工具' };
 const severityNames = { critical: '严重', high: '高危', medium: '中危', low: '低危', info: '信息', research: '研究' };
 const disclosureNames = { research: '研究中', reported: '已报告', triaged: '已确认', fixed: '已修复', published: '已公开' };
 ---
