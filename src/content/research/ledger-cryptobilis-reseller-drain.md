@@ -2,7 +2,7 @@
 title: "Ledger 经销商渠道失窃复盘：密钥在交付链上泄露，不是设备被远程攻破"
 description: "2026-10-09 东南亚 Ledger 经销商 CryptoBilis 买家钱包被集中清空，链上统计约 9,290 万美元、311 个钱包。Ledger 称自身系统未被入侵，原因仍在调查；链上特征指向单一行为体事先持有全部助记词。"
 published: 2026-10-10
-category: web
+category: security-news
 tags: [Ledger, CryptoBilis, Supply Chain, Hardware Wallet, Incident Review, Crypto]
 severity: critical
 vendor: Ledger
