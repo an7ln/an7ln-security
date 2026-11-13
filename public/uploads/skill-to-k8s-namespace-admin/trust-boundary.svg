@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 280" font-family="ui-sans-serif,system-ui,sans-serif" font-size="13">
+  <style>
+    .box{fill:#0f172a;stroke:#334155;stroke-width:1.5;rx:8}
+    .bad{fill:#1c1917;stroke:#f59e0b;stroke-width:1.5;rx:8}
+    .t{fill:#e2e8f0}.sub{fill:#94a3b8;font-size:11px}
+    .arrow{stroke:#38bdf8;stroke-width:2;fill:none;marker-end:url(#a)}
+    .warn{fill:#fbbf24;font-size:11px}
+  </style>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#38bdf8"/></marker></defs>
+  <text x="24" y="28" class="sub">授权测试复盘 · 身份边界（去敏示意）</text>
+  <rect class="box" x="24" y="50" width="150" height="70"/><text class="t" x="40" y="80">普通用户账号</text><text class="sub" x="40" y="100">自定义 Skill</text>
+  <rect class="box" x="210" y="50" width="150" height="70"/><text class="t" x="226" y="80">Agent + Bash</text><text class="sub" x="226" y="100">执行用户脚本</text>
+  <rect class="bad" x="396" y="50" width="170" height="70"/><text class="t" x="412" y="80">业务 Pod 容器</text><text class="sub" x="412" y="100">可读 SA token</text>
+  <rect class="bad" x="602" y="50" width="140" height="70"/><text class="t" x="618" y="80">apiserver</text><text class="sub" x="618" y="100">命名空间 * / *</text>
+  <rect class="bad" x="770" y="50" width="126" height="70"/><text class="t" x="786" y="80">同 NS 业务</text><text class="sub" x="786" y="100">共用 default SA</text>
+  <path class="arrow" d="M174 85 H208"/><path class="arrow" d="M360 85 H394"/><path class="arrow" d="M566 85 H600"/><path class="arrow" d="M742 85 H768"/>
+  <text class="warn" x="24" y="170">缺位叠合：身份（宽 SA）· 网络（Pod→控制面）· 准入（无强制策略）→ 命名空间管理员</text>
+  <text class="sub" x="24" y="210">不是「某个越权接口」，而是平台把用户代码跑进了挂着集群身份的业务容器。</text>
+  <text class="sub" x="24" y="240">测试侧：dryRun 验证准入；凭据遮蔽；未创建对象、未进其他容器、未认证数据库。</text>
+</svg>
