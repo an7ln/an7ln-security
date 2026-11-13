@@ -19,7 +19,10 @@ function normalizeEscapedAstroRequests() {
 
 export default defineConfig({
   site: process.env.SITE_URL ?? 'https://qqyln.cn',
-  integrations: [mdx(), sitemap()],
+  redirects: { '/research': '/' },
+  integrations: [mdx(), sitemap({
+    filter: page => !['/research', '/research/'].includes(new URL(page).pathname),
+  })],
   vite: {
     plugins: [normalizeEscapedAstroRequests()],
   },
