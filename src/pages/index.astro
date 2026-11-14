@@ -22,7 +22,7 @@ const filters = [
       <div class="filters" role="group" aria-label="按研究方向筛选">
         {filters.map(([value, label], i) => <button type="button" data-filter={value} aria-pressed={i === 0 ? 'true' : 'false'}>{label}</button>)}
       </div>
-      <div class="table-head" aria-hidden="true"><span>日期</span><span>研究</span><span>方向</span><span>等级</span><i></i></div>
+      <div class="table-head" aria-hidden="true"><span>日期</span><span>研究</span><span>方向</span><span>封面</span><i></i></div>
       <div class="ruled-list" data-research-list>
         {research.map((entry) => <div class="research-item" data-category={entry.data.category}><ResearchRow entry={entry} /></div>)}
       </div>
@@ -54,10 +54,10 @@ const filters = [
   .filters button::after { content: ''; position: absolute; right: 0; bottom: 0; left: 0; height: 2px; transform: scaleX(0); background: var(--amber); }
   .filters button[aria-pressed='true'] { color: var(--amber); }
   .filters button[aria-pressed='true']::after { transform: scaleX(1); }
-  .table-head { display: grid; grid-template-columns: 8.5rem minmax(18rem,1fr) 10rem 8rem 2rem; gap: 1.25rem; padding: .9rem var(--gutter); color: var(--steel); font: .66rem/1 var(--mono); letter-spacing: .07em; text-transform: uppercase; }
+  .table-head { display: grid; grid-template-columns: var(--research-columns); gap: var(--research-gap); padding: .9rem var(--gutter); color: var(--steel); font: .66rem/1 var(--mono); letter-spacing: .07em; text-transform: uppercase; }
   .research-item { display: contents; }
   .research-item[hidden] { display: none; }
   .empty { margin: 0; padding: 4rem var(--gutter); color: var(--steel); font-family: var(--mono); }
-  @media (max-width: 980px) { .table-head { grid-template-columns: 6.5rem minmax(0,1fr) 7rem 2rem; } .table-head span:nth-child(3) { display:none; } }
+  @media (max-width: 980px) { .table-head span:nth-child(3) { display:none; } }
   @media (max-width: 760px) { .filters { gap: 1rem 1.4rem; } .table-head { display: none; } }
 </style>
