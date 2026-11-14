@@ -5,13 +5,27 @@ import ArrowIcon from './ArrowIcon.astro';
 interface Props { entry: CollectionEntry<'research'>; prefix?: string; }
 const { entry, prefix = '/research/' } = Astro.props;
 const categoryNames = { web: 'Web 安全', api: 'API 安全', mobile: '移动安全', 'code-audit': '代码审计', 'ai-security': 'AI 安全', 'security-news': '安全动态', 'security-tools': '安全工具' };
-const severityNames = { critical: '严重', high: '高危', medium: '中危', low: '低危', info: '信息', research: '研究' };
 const date = entry.data.published.toISOString().slice(0, 10).replaceAll('-', '.');
+// An explicit cover takes priority; existing article illustrations also work as thumbnails.
+const articleBody = (entry.body ?? '').replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, '');
+const firstIllustration = articleBody.match(/^!\[[^\]\n]*\]\((\/uploads\/[^\s)]+)\)/m)?.[1];
+const cover = entry.data.cover ?? firstIllustration;
+const coverLabel = entry.data.tags[0] ?? categoryNames[entry.data.category];
 ---
 <a class="research-row" href={`${prefix}${entry.id}/`}>
   <time datetime={entry.data.published.toISOString()}>{date}</time>
   <h3>{entry.data.title}</h3>
   <span class="field">{categoryNames[entry.data.category]}</span>
-  <span class:list={['severity', `severity-${entry.data.severity}`]}>{severityNames[entry.data.severity]}</span>
+  <span class="article-cover" aria-hidden="true">
+    {cover ? (
+      <img src={cover} alt="" width="240" height="135" loading="lazy" decoding="async" />
+    ) : (
+      <span class="cover-fallback">
+        <span class="cover-brand">AN7LN</span>
+        <strong>{coverLabel}</strong>
+        <span class="cover-category">{categoryNames[entry.data.category]}</span>
+      </span>
+    )}
+  </span>
   <span class="row-arrow"><ArrowIcon size={19} /></span>
 </a>
