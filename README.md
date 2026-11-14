@@ -15,6 +15,10 @@ npm run dev
 
 `npm run build` generates the Astro site and then creates the Pagefind index. Use `npm run preview` after a build to test production search locally.
 
+## Homepage routing
+
+The article list is served at `/`. The old `/research/` index redirects to `/` with HTTP 301 through Cloudflare Workers static-asset rules in `public/_redirects`; Astro redirects provide a static-host fallback. Individual `/research/<id>/` article URLs stay unchanged. Keep these redirects for at least one year after deployment.
+
 ## Writing
 
 Site branding and title formatting are defined in `src/config/site.ts`. Use `AN7LN Security` as the public brand and retain the registered website name `浅笑新柔` in page titles. Pass only the page or article name to `BaseLayout`; it adds the shared site identity to browser and social-sharing titles.

@@ -1,7 +1,7 @@
 ---
 import { site } from '../config/site';
 const nav = [
-  ['首页', '/research/'],
+  ['首页', '/'],
   ['CVE', '/cve/'],
   ['笔记', '/notes/'],
   ['AI 安全', '/ai-security/'],
@@ -23,7 +23,7 @@ const pathname = Astro.url.pathname;
 
   <nav id="site-nav" aria-label="主导航">
     {nav.map(([label, href]) => (
-      <a href={href} aria-current={pathname.startsWith(href) ? 'page' : undefined}>{label}</a>
+      <a href={href} aria-current={(href === '/' ? pathname === '/' : pathname.startsWith(href)) ? 'page' : undefined}>{label}</a>
     ))}
   </nav>
 

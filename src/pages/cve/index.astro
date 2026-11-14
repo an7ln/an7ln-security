@@ -15,7 +15,7 @@ const records = (await getCollection('research', ({ data }) => !data.draft && Bo
       {records.length ? (
         <div class="cve-list">{records.map((entry) => <a href={`/cve/${entry.data.cve}/`}><strong>{entry.data.cve}</strong><span>{entry.data.title}</span><b class:list={['severity', `severity-${entry.data.severity}`]}>{entry.data.severity}</b><ArrowIcon /></a>)}</div>
       ) : (
-        <div class="empty-state"><span class="mono-label">登记状态 / 000</span><h2>暂无公开 CVE 记录。</h2><p>这里只收录完成协调披露后的公开记录。草稿、未修复漏洞与敏感 PoC 不会进入公开仓库。</p><a class="arrow-link" href="/research/">浏览公开研究 <ArrowIcon /></a></div>
+        <div class="empty-state"><span class="mono-label">登记状态 / 000</span><h2>暂无公开 CVE 记录。</h2><p>这里只收录完成协调披露后的公开记录。草稿、未修复漏洞与敏感 PoC 不会进入公开仓库。</p><a class="arrow-link" href="/">浏览公开研究 <ArrowIcon /></a></div>
       )}
     </div>
   </div>
