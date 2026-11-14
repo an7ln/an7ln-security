@@ -1,12 +1,6 @@
 ---
-import { site } from '../config/site';
-const nav = [
-  ['首页', '/'],
-  ['CVE', '/cve/'],
-  ['笔记', '/notes/'],
-  ['AI 安全', '/ai-security/'],
-  ['关于', '/about/'],
-];
+import { site, navigation } from '../config/site';
+const nav = navigation.map(item => [item.label, item.href]);
 const pathname = Astro.url.pathname;
 ---
 

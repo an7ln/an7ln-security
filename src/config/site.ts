@@ -10,3 +10,11 @@ export const siteTitle = `${site.name}｜${site.registeredName} · ${site.taglin
 export function pageTitle(title?: string): string {
   return title ? `${title}｜${site.name} · ${site.registeredName}` : siteTitle;
 }
+
+export const navigation = [
+  { label: '首页', href: '/', index: '001', archiveLabel: '首页', contentScope: 'research' },
+  { label: 'CVE', href: '/cve/', index: '002', archiveLabel: 'CVE', contentScope: 'cve' },
+  { label: '笔记', href: '/notes/', index: '003', archiveLabel: '笔记复盘', contentScope: 'notes' },
+  { label: 'AI 安全', href: '/ai-security/', index: '004', archiveLabel: 'AI 安全', contentScope: 'ai-security' },
+  { label: '关于', href: '/about/', index: '005', archiveLabel: '关于', contentScope: 'all' },
+] as const;
