@@ -23,6 +23,33 @@
   --mono: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
+:root[data-theme='light'] {
+  color-scheme: light;
+  --ink: #faf9f5;
+  --ink-deep: #efede6;
+  --ink-soft: #f1efe8;
+  --paper: #302f2b;
+  --paper-dim: #46453f;
+  --steel: #727068;
+  --steel-bright: #625f57;
+  --rule: rgba(61, 57, 47, .17);
+  --rule-strong: rgba(61, 57, 47, .35);
+  --amber: #a34c30;
+  --critical: #ac3434;
+}
+:root[data-theme='light'] body { background: var(--ink); }
+:root[data-theme='light'] .display { font-family: Georgia, 'Noto Serif CJK SC', 'Songti SC', SimSun, serif; font-weight: 650; line-height: 1.15; letter-spacing: -.025em; }
+:root[data-theme='light'] .brand-name img { filter: brightness(.22) sepia(.2); }
+:root[data-theme='light'] .research-row:hover { background: var(--ink-soft); }
+:root[data-theme='light'] .cover-fallback { background: linear-gradient(135deg, #eaded0, #f3eee5); }
+:root[data-theme='light'] .article-cover { border-color: var(--rule); }
+/* Keep syntax-highlighted code and technical illustrations on their original dark canvas. */
+:root[data-theme='light'] .prose pre { background: #101a24 !important; }
+:root[data-theme='light'] .prose pre code { color: #f2efe7; }
+:root[data-theme='light'] .search-dialog { border-radius: 12px; box-shadow: 0 1rem 4rem #302f2b26; }
+:root[data-theme='light'] .search-dialog::backdrop { background: #302f2b55; }
+:root[data-theme='light'] .button { border-radius: 6px; }
+
 * { box-sizing: border-box; }
 
 html {
