@@ -21,6 +21,10 @@ const pathname = Astro.url.pathname;
     ))}
   </nav>
 
+  <div class="header-actions">
+  <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到深色主题" title="切换到深色主题">
+    <span aria-hidden="true">◐</span><span data-theme-label>深色</span>
+  </button>
   <button class="search-trigger" type="button" data-open-search aria-label="打开站内搜索">
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.5" />
@@ -29,6 +33,7 @@ const pathname = Astro.url.pathname;
     <span>搜索</span>
     <kbd>Ctrl K</kbd>
   </button>
+  </div>
 </header>
 
 <script is:inline>
@@ -46,12 +51,13 @@ const pathname = Astro.url.pathname;
     position: relative;
     z-index: 20;
     display: grid;
-    grid-template-columns: minmax(19rem, 1fr) auto minmax(10rem, .45fr);
+    grid-template-columns: minmax(19rem, 1fr) auto auto;
+    gap: 1.5rem;
     align-items: center;
     min-height: 6rem;
     padding: 0 var(--gutter);
     border-bottom: 1px solid var(--rule);
-    background: rgba(9, 16, 24, .96);
+    background: var(--ink);
   }
   .brand { display: inline-flex; align-items: center; gap: 1rem; width: fit-content; }
   .brand-name { display: inline-flex; align-items: center; gap: .5rem; }
@@ -79,14 +85,20 @@ const pathname = Astro.url.pathname;
   .search-trigger:hover { border-color: var(--amber); color: var(--amber); }
   .search-trigger kbd { color: var(--steel-bright); font: inherit; }
   .menu-button { display: none; }
+  .header-actions { display: flex; align-items: center; justify-self: end; gap: .5rem; }
+  .theme-toggle { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; min-width: 2.75rem; min-height: 2.75rem; padding: .5rem; border: 1px solid var(--rule); border-radius: 6px; background: transparent; color: var(--paper); cursor: pointer; font: .74rem/1 var(--sans); }
+  .theme-toggle > span:first-child { font-size: 1.25rem; }
+  .theme-toggle:hover { border-color: var(--amber); color: var(--amber); }
 
   @media (max-width: 1120px) {
     .site-header { grid-template-columns: auto 1fr auto; }
     .registered-name { display: none; }
     nav { justify-content: center; gap: 1.25rem; }
+    .theme-toggle [data-theme-label], .search-trigger span, .search-trigger kbd { display: none; }
+    .search-trigger { min-width: 2.75rem; min-height: 2.75rem; padding: .5rem; }
   }
   @media (max-width: 760px) {
-    .site-header { grid-template-columns: 1fr auto auto; min-height: 4.5rem; padding-inline: 1.1rem; }
+    .site-header { grid-template-columns: 1fr auto auto; gap: .2rem; min-height: 4.5rem; padding-inline: .8rem; }
     .brand img { width: 5.2rem; }
     .brand b { font-size: .9rem; }
     .menu-button {
