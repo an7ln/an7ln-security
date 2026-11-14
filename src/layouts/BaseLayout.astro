@@ -22,13 +22,41 @@ const title = pageTitle(pageHeading);
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
 ---
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#091018" />
+    <script is:inline>
+      (() => {
+        const key = 'an7ln-theme';
+        const apply = (value) => {
+          const theme = value === 'dark' ? 'dark' : 'light';
+          document.documentElement.dataset.theme = theme;
+          document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#faf9f5' : '#091018');
+          document.querySelectorAll('[data-theme-toggle]').forEach(button => {
+            button.setAttribute('aria-label', theme === 'light' ? '切换到深色主题' : '切换到浅色主题');
+            button.setAttribute('title', theme === 'light' ? '切换到深色主题' : '切换到浅色主题');
+            const label = button.querySelector('[data-theme-label]');
+            if (label) label.textContent = theme === 'light' ? '深色' : '浅色';
+          });
+          document.dispatchEvent(new CustomEvent('site-theme-change', { detail: theme }));
+        };
+        let initial = 'light';
+        try { initial = localStorage.getItem(key) || initial; } catch {}
+        apply(initial);
+        document.addEventListener('DOMContentLoaded', () => apply(document.documentElement.dataset.theme));
+        document.addEventListener('click', event => {
+          if (!(event.target instanceof Element) || !event.target.closest('[data-theme-toggle]')) return;
+          const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+          try { localStorage.setItem(key, next); } catch {}
+          apply(next);
+        });
+        window.addEventListener('storage', event => { if (event.key === key || event.key === null) apply(event.newValue); });
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonical} />
     <link rel="alternate" type="application/rss+xml" title={site.name} href="/rss.xml" />
