@@ -10,6 +10,26 @@ const [research, notes] = await Promise.all([
   getCollection('notes', ({ data }) => !data.draft && data.topic.includes('AI')),
 ]);
 const articles = [...research, ...notes].sort((a, b) => contentDate(b.data).valueOf() - contentDate(a.data).valueOf());
+const lessons = [
+  {
+    label: '提示词安全',
+    title: '提示词注入精讲',
+    description: '通过章节图示、场景练习与模拟实验，理解不可信输入如何影响 Agent 行为。',
+    href: '/learn/prompt-injection/',
+  },
+  {
+    label: '知识与记忆安全',
+    title: 'RAG 与记忆投毒',
+    description: '理解知识库、检索结果与长期记忆的信任边界，学习识别投毒风险与防御方法。',
+    href: '/learn/rag-memory-poisoning/',
+  },
+  {
+    label: 'Agent 安全',
+    title: 'Agent 与工具调用安全',
+    description: '围绕工具调用、权限与人工审批，理解 Agent 的风险路径与防御边界。',
+    href: '/learn/agent-tool-security/',
+  },
+];
 ---
 <BaseLayout title="AI 安全" description="提示词注入、Agent 权限与 AI 系统的信任边界。">
   <div class="page-grid">
@@ -20,9 +40,14 @@ const articles = [...research, ...notes].sort((a, b) => contentDate(b.data).valu
         <h1 class="display display-lg" data-pagefind-meta="title">AI 安全</h1>
         <p>提示词注入、Agent 权限与 AI 系统的信任边界。</p>
       </header>
-      <section class="learning" aria-labelledby="learning-title">
-        <div><span class="mono-label">交互学习</span><h2 id="learning-title">提示词注入精讲</h2><p>通过章节图示、场景练习与模拟实验，理解不可信输入如何影响 Agent 行为。</p></div>
-        <a class="button" href="/learn/prompt-injection/">开始学习 <ArrowIcon /></a>
+      <section aria-labelledby="learning-title">
+        <div class="section-heading"><h2 id="learning-title">交互学习</h2><span>{lessons.length} 个交互专题</span></div>
+        <ul class="learning-list">
+          {lessons.map(lesson => <li class="learning">
+            <div><span class="mono-label">{lesson.label}</span><h3>{lesson.title}</h3><p>{lesson.description}</p></div>
+            <a class="button" href={lesson.href} aria-label={['开始学习', lesson.title].join('：')}>开始学习 <ArrowIcon /></a>
+          </li>)}
+        </ul>
       </section>
       <section aria-labelledby="articles-title">
         <div class="section-heading"><h2 id="articles-title">研究与笔记</h2><span>{articles.length} 篇公开记录</span></div>
@@ -38,9 +63,10 @@ const articles = [...research, ...notes].sort((a, b) => contentDate(b.data).valu
   </div>
 </BaseLayout>
 <style>
-  .learning { display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding: 2rem var(--gutter); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); background: var(--ink-soft); }
+  .learning-list { margin: 0; padding: 0; list-style: none; }
+  .learning { display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding: 2rem var(--gutter); border-bottom: 1px solid var(--rule); background: var(--ink-soft); }
   .learning .mono-label { color: var(--amber); }
-  .learning h2 { margin: .7rem 0; font-size: 1.5rem; line-height: 1.4; }
+  .learning h3 { margin: .7rem 0; font-size: 1.5rem; line-height: 1.4; }
   .learning p { max-width: 42rem; margin: 0; color: var(--steel-bright); font-size: .9rem; line-height: 1.8; }
   .learning .button { flex-shrink: 0; }
   .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.5rem var(--gutter); border-bottom: 1px solid var(--rule); }
