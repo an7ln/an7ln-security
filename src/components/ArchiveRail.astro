@@ -1,21 +1,28 @@
 ---
 import { latestContentDate, formatDate } from '../lib/content-dates';
-import { site } from '../config/site';
+import { site, navigation } from '../config/site';
 interface Props {
   index?: string;
   label?: string;
   updated?: Date;
 }
-const { index = '001', label = '公开', updated } = Astro.props;
-const date = updated ?? await latestContentDate();
+const { index, label, updated } = Astro.props;
+const pathname = Astro.url.pathname;
+const section = navigation.find(item => item.href === '/' ? pathname === '/' : pathname.startsWith(item.href));
+const isArticle = /^\/(?:research|notes|cve)\/.+/.test(pathname);
+const archiveIndex = isArticle ? index ?? 'ARTICLE' : section?.index ?? index ?? '001';
+const archiveLabel = isArticle ? label ?? '文章' : section?.archiveLabel ?? label ?? '公开';
+const scope = section?.contentScope ?? 'all';
+const date = updated ?? await latestContentDate(scope);
+const dateLabel = isArticle ? '文章更新' : scope === 'all' ? '全站更新' : '栏目更新';
 ---
 <aside class="archive-rail" aria-label="档案信息">
   <strong>{site.name}<br />公开档案</strong>
   <dl>
-    <div><dt>编号</dt><dd>{index}</dd></div>
-    <div><dt>类型</dt><dd>{label}</dd></div>
+    <div><dt>编号</dt><dd>{archiveIndex}</dd></div>
+    <div><dt>{isArticle ? '类型' : '栏目'}</dt><dd>{archiveLabel}</dd></div>
     <div><dt>范围</dt><dd>公开</dd></div>
-    {date && <div><dt>{updated ? '文章更新' : '内容更新'}</dt><dd><time datetime={formatDate(date)}>{formatDate(date).replaceAll('-', '.')}</time></dd></div>}
+    {date && <div><dt>{dateLabel}</dt><dd><time datetime={formatDate(date)}>{formatDate(date).replaceAll('-', '.')}</time></dd></div>}
     <div><dt>披露</dt><dd>负责任<br />披露</dd></div>
   </dl>
 </aside>
