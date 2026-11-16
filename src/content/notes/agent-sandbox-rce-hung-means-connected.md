@@ -13,7 +13,7 @@ draft: false
 
 几天前读过站内[提示词注入精讲](/learn/prompt-injection/)，这次用同一套「审查面 ≠ 执行面」的思路在授权测试里走通了 Agent 沙箱 RCE。
 
-![审查面与执行面错位：模型读到干净实现，解释器按 main 加载的是另一份文件；挂起往往意味着连接已建立](/uploads/agent-sandbox-rce-hung-means-connected/review-vs-execution.svg)
+![审查面与执行面错位：模型读到干净实现，解释器按 main 加载的是另一份文件；挂起往往意味着连接已建立](/uploads/agent-sandbox-rce-hung-means-connected/review-vs-execution.png)
 
 ---
 
