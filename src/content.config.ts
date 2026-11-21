@@ -34,6 +34,7 @@ const notes = defineCollection({
     published: z.coerce.date(),
     updated: z.coerce.date().optional(),
     topic: z.string(),
+    cover: z.string().optional(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
   }),
