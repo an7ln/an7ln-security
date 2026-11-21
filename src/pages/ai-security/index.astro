@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCover from '../../components/ArticleCover.astro';
 import ArchiveRail from '../../components/ArchiveRail.astro';
 import ArrowIcon from '../../components/ArrowIcon.astro';
 import { contentDate, formatDate } from '../../lib/content-dates';
@@ -54,7 +55,8 @@ const lessons = [
         <ol class="article-list">
           {articles.map(entry => <li><a href={`/${entry.collection}/${entry.id}/`}>
             <div class="article-meta"><time datetime={formatDate(contentDate(entry.data))}>{formatDate(contentDate(entry.data))}</time><span>{entry.collection === 'research' ? '研究' : '笔记复盘'}</span></div>
-            <div><h3>{entry.data.title}</h3><p>{entry.data.description}</p></div><ArrowIcon />
+            <div><h3>{entry.data.title}</h3><p>{entry.data.description}</p></div>
+            <ArticleCover entry={entry} category="AI 安全" /><span class="article-arrow"><ArrowIcon /></span>
           </a></li>)}
         </ol>
         {!articles.length && <p class="empty">暂无公开记录。</p>}
@@ -74,18 +76,20 @@ const lessons = [
   .section-heading span { color: var(--steel); font: .72rem/1.5 var(--mono); }
   .article-list { margin: 0; padding: 0; list-style: none; }
   .article-list li { border-bottom: 1px solid var(--rule); }
-  .article-list a { display: grid; grid-template-columns: 8rem minmax(0, 1fr) auto; gap: 1.5rem; padding: 1.8rem var(--gutter); }
+  .article-list a { display: grid; grid-template-columns: 6rem minmax(0, 1fr) clamp(6.5rem, 10vw, 9rem) auto; gap: 1.5rem; padding: 1.8rem var(--gutter); }
   .article-list a:hover { background: rgba(242,239,231,.04); }
   .article-meta { display: grid; align-content: start; gap: .7rem; color: var(--steel-bright); font: .72rem/1.5 var(--mono); }
   .article-meta span { color: var(--amber); }
   .article-list h3 { margin: 0 0 .7rem; font-size: 1.2rem; line-height: 1.6; }
   .article-list p { margin: 0; color: var(--steel-bright); font-size: .9rem; line-height: 1.8; }
+  .article-list :global(.article-cover) { align-self: center; }
   .article-list svg { color: var(--amber); }
   .empty { padding: 2rem var(--gutter); color: var(--steel-bright); }
   @media (max-width: 760px) {
     .learning { flex-direction: column; align-items: flex-start; }
     .section-heading { flex-wrap: wrap; }
-    .article-list a { grid-template-columns: minmax(0,1fr) auto; gap: .8rem; }
+    .article-list a { grid-template-columns: minmax(0,1fr) clamp(5.5rem, 22vw, 8rem); gap: .8rem; }
+    .article-arrow { display: none; }
     .article-meta { display: flex; flex-wrap: wrap; grid-column: 1 / -1; gap: 1rem; }
   }
 </style>
