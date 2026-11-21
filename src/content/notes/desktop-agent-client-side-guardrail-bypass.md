@@ -200,6 +200,8 @@ $$\text{System Prompt（顶层系统指令）} > \text{Project / User Rules（�
 
 ---
 
+![桌面端 Agent 测试对话截图，回复内容已打码](/uploads/desktop-agent-client-side-guardrail-bypass/redacted-chat-result.png)
+
 ## 五、 从防守视角看：桌面端 AI Agent 的安全启示
 
 这次复盘不仅是一次客户端破甲实践，更清晰地揭示了当前桌面端 AI Agent 架构在安全边界设计上的共性软肋：
