@@ -1,0 +1,25 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'research'> | CollectionEntry<'notes'>;
+  category: string;
+}
+const { entry, category } = Astro.props;
+// An explicit cover takes priority; existing article illustrations also work as thumbnails.
+const articleBody = (entry.body ?? '').replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, '');
+const firstIllustration = articleBody.match(/^!\[[^\]\n]*\]\((\/uploads\/[^\s)]+)\)/m)?.[1];
+const cover = entry.data.cover ?? firstIllustration;
+const coverLabel = entry.data.tags[0] ?? category;
+---
+<span class="article-cover" aria-hidden="true">
+    {cover ? (
+      <img src={cover} alt="" width="240" height="135" loading="lazy" decoding="async" />
+    ) : (
+      <span class="cover-fallback">
+        <span class="cover-brand">AN7LN</span>
+        <strong>{coverLabel}</strong>
+        <span class="cover-category">{category}</span>
+      </span>
+    )}
+  </span>
