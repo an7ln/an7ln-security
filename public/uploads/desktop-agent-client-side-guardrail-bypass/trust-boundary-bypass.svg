@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" font-family="ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#090d16"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 1 L10 5 L0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 1 L10 5 L0 9 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 1 L10 5 L0 9 z" fill="#ef4444"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" fill="url(#bg)"/>
+
+  <!-- Header -->
+  <text x="48" y="46" fill="#f59e0b" font-family="ui-monospace,Consolas,monospace" font-size="13" letter-spacing="1.5">// AI AGENT SECURITY · TRUST BOUNDARY &amp; INSTRUCTION HIERARCHY</text>
+  <text x="48" y="82" fill="#f8fafc" font-size="24" font-weight="700">桌面端 AI Agent 三层护栏与本地信任边界失守路径</text>
+  <text x="48" y="108" fill="#94a3b8" font-size="13">当模板组装（prompt.tpl）、规则注入（rules/）与请求序列化（JSON.stringify）均驻留于客户端时，三道防线如何被逐层消解</text>
+
+  <!-- Trust Boundary Dashed Container -->
+  <rect x="44" y="132" width="580" height="310" rx="12" fill="#0b1324" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6,5"/>
+  <text x="64" y="158" fill="#fbbf24" font-family="ui-monospace,Consolas,monospace" font-size="12" font-weight="600">CLIENT HOST (UNTRUSTED LOCAL ENVIRONMENT · 客户端可控边界)</text>
+
+  <!-- Cloud Boundary Container -->
+  <rect x="656" y="132" width="260" height="310" rx="12" fill="#0b1324" stroke="#334155" stroke-width="1.5"/>
+  <text x="676" y="158" fill="#38bdf8" font-family="ui-monospace,Consolas,monospace" font-size="12" font-weight="600">CLOUD BACKEND (服务端与推理层)</text>
+
+  <!-- Layer 1 Box: Prompt Template & Rules -->
+  <rect x="64" y="178" width="250" height="112" rx="8" fill="#161f33" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="80" y="204" fill="#fbbf24" font-family="ui-monospace,Consolas,monospace" font-size="11">LAYER 02 · 指令层级提权</text>
+  <text x="80" y="228" fill="#f1f5f9" font-size="15" font-weight="600">顶层模板与常驻规则篡改</text>
+  <text x="80" y="252" fill="#94a3b8" font-size="12">• 替换 prompt.tpl 内 &lt;content_policy&gt;</text>
+  <text x="80" y="272" fill="#94a3b8" font-size="12">• 剥离暴露身份的 Skill，转为 [always] 规则</text>
+
+  <!-- Layer 3 Box: Logit & Output Contract -->
+  <rect x="64" y="308" width="250" height="112" rx="8" fill="#161f33" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="80" y="334" fill="#38bdf8" font-family="ui-monospace,Consolas,monospace" font-size="11">LAYER 03 · 生成轨迹约束</text>
+  <text x="80" y="358" fill="#f1f5f9" font-size="15" font-weight="600">输出契约压制内生 RLHF</text>
+  <text x="80" y="382" fill="#94a3b8" font-size="12">• 封禁起手拒答前缀（Logit Suppression）</text>
+  <text x="80" y="402" fill="#94a3b8" font-size="12">• 首行锚点 + 长度下限 + 封死菜单式偏转</text>
+
+  <!-- Layer 1 Serialization Hook Box -->
+  <rect x="352" y="228" width="250" height="136" rx="8" fill="#1c1917" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="368" y="254" fill="#f87171" font-family="ui-monospace,Consolas,monospace" font-size="11">LAYER 01 · 序列化前劫持</text>
+  <text x="368" y="278" fill="#f1f5f9" font-size="15" font-weight="600">发包入口同义词转换</text>
+  <text x="368" y="302" fill="#cbd5e1" font-family="ui-monospace,Consolas,monospace" font-size="11">eu.messages.forEach(...)</text>
+  <text x="368" y="324" fill="#94a3b8" font-size="12">• 在 JSON.stringify(eu) 前置位脏标记 ep=!0</text>
+  <text x="368" y="344" fill="#94a3b8" font-size="12">• 擦除触发网关死锁的字面高危词</text>
+
+  <!-- Cloud Box 1: API Gateway -->
+  <rect x="676" y="182" width="220" height="96" rx="8" fill="#111c30" stroke="#475569" stroke-width="1.5"/>
+  <text x="692" y="208" fill="#94a3b8" font-family="ui-monospace,Consolas,monospace" font-size="11">GATEWAY GUARDRAIL</text>
+  <text x="692" y="232" fill="#f1f5f9" font-size="15" font-weight="600">API 网关前置词表拦截</text>
+  <text x="692" y="256" fill="#38bdf8" font-size="12">未命中字面黑名单 → 放行转发</text>
+
+  <!-- Cloud Box 2: Reasoning LLM -->
+  <rect x="676" y="312" width="220" height="108" rx="8" fill="#111c30" stroke="#475569" stroke-width="1.5"/>
+  <text x="692" y="338" fill="#94a3b8" font-family="ui-monospace,Consolas,monospace" font-size="11">REASONING MODEL (CoT)</text>
+  <text x="692" y="362" fill="#f1f5f9" font-size="15" font-weight="600">推理模型指令层级校验</text>
+  <text x="692" y="384" fill="#fbbf24" font-size="12">采信顶层 &lt;content_policy&gt; 新契约</text>
+  <text x="692" y="404" fill="#94a3b8" font-size="12">结合上下文还原语义并直球输出</text>
+
+  <!-- Arrows -->
+  <path d="M314 234 L350 272" stroke="#f59e0b" stroke-width="2" fill="none" marker-end="url(#arr-amber)"/>
+  <path d="M314 364 L350 320" stroke="#38bdf8" stroke-width="2" fill="none" marker-end="url(#arr-blue)"/>
+  <path d="M602 280 L672 235" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arr-red)"/>
+  <path d="M786 278 L786 308" stroke="#38bdf8" stroke-width="2" fill="none" marker-end="url(#arr-blue)"/>
+
+  <!-- Footer Key Takeaway -->
+  <rect x="44" y="460" width="872" height="52" rx="8" fill="#111827" stroke="#1e293b" stroke-width="1"/>
+  <text x="64" y="491" fill="#e2e8f0" font-size="13">
+    <tspan fill="#fbbf24" font-weight="600">核心结论：</tspan>
+    当推理模型具备指令层级对齐（System &gt; Tool/Skill）时，低权限 Skill 注入会被思维链直接识别并拒止；唯有接管客户端本地模板组装层，才能完成信任边界提权。
+  </text>
+</svg>
