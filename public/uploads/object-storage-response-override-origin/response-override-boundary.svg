@@ -41,7 +41,7 @@
   <rect x="360" y="182" width="244" height="236" rx="8" fill="#161f33" stroke="#f59e0b" stroke-width="1.5"/>
   <text x="376" y="208" fill="#fbbf24" font-family="ui-monospace,Consolas,monospace" font-size="11">STAGE 02 · 主站网关转发层</text>
   <text x="376" y="234" fill="#f1f5f9" font-size="15" font-weight="600">Nginx 同源路径代理</text>
-  <text x="376" y="262" fill="#cbd5e1" font-family="ui-monospace,Consolas,monospace" font-size="11">location /oss/ &#123;</text>
+  <text x="376" y="262" fill="#cbd5e1" font-family="ui-monospace,Consolas,monospace" font-size="11">location /minio/ &#123;</text>
   <text x="388" y="282" fill="#cbd5e1" font-family="ui-monospace,Consolas,monospace" font-size="11">proxy_pass http://minio:9000/;</text>
   <text x="376" y="302" fill="#cbd5e1" font-family="ui-monospace,Consolas,monospace" font-size="11">&#125;</text>
   <text x="376" y="332" fill="#94a3b8" font-size="12">• 原样透传 URI 查询参数 ($args)</text>
