@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" font-family="ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#090d16"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 1 L10 5 L0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 1 L10 5 L0 9 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 1 L10 5 L0 9 z" fill="#ef4444"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" fill="url(#bg)"/>
+
+  <!-- Header -->
+  <text x="48" y="46" fill="#f59e0b" font-family="ui-monospace,Consolas,monospace" font-size="13" letter-spacing="1.5">// WEB SECURITY · OBJECT STORAGE &amp; ORIGIN BOUNDARY</text>
+  <text x="48" y="82" fill="#f8fafc" font-size="24" font-weight="700">对象存储响应头覆盖与同源信任边界失守路径</text>
+  <text x="48" y="108" fill="#94a3b8" font-size="13">上传层校验了文件类型，但分发层采信 ?response-content-type=text/html 且经主站反向代理出站时，静态存储直接升格为同源执行</text>
+
+  <!-- Trusted Origin Boundary -->
+  <rect x="44" y="132" width="872" height="310" rx="12" fill="#0b1324" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="6,5"/>
+  <text x="64" y="158" fill="#f87171" font-family="ui-monospace,Consolas,monospace" font-size="12" font-weight="600">TRUSTED APPLICATION ORIGIN · https://app.example.com（同源反向代理边界）</text>
+
+  <!-- Step 1: Upload Layer -->
+  <rect x="64" y="182" width="256" height="236" rx="8" fill="#161f33" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="80" y="208" fill="#38bdf8" font-family="ui-monospace,Consolas,monospace" font-size="11">STAGE 01 · 业务上传层（看似严密）</text>
+  <text x="80" y="234" fill="#f1f5f9" font-size="15" font-weight="600">文件准入与静态元数据写入</text>
+  <text x="80" y="262" fill="#94a3b8" font-size="12">• 校验扩展名白名单（仅允许 .png/.jpg）</text>
+  <text x="80" y="286" fill="#94a3b8" font-size="12">• 校验文件头魔数（89 50 4E 47）</text>
+  <text x="80" y="310" fill="#94a3b8" font-size="12">• 固定写入 ContentType: image/png</text>
+  <rect x="80" y="334" width="224" height="64" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+  <text x="92" y="356" fill="#fbbf24" font-family="ui-monospace,Consolas,monospace" font-size="11">盲区：未做像素级重编码</text>
+  <text x="92" y="378" fill="#cbd5e1" font-size="11">保留元数据块或尾部双语义标记文本</text>
+
+  <!-- Step 2: Reverse Proxy -->
+  <rect x="360" y="182" width="244" height="236" rx="8" fill="#161f33" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="376" y="208" fill="#fbbf24" font-family="ui-monospace,Consolas,monospace" font-size="11">STAGE 02 · 主站网关转发层</text>
+  <text x="376" y="234" fill="#f1f5f9" font-size="15" font-weight="600">Nginx 同源路径代理</text>
+  <text x="376" y="262" fill="#cbd5e1" font-family="ui-monospace,Consolas,monospace" font-size="11">location /oss/ &#123;</text>
+  <text x="388" y="282" fill="#cbd5e1" font-family="ui-monospace,Consolas,monospace" font-size="11">proxy_pass http://minio:9000/;</text>
+  <text x="376" y="302" fill="#cbd5e1" font-family="ui-monospace,Consolas,monospace" font-size="11">&#125;</text>
+  <text x="376" y="332" fill="#94a3b8" font-size="12">• 原样透传 URI 查询参数 ($args)</text>
+  <text x="376" y="356" fill="#94a3b8" font-size="12">• 原样回传上游 Content-Type 响应头</text>
+  <text x="376" y="380" fill="#f87171" font-size="12">• 赋予静态桶主站完整可信 Origin</text>
+
+  <!-- Step 3: Object Storage Serving Layer -->
+  <rect x="644" y="182" width="252" height="236" rx="8" fill="#1c1917" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="660" y="208" fill="#f87171" font-family="ui-monospace,Consolas,monospace" font-size="11">STAGE 03 · 存储分发层覆盖</text>
+  <text x="660" y="234" fill="#f1f5f9" font-size="15" font-weight="600">GetObject 响应头动态重写</text>
+  <rect x="660" y="252" width="220" height="52" rx="6" fill="#0f172a" stroke="#ef4444" stroke-width="1"/>
+  <text x="670" y="272" fill="#fca5a5" font-family="ui-monospace,Consolas,monospace" font-size="10.5">?response-content-type=text/html</text>
+  <text x="670" y="292" fill="#fca5a5" font-family="ui-monospace,Consolas,monospace" font-size="10.5">&amp;response-content-disposition=inline</text>
+  <text x="660" y="330" fill="#94a3b8" font-size="12">• MinIO 匿名可读配置采信参数</text>
+  <text x="660" y="354" fill="#94a3b8" font-size="12">• 或 S3 预签名接口误签用户参数</text>
+  <text x="660" y="378" fill="#fbbf24" font-size="12">• nosniff 失效：服务端亲自声明 HTML</text>
+
+  <!-- Arrows -->
+  <path d="M320 300 L356 300" stroke="#38bdf8" stroke-width="2" fill="none" marker-end="url(#arr-blue)"/>
+  <path d="M604 276 L640 276" stroke="#f59e0b" stroke-width="2" fill="none" marker-end="url(#arr-amber)"/>
+  <path d="M644 336 L608 336" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arr-red)"/>
+
+  <!-- Footer Key Takeaway -->
+  <rect x="44" y="460" width="872" height="52" rx="8" fill="#111827" stroke="#1e293b" stroke-width="1"/>
+  <text x="64" y="491" fill="#e2e8f0" font-size="13">
+    <tspan fill="#fbbf24" font-weight="600">核心结论：</tspan>
+    上传校验只约束了“存进去是什么”，没有锁死“读出来按什么解释”。当存储层支持响应头覆盖且与业务共享同一 Origin 时，防线在分发侧直接旁路。
+  </text>
+</svg>
