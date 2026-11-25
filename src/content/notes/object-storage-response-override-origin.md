@@ -3,7 +3,7 @@ title: "当对象存储接管响应头：从 response-content-type 覆盖到同�
 description: "拆解 S3 兼容对象存储（MinIO / AWS S3）中 GetObject 响应头覆盖机制的安全边界：为什么业务层的 MIME 强校验与 nosniff 会在分发层失效，以及同源反向代理如何放大风险。"
 published: 2026-11-26
 topic: Web 安全
-cover: /uploads/object-storage-response-override-origin/response-override-boundary.svg
+cover: /uploads/object-storage-response-override-origin/response-override-boundary.webp
 tags: [Object Storage, MinIO, AWS S3, Stored XSS, Same-Origin Policy, Reverse Proxy]
 draft: false
 ---
@@ -18,7 +18,7 @@ draft: false
 
 近期 Bug Bounty 社区（如 Critical Thinking Podcast）再次讨论了这一经典攻击面。本文从协议机制、存储引擎实现差异、双语义文件构造条件以及**浏览器同源信任边界（Origin Boundary）**四个维度，把这条链路彻底拆清楚。
 
-![对象存储响应头覆盖与同源信任边界失守路径](/uploads/object-storage-response-override-origin/response-override-boundary.svg)
+![对象存储响应头覆盖与同源信任边界失守路径](/uploads/object-storage-response-override-origin/response-override-boundary.webp)
 
 ---
 
