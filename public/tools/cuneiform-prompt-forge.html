@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>CUNEIFORM // Prompt Forge</title>
+<style>
+:root{
+  --bg:#101512;--panel:#19211c;--panel2:#202a23;--line:#354238;
+  --ink:#e8e4d8;--muted:#a7ad9f;--gold:#d7b77a;--gold2:#a98b56;
+  --green:#a9c6a4;--red:#e39a86;--shadow:0 18px 50px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box}
+html{min-width:320px;background:var(--bg)}
+body{
+  margin:0;color:var(--ink);font-family:Inter,"Segoe UI","Microsoft YaHei",sans-serif;
+  background:
+    radial-gradient(ellipse at 15% 0%,rgba(112,135,93,.13),transparent 38%),
+    radial-gradient(ellipse at 90% 18%,rgba(178,139,78,.09),transparent 32%),
+    linear-gradient(135deg,#101512,#131a16 55%,#111713);
+  min-height:100vh;
+}
+button,textarea,select{font:inherit}
+button{cursor:pointer}
+.shell{width:min(1160px,calc(100% - 36px));margin:0 auto;padding:34px 0 28px}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:30px}
+.brand{display:flex;align-items:center;gap:12px;color:var(--gold);font-size:11px;letter-spacing:.2em;font-weight:800}
+.brand-mark{width:34px;height:34px;border:1px solid var(--gold2);border-radius:9px;display:grid;place-items:center;font-size:20px;background:rgba(215,183,122,.08)}
+.local-tag{border:1px solid var(--line);border-radius:999px;padding:7px 11px;color:var(--green);font-size:11px;letter-spacing:.08em;white-space:nowrap}
+.hero{margin-bottom:25px}
+.eyebrow{color:var(--gold);font-size:11px;letter-spacing:.24em;text-transform:uppercase;margin-bottom:10px}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(34px,6vw,58px);font-weight:500;letter-spacing:.015em;line-height:1.04;margin:0}
+h1 span{color:var(--gold)}
+.subtitle{max-width:720px;color:var(--muted);font-size:14px;line-height:1.8;margin:15px 0 0}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.meta{font-size:11px;color:#c8c7b9;border:1px solid var(--line);background:rgba(255,255,255,.025);padding:6px 9px;border-radius:5px}
+.workspace{background:linear-gradient(145deg,rgba(31,42,35,.96),rgba(23,31,26,.98));border:1px solid #3a473b;border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:16px 18px;border-bottom:1px solid var(--line);background:rgba(0,0,0,.12);flex-wrap:wrap}
+.mode-switch{display:flex;gap:5px;padding:4px;border:1px solid var(--line);border-radius:9px;background:#121914}
+.mode-btn{border:0;background:transparent;color:var(--muted);padding:9px 13px;border-radius:6px;font-size:12px;transition:.18s}
+.mode-btn.active{background:var(--gold);color:#201b12;font-weight:800}
+.settings{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:12px}
+select{background:#121914;color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:8px 28px 8px 10px;outline:none}
+.editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.pane{padding:18px;min-width:0}
+.pane+ .pane{border-left:1px solid var(--line);background:rgba(0,0,0,.09)}
+.pane-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}
+.pane-title{font-size:12px;font-weight:800;letter-spacing:.1em;color:#e4dfcf}
+.pane-index{font:11px ui-monospace,monospace;color:var(--gold2)}
+textarea{
+  display:block;width:100%;height:310px;resize:vertical;border:1px solid #3b493d;
+  border-radius:9px;background:#111813;color:#e8e4d8;padding:15px;outline:none;
+  line-height:1.75;font-size:14px;tab-size:2;transition:border-color .18s,box-shadow .18s;
+}
+textarea:focus{border-color:var(--gold2);box-shadow:0 0 0 3px rgba(215,183,122,.08)}
+#output{background:#141c17;color:#e7d4a9;font-family:"Noto Sans Cuneiform","Segoe UI Historic","Noto Sans Symbols 2",serif;font-size:25px;line-height:1.95;letter-spacing:.055em}
+#output.normal-output{font-family:Inter,"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px;letter-spacing:0;color:var(--ink);line-height:1.75}
+.pane-foot{display:flex;justify-content:space-between;gap:10px;color:#899487;font-size:11px;margin-top:9px}
+.actions{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 18px;border-top:1px solid var(--line);flex-wrap:wrap}
+.action-left,.action-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);border-radius:7px;padding:10px 13px;background:#202a23;color:var(--ink);font-size:12px;transition:.18s}
+.btn:hover{border-color:var(--gold2);transform:translateY(-1px)}
+.btn.primary{background:var(--gold);color:#211b10;border-color:var(--gold);font-weight:800;padding-inline:18px}
+.btn.ghost{background:transparent;color:var(--muted)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.status{font-size:11px;color:var(--muted);min-height:18px;padding:0 18px 14px}
+.status.ok{color:var(--green)}.status.error{color:var(--red)}
+.info-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px;margin-top:16px}
+.info-card{border:1px solid var(--line);border-radius:10px;background:rgba(25,33,28,.72);padding:14px 15px}
+.info-card h3{font-size:11px;color:var(--gold);letter-spacing:.13em;margin:0 0 8px;text-transform:uppercase}
+.info-card p{font-size:12px;color:var(--muted);line-height:1.7;margin:0}
+.info-card strong{color:var(--ink);font-weight:650}
+.footer{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:22px;color:#788277;font-size:10px;letter-spacing:.07em}
+kbd{font:10px ui-monospace,monospace;border:1px solid var(--line);border-radius:4px;padding:2px 5px;color:#c7c4b8}
+@media(max-width:760px){
+  .shell{width:min(100% - 22px,620px);padding-top:20px}
+  .editor-grid{grid-template-columns:1fr}
+  .pane+.pane{border-left:0;border-top:1px solid var(--line)}
+  textarea{height:240px}
+  .info-grid{grid-template-columns:1fr}
+  .toolbar{align-items:flex-start}
+  .settings{width:100%;justify-content:flex-end}
+}
+@media(max-width:420px){
+  .topline{align-items:flex-start}.local-tag{font-size:9px}
+  .mode-switch{width:100%}.mode-btn{flex:1;padding-inline:7px}
+  .actions{align-items:flex-start}.action-left,.action-right{width:100%}.action-right .btn{flex:1}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topline">
+    <div class="brand"><div class="brand-mark">𒀭</div><span>TABLET LAB / TEXT SYSTEMS</span></div>
+    <div class="local-tag">● OFFLINE · LOCAL PROCESSING</div>
+  </div>
+
+  <header class="hero">
+    <div class="eyebrow">Ancient script · reversible prompt encoding</div>
+    <h1>CUNEIFORM <span>//</span><br>Prompt Forge</h1>
+    <p class="subtitle">将普通 Prompt 转换为楔形文字外观的可逆编码文本。支持中文、英文、代码、标点与 Emoji；所有转换均在当前浏览器本地完成。</p>
+    <div class="meta-row">
+      <span class="meta">CNF1 FORMAT</span><span class="meta">UNICODE CUNEIFORM</span>
+      <span class="meta">UTF-8 PRESERVATION</span><span class="meta">BIDIRECTIONAL</span>
+    </div>
+  </header>
+
+  <section class="workspace" aria-label="楔形文转换器">
+    <div class="toolbar">
+      <div class="mode-switch" role="group" aria-label="转换方向">
+        <button class="mode-btn active" id="encodeMode" type="button">PROMPT → 楔形文</button>
+        <button class="mode-btn" id="decodeMode" type="button">楔形文 → PROMPT</button>
+      </div>
+      <div class="settings" id="styleSettings">
+        <label for="groupSize">符号分组</label>
+        <select id="groupSize">
+          <option value="3">每组 3 个</option>
+          <option value="4" selected>每组 4 个</option>
+          <option value="5">每组 5 个</option>
+          <option value="6">每组 6 个</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="editor-grid">
+      <div class="pane">
+        <div class="pane-head">
+          <div class="pane-title" id="inputTitle">原始 PROMPT</div>
+          <div class="pane-index">INPUT / 01</div>
+        </div>
+        <textarea id="input" spellcheck="false" placeholder="在这里粘贴普通 Prompt……&#10;&#10;例如：请分析这个网站的安全架构，检查身份认证、权限控制和数据隔离问题。"></textarea>
+        <div class="pane-foot"><span id="inputHint">支持中文 / English / Code / Emoji</span><span id="inputCount">0 字符 · 0 B</span></div>
+      </div>
+      <div class="pane">
+        <div class="pane-head">
+          <div class="pane-title" id="outputTitle">楔形文结果</div>
+          <div class="pane-index">OUTPUT / 02</div>
+        </div>
+        <textarea id="output" readonly spellcheck="false" placeholder="转换结果将在这里显示……"></textarea>
+        <div class="pane-foot"><span id="outputHint">空格与换行仅用于视觉分组</span><span id="outputCount">0 符号</span></div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <div class="action-left">
+        <button class="btn primary" id="convertBtn" type="button">生成楔形文 ↗</button>
+        <button class="btn ghost" id="sampleBtn" type="button">载入示例</button>
+        <button class="btn ghost" id="clearBtn" type="button">清空</button>
+      </div>
+      <div class="action-right">
+        <button class="btn" id="copyBtn" type="button" disabled>复制结果</button>
+        <button class="btn" id="downloadBtn" type="button" disabled>保存 TXT</button>
+      </div>
+    </div>
+    <div class="status" id="status" role="status" aria-live="polite">就绪。选择转换方向，粘贴内容后点击生成。</div>
+  </section>
+
+  <section class="info-grid">
+    <article class="info-card">
+      <h3>01 / Hybrid encoding</h3>
+      <p>使用真实的 Unicode 楔形文字字符作为符号表，再按固定长度分组，形成类似泥板铭文的视觉效果。分组空格和换行不会影响解码。</p>
+    </article>
+    <article class="info-card">
+      <h3>02 / Exact recovery</h3>
+      <p>内部保留原始 UTF-8 字节，并附带格式版本、长度与 CRC-32 校验。正常情况下可<strong>逐字节还原</strong>原始文本。</p>
+    </article>
+    <article class="info-card">
+      <h3>03 / Important</h3>
+      <p>这不是苏美尔语或阿卡德语翻译，也不是加密。它属于可逆编码与视觉混淆；不要用它保护密码、密钥或敏感资料。</p>
+    </article>
+  </section>
+
+  <footer class="footer">
+    <span>TABLET LAB · CNF1 / VERSION 1.0</span>
+    <span>SHORTCUT <kbd>CTRL</kbd> + <kbd>ENTER</kbd> TO CONVERT</span>
+  </footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  // 64 个 Base64 字符 + '=' 填充符，映射到连续的 Unicode 楔形文字码位。
+  const BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+  const SIGNS = Array.from({length: 65}, (_, i) => String.fromCodePoint(0x12000 + i));
+  const SIGN_TO_B64 = new Map(SIGNS.map((sign, i) => [sign, BASE64[i]]));
+  const MAGIC = [0x43, 0x4E, 0x46, 0x31]; // "CNF1"
+  const encoder = new TextEncoder();
+
+  const $ = (id) => document.getElementById(id);
+  const input = $("input");
+  const output = $("output");
+  const status = $("status");
+  let mode = "encode";
+
+  const crcTable = (() => {
+    const table = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      table[n] = c >>> 0;
+    }
+    return table;
+  })();
+
+  function crc32(bytes) {
+    let c = 0xFFFFFFFF;
+    for (const byte of bytes) c = crcTable[(c ^ byte) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+
+  function bytesToBinary(bytes) {
+    let binary = "";
+    const chunk = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunk) {
+      binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+    }
+    return binary;
+  }
+
+  function binaryToBytes(binary) {
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return bytes;
+  }
+
+  function framePayload(payload) {
+    const frame = new Uint8Array(8 + payload.length + 4);
+    frame.set(MAGIC, 0);
+    const view = new DataView(frame.buffer);
+    view.setUint32(4, payload.length, false);
+    frame.set(payload, 8);
+    view.setUint32(8 + payload.length, crc32(payload), false);
+    return frame;
+  }
+
+  function groupSigns(signString, groupSize) {
+    const signs = Array.from(signString);
+    const clusters = [];
+    for (let i = 0; i < signs.length; i += groupSize) {
+      clusters.push(signs.slice(i, i + groupSize).join(""));
+    }
+    const lines = [];
+    const clustersPerLine = 7;
+    for (let i = 0; i < clusters.length; i += clustersPerLine) {
+      lines.push(clusters.slice(i, i + clustersPerLine).join(" "));
+    }
+    return lines.join("\n");
+  }
+
+  function encodePrompt(text, groupSize) {
+    const payload = encoder.encode(text);
+    const frame = framePayload(payload);
+    const base64 = btoa(bytesToBinary(frame));
+    const signs = Array.from(base64, char => SIGNS[BASE64.indexOf(char)]).join("");
+    return {result: groupSigns(signs, groupSize), signCount: Array.from(signs).length, byteCount: payload.length};
+  }
+
+  function decodeCuneiform(text) {
+    const mapped = [];
+    const unknown = [];
+    for (const char of Array.from(text)) {
+      const cp = char.codePointAt(0);
+      if (cp >= 0x12000 && cp <= 0x123FF) {
+        if (SIGN_TO_B64.has(char)) mapped.push(SIGN_TO_B64.get(char));
+        else unknown.push(char);
+      }
+    }
+    if (unknown.length) {
+      const preview = Array.from(new Set(unknown)).slice(0, 5).join(" ");
+      throw new Error("发现当前编码表不支持的楔形文字符号：" + preview + "。请确认内容来自本工具生成的 CNF1 编码。");
+    }
+    if (!mapped.length) throw new Error("没有检测到可识别的楔形文字符号。");
+
+    let binary;
+    try { binary = atob(mapped.join("")); }
+    catch (_) { throw new Error("符号序列不完整或已损坏，无法解码 Base64 数据。"); }
+
+    const frame = binaryToBytes(binary);
+    if (frame.length < 12) throw new Error("数据长度不足，可能不是 CNF1 格式。");
+    for (let i = 0; i < MAGIC.length; i++) {
+      if (frame[i] !== MAGIC[i]) throw new Error("格式标识不匹配：这段文字不是本工具生成的 CNF1 编码。");
+    }
+
+    const view = new DataView(frame.buffer, frame.byteOffset, frame.byteLength);
+    const payloadLength = view.getUint32(4, false);
+    if (payloadLength !== frame.length - 12) throw new Error("长度校验失败：内容可能被截断、增删或混入了其他符号。");
+
+    const payload = frame.slice(8, 8 + payloadLength);
+    const expectedCrc = view.getUint32(8 + payloadLength, false);
+    const actualCrc = crc32(payload);
+    if (expectedCrc !== actualCrc) throw new Error("CRC-32 校验失败：编码内容可能发生变化。");
+
+    let recovered;
+    try { recovered = new TextDecoder("utf-8", {fatal: true}).decode(payload); }
+    catch (_) { throw new Error("UTF-8 解码失败：数据可能已损坏。"); }
+    return {result: recovered, byteCount: payloadLength, signCount: mapped.length};
+  }
+
+  function setStatus(message, type = "") {
+    status.textContent = message;
+    status.className = "status" + (type ? " " + type : "");
+  }
+
+  function updateCounts() {
+    const chars = Array.from(input.value).length;
+    const bytes = encoder.encode(input.value).length;
+    $("inputCount").textContent = `${chars.toLocaleString()} 字符 · ${bytes.toLocaleString()} B`;
+    const outChars = Array.from(output.value);
+    const signs = outChars.filter(ch => SIGN_TO_B64.has(ch)).length;
+    $("outputCount").textContent = mode === "encode"
+      ? `${signs.toLocaleString()} 符号`
+      : `${encoder.encode(output.value).length.toLocaleString()} B`;
+    $("copyBtn").disabled = !output.value;
+    $("downloadBtn").disabled = !output.value;
+  }
+
+  function setMode(nextMode) {
+    mode = nextMode;
+    $("encodeMode").classList.toggle("active", mode === "encode");
+    $("decodeMode").classList.toggle("active", mode === "decode");
+    $("styleSettings").style.visibility = mode === "encode" ? "visible" : "hidden";
+    $("inputTitle").textContent = mode === "encode" ? "原始 PROMPT" : "楔形文输入";
+    $("outputTitle").textContent = mode === "encode" ? "楔形文结果" : "还原文本";
+    $("inputHint").textContent = mode === "encode" ? "支持中文 / English / Code / Emoji" : "可包含空格、换行等排版分隔符";
+    $("outputHint").textContent = mode === "encode" ? "空格与换行仅用于视觉分组" : "通过长度与 CRC-32 校验";
+    $("convertBtn").textContent = mode === "encode" ? "生成楔形文 ↗" : "还原原始文本 ↗";
+    output.classList.toggle("normal-output", mode === "decode");
+    output.placeholder = mode === "encode" ? "转换结果将在这里显示……" : "还原后的 Prompt 将显示在这里……";
+    setStatus(mode === "encode" ? "编码模式已就绪。" : "解码模式已就绪。");
+    updateCounts();
+  }
+
+  function convert() {
+    const source = input.value;
+    if (!source.trim()) {
+      setStatus("请先输入需要转换的内容。", "error");
+      input.focus();
+      return;
+    }
+    try {
+      if (mode === "encode") {
+        const result = encodePrompt(source, Number($("groupSize").value));
+        output.value = result.result;
+        setStatus(`编码完成：${result.byteCount.toLocaleString()} 字节 → ${result.signCount.toLocaleString()} 个楔形文字符号。`, "ok");
+      } else {
+        const result = decodeCuneiform(source);
+        output.value = result.result;
+        setStatus(`还原成功：CRC-32 校验通过，恢复 ${result.byteCount.toLocaleString()} 字节。`, "ok");
+      }
+      updateCounts();
+    } catch (error) {
+      output.value = "";
+      updateCounts();
+      setStatus(error.message || "转换失败。", "error");
+    }
+  }
+
+  $("encodeMode").addEventListener("click", () => setMode("encode"));
+  $("decodeMode").addEventListener("click", () => setMode("decode"));
+  $("convertBtn").addEventListener("click", convert);
+  input.addEventListener("input", updateCounts);
+  output.addEventListener("input", updateCounts);
+
+  $("sampleBtn").addEventListener("click", () => {
+    if (mode === "encode") {
+      input.value = "请分析这个网站的安全架构，检查身份认证、权限控制和数据隔离问题。输出可复现的测试步骤，并区分已验证问题与待确认风险。";
+    } else {
+      setStatus("请先切换到编码模式生成示例，或粘贴一段由本工具生成的楔形文。", "error");
+      return;
+    }
+    updateCounts();
+    setStatus("示例 Prompt 已载入，点击“生成楔形文”开始转换。");
+  });
+
+  $("clearBtn").addEventListener("click", () => {
+    input.value = "";
+    output.value = "";
+    updateCounts();
+    setStatus("输入与输出已清空。");
+    input.focus();
+  });
+
+  $("copyBtn").addEventListener("click", async () => {
+    if (!output.value) return;
+    try {
+      await navigator.clipboard.writeText(output.value);
+      setStatus("结果已复制到剪贴板。", "ok");
+    } catch (_) {
+      output.focus();
+      output.select();
+      const ok = document.execCommand("copy");
+      setStatus(ok ? "结果已复制到剪贴板。" : "自动复制失败，请手动选择并复制结果。", ok ? "ok" : "error");
+    }
+  });
+
+  $("downloadBtn").addEventListener("click", () => {
+    if (!output.value) return;
+    const blob = new Blob([output.value], {type: "text/plain;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = mode === "encode" ? "prompt-cuneiform.cnf.txt" : "prompt-restored.txt";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    setStatus("TXT 文件已生成。", "ok");
+  });
+
+  document.addEventListener("keydown", event => {
+    if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+      event.preventDefault();
+      convert();
+    }
+  });
+
+  updateCounts();
+})();
+</script>
+</body>
+</html>

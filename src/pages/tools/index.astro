@@ -1,0 +1,72 @@
+---
+import ArchiveRail from '../../components/ArchiveRail.astro';
+import ArrowIcon from '../../components/ArrowIcon.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const description = '我写的一些独立网页工具。';
+const tools = [
+  {
+    name: 'CUNEIFORM · Prompt Forge',
+    description: '将文本与楔形文编码双向转换。',
+    href: '/tools/cuneiform-prompt-forge.html',
+    iconPath: 'm8 6-6 6 6 6m8-12 6 6-6 6M14 4l-4 16',
+  },
+];
+---
+<BaseLayout title="工具目录" description={description}>
+  <div class="page-grid">
+    <ArchiveRail />
+    <div class="page-main" data-pagefind-body>
+      <header class="page-hero">
+        <h1 class="display display-lg" data-pagefind-meta="title">工具目录</h1>
+        <p>{description}</p>
+      </header>
+      <section class="directory" aria-labelledby="tools-heading">
+        <div class="directory-heading">
+          <h2 id="tools-heading">全部工具</h2>
+          <span>{tools.length} 个工具</span>
+        </div>
+        <ul class="tool-list">
+          {tools.map(tool => (
+            <li>
+              <a class="tool-link" href={tool.href}>
+                <svg class="tool-icon" viewBox="0 0 24 24" width="26" height="26" fill="none" aria-hidden="true">
+                  <path d={tool.iconPath} stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <div>
+                  <h3>{tool.name}</h3>
+                  <p>{tool.description}</p>
+                </div>
+                <span class="tool-action"><span>打开工具</span><ArrowIcon /></span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .directory { padding: 1.5rem var(--gutter) 5rem; }
+  .directory-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 1.25rem; }
+  .directory-heading h2 { margin: 0; font-size: 1.15rem; }
+  .directory-heading span { color: var(--steel-bright); font: .75rem/1.5 var(--mono); }
+  .tool-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+  .tool-link {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: clamp(.75rem, 2.5vw, 1.5rem);
+    padding: 1.5rem .5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .tool-link:hover, .tool-link:focus-visible { background: var(--ink-soft); }
+  .tool-icon, .tool-action { color: var(--amber); }
+  .tool-link h3 { margin: 0; overflow-wrap: anywhere; font-size: 1.1rem; }
+  .tool-link p { margin: .35rem 0 0; font-size: .9rem; color: var(--steel-bright); }
+  .tool-action { display: flex; gap: .6rem; align-items: center; font-size: .85rem; }
+  @media (max-width: 520px) {
+    .tool-action > span { display: none; }
+  }
+</style>

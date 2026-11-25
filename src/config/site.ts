@@ -16,5 +16,6 @@ export const navigation = [
   { label: 'CVE', href: '/cve/', index: '002', archiveLabel: 'CVE', contentScope: 'cve' },
   { label: '笔记', href: '/notes/', index: '003', archiveLabel: '笔记复盘', contentScope: 'notes' },
   { label: 'AI 安全', href: '/ai-security/', index: '004', archiveLabel: 'AI 安全', contentScope: 'ai-security' },
+  { label: '工具', href: '/tools/', index: '006', archiveLabel: '工具目录', contentScope: 'all' },
   { label: '关于', href: '/about/', index: '005', archiveLabel: '关于', contentScope: 'all' },
 ] as const;
